@@ -1523,42 +1523,6 @@ const chatswoodRestaurants = [
     ].join("\n"),
   },
   {
-    id: "cw-new-shanghai",
-    name: "New Shanghai Chatswood Chase",
-    area: "Chatswood",
-    address: "Chatswood Chase, Chatswood NSW",
-    rating: "",
-    note: "官网确认 Chatswood Chase 门店和小笼包/上海菜定位。这里只放官网可确认代表菜，不当完整菜单。",
-    tags: ["上海菜", "官网确认", "非完整菜单"],
-    hasMenu: true,
-    websiteUri: "https://www.newshanghai.com.au/",
-    menuSource: "官网确认代表菜（非完整菜单）",
-    menuVerified: true,
-    menuText: [
-      "Xiao long bao dumplings",
-    ].join("\n"),
-  },
-  {
-    id: "cw-dumpling",
-    name: "Chatswood 菜系练习：点心/小笼包",
-    area: "Chatswood",
-    address: "Chatswood, NSW",
-    rating: "",
-    note: "菜系练习，不是某家餐厅真实菜单。用于先看懂常见菜名。",
-    tags: ["中餐", "点心", "练习菜单"],
-    hasMenu: true,
-    menuSource: "菜系练习",
-    menuVerified: false,
-    menuText: [
-      "Xiao long bao",
-      "Pan fried pork buns",
-      "Prawn wonton noodle soup",
-      "Shanghai fried noodles",
-      "Salt and pepper calamari",
-      "Mango pancakes",
-    ].join("\n"),
-  },
-  {
     id: "cw-thai",
     name: "Chatswood 菜系练习：泰餐",
     area: "Chatswood",
@@ -1768,7 +1732,7 @@ function localNearbyRestaurants(payload = {}) {
   if (/^(cw|chatswood)$/i.test(area)) {
     return {
       source: "static_known",
-      message: "Chatswood 先显示已确认来源的真实餐厅菜单；练习菜单只放在后面兜底，不冒充真实餐厅。",
+      message: "Chatswood 优先显示非中文环境餐厅：真实菜单在前，练习菜单只用于兜底，不推荐中餐。",
       restaurants: chatswoodRestaurants,
     };
   }
@@ -2258,4 +2222,4 @@ if ("serviceWorker" in navigator) {
 }
 
 renderHistory();
-renderRestaurants(demoRestaurants, "v29 已加载：Chatswood 已加入 Khao Pla 官网 PDF 真实菜单；Tea Gardens 真实菜单库继续保留。");
+renderRestaurants(demoRestaurants, "v30 已加载：Chatswood 改为非中文环境餐厅优先，不再主动推荐中餐。");

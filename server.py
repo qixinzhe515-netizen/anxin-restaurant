@@ -1499,35 +1499,6 @@ def known_restaurants(area_name=""):
                 True,
             ),
             (
-                "cw-new-shanghai",
-                "New Shanghai Chatswood Chase",
-                "Chatswood Chase, Chatswood NSW",
-                "官网确认 Chatswood Chase 门店和小笼包/上海菜定位。这里只放官网可确认代表菜，不当完整菜单。",
-                ["上海菜", "官网确认", "非完整菜单"],
-                "https://www.newshanghai.com.au/",
-                "Xiao long bao dumplings",
-                "官网确认代表菜（非完整菜单）",
-                True,
-            ),
-            (
-                "cw-dumpling",
-                "Chatswood 菜系练习：点心/小笼包",
-                "Chatswood, NSW",
-                "菜系练习，不是某家餐厅真实菜单。用于先看懂常见菜名。",
-                ["中餐", "点心", "练习菜单"],
-                "",
-                "\n".join([
-                    "Xiao long bao",
-                    "Pan fried pork buns",
-                    "Prawn wonton noodle soup",
-                    "Shanghai fried noodles",
-                    "Salt and pepper calamari",
-                    "Mango pancakes",
-                ]),
-                "菜系练习",
-                False,
-            ),
-            (
                 "cw-thai",
                 "Chatswood 菜系练习：泰餐",
                 "Chatswood, NSW",
@@ -1602,7 +1573,7 @@ def known_restaurants(area_name=""):
         ]
         return {
             "source": "known_local",
-            "message": "Chatswood 先显示已确认来源的真实餐厅菜单；练习菜单只放在后面兜底，不冒充真实餐厅。",
+            "message": "Chatswood 优先显示非中文环境餐厅：真实菜单在前，练习菜单只用于兜底，不推荐中餐。",
             "restaurants": [
                 {
                     "id": f"known-{slug}",
