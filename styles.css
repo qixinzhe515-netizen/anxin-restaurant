@@ -575,6 +575,48 @@ textarea:focus {
   line-height: 1.45;
 }
 
+.dish-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.dish-title-row h3 {
+  margin: 0 0 6px;
+}
+
+.price-pill {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: #f2efe5;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 760;
+  padding: 6px 9px;
+}
+
+.dish-original {
+  color: #4f4f54;
+  font-weight: 680;
+}
+
+.dish-meta {
+  color: #7b7567;
+  font-size: 14px;
+}
+
+.dish-description {
+  color: var(--text);
+}
+
+.dish-note {
+  border-left: 3px solid #d6c59b;
+  color: #786a4d;
+  font-size: 14px;
+  padding-left: 10px;
+}
+
 .tag-row,
 .chip-row {
   display: flex;
@@ -583,12 +625,24 @@ textarea:focus {
 }
 
 .tag,
-.chip {
+.chip,
+.taste-tag,
+.risk-tag {
   border-radius: 999px;
   background: #efefe8;
   color: var(--muted);
   padding: 7px 10px;
   font-size: 14px;
+}
+
+.taste-tag {
+  background: #eef7f1;
+  color: #2f6f5e;
+}
+
+.risk-tag {
+  background: #fff4dc;
+  color: #8a5a00;
 }
 
 .chip {

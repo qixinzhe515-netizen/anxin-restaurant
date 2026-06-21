@@ -289,15 +289,33 @@ function fallbackLocalMenuData(menuText) {
     .split("\n")
     .map((line) => line.trim())
     .filter(Boolean)
-    .map((name, index) => ({
-      id: String(index + 1),
-      name_en: name,
-      ...describeLocalDish(name),
-    }));
+    .map((line, index) => buildLocalDish(line, index + 1));
   return {
-    summary: "下面是菜单的中文解释。先看口味和注意事项，再勾选想点的菜。",
+    summary: "下面是整理后的菜单解释。英文原文会保留；没有写清楚的内容会标为需要确认，不会当成事实。",
     dishes,
   };
+}
+
+function buildLocalDish(rawLine, index) {
+  const { name, price } = splitDishPrice(rawLine);
+  return {
+    id: String(index),
+    name_en: name,
+    original_text: rawLine,
+    price: price || "",
+    source: "菜单原文",
+    confidence: "中",
+    assumptions: [],
+    ...describeLocalDish(name),
+  };
+}
+
+function splitDishPrice(line) {
+  const priceMatch = line.match(/(?:\$?\s?)(\d{1,3}(?:\.\d{1,2})?)\s*$/);
+  if (!priceMatch) return { name: line.trim(), price: "" };
+  const price = `$${priceMatch[1]}`;
+  const name = line.slice(0, priceMatch.index).replace(/[|.\-–—\s]+$/g, "").trim();
+  return { name: name || line.trim(), price };
 }
 
 function describeLocalDish(name) {
@@ -306,41 +324,64 @@ function describeLocalDish(name) {
     return {
       name_zh: "土耳其软糖风味意式奶冻",
       description_zh: "一种像布丁一样软滑的奶冻甜点，通常偏甜，可能有玫瑰糖或土耳其软糖香气。适合饭后甜点；不适合不吃奶制品的人。",
+      category: "甜点",
+      taste: ["甜", "奶香", "软滑"],
+      cautions: ["含奶制品"],
       tags: ["甜点", "奶制品", "偏甜", "口感软"],
+      confidence: "高",
     };
   }
   if (lower.includes("persian fairy floss") || lower.includes("pistachio")) {
     return {
       name_zh: "波斯棉花糖配开心果",
       description_zh: "偏甜的甜点，通常有轻盈棉花糖口感和开心果坚果香。对开心果或坚果过敏的人不要点。",
+      category: "甜点",
+      taste: ["甜", "坚果香"],
+      cautions: ["含坚果", "开心果过敏者避免"],
       tags: ["甜点", "含坚果", "偏甜"],
+      confidence: "高",
     };
   }
   if (lower.includes("flat white")) {
     return {
       name_zh: "澳式奶咖 Flat White",
       description_zh: "澳洲常见咖啡，奶香明显但咖啡味比拿铁更重，适合想喝顺口奶咖的人。",
+      category: "饮品",
+      taste: ["咖啡味", "奶香"],
+      cautions: ["含牛奶"],
       tags: ["咖啡", "含牛奶"],
+      confidence: "高",
     };
   }
   if (lower.includes("long black")) {
     return {
       name_zh: "黑咖啡 Long Black",
       description_zh: "不加奶的黑咖啡，咖啡味明显、偏苦，类似美式但通常更浓。",
+      category: "饮品",
+      taste: ["苦", "咖啡味重"],
+      cautions: [],
       tags: ["咖啡", "无奶", "偏苦"],
+      confidence: "高",
     };
   }
   if (lower.includes("avocado toast")) {
     return {
       name_zh: "牛油果吐司",
       description_zh: "早午餐常见菜，通常有牛油果和吐司，可能配水波蛋。想吃全熟蛋可以要求 fully cooked egg。",
+      category: "早午餐",
+      taste: ["清淡", "奶油口感"],
+      cautions: ["可能有半熟蛋"],
       tags: ["早午餐", "比较安全"],
+      assumptions: ["配料和鸡蛋熟度按澳洲咖啡店常见做法推测，具体请现场确认。"],
     };
   }
   if (lower.includes("panna cotta")) {
     return {
       name_zh: "意式奶冻",
       description_zh: "口感像布丁的奶制甜点，通常偏甜，适合饭后分享。",
+      category: "甜点",
+      taste: ["甜", "奶香", "软滑"],
+      cautions: ["含奶制品"],
       tags: ["甜点", "奶制品"],
     };
   }
@@ -348,6 +389,9 @@ function describeLocalDish(name) {
     return {
       name_zh: name,
       description_zh: "海鲜或鱼类菜。一般比较适合想吃清淡本地餐的人；对海鲜过敏的人不要点。",
+      category: "主菜",
+      taste: ["鲜味", "偏清淡"],
+      cautions: ["海鲜过敏者避免"],
       tags: ["海鲜", "需注意过敏"],
     };
   }
@@ -355,13 +399,20 @@ function describeLocalDish(name) {
     return {
       name_zh: name,
       description_zh: "意式主食类，通常比较容易接受。披萨多含芝士；奶油意面会比较腻。",
+      category: "主食",
+      taste: ["咸香"],
+      cautions: ["可能含奶制品", "可能含麸质"],
       tags: ["主食", "比较安全"],
+      assumptions: ["奶制品和麸质按常见做法推测，具体请以菜单或服务员确认为准。"],
     };
   }
   if (lower.includes("chicken") || lower.includes("schnitzel") || lower.includes("parmigiana")) {
     return {
       name_zh: name,
       description_zh: "鸡肉类菜，通常比较稳。Schnitzel/Parmigiana 多是炸鸡排，份量可能比较大。",
+      category: "主菜",
+      taste: ["咸香"],
+      cautions: ["炸物可能偏油"],
       tags: ["鸡肉", "比较安全"],
     };
   }
@@ -369,20 +420,33 @@ function describeLocalDish(name) {
     return {
       name_zh: name,
       description_zh: "沙拉类，适合作为配菜或清淡选择。可以注意是否含芝士、培根或坚果。",
+      category: "沙拉/配菜",
+      taste: ["清爽"],
+      cautions: ["可能含芝士或坚果"],
       tags: ["沙拉", "清淡"],
+      assumptions: ["具体酱汁和配料需要看菜单细节或现场确认。"],
     };
   }
   if (lower.includes("tiramisu") || lower.includes("cake") || lower.includes("bread") || lower.includes("pancake")) {
     return {
       name_zh: name,
       description_zh: "甜点或烘焙类，通常偏甜，适合饭后或咖啡搭配。",
+      category: "甜点/烘焙",
+      taste: ["甜"],
+      cautions: ["可能含奶制品", "可能含麸质"],
       tags: ["甜点", "偏甜"],
+      assumptions: ["过敏信息按常见做法推测，具体请现场确认。"],
     };
   }
   return {
     name_zh: name,
     description_zh: "这是一道菜单菜品。当前版本先给出基础解释，正式 AI 模式会补充更准确的口味、做法和注意事项。",
+    category: "未分类",
+    taste: [],
+    cautions: ["需要现场确认细节"],
     tags: ["待确认"],
+    confidence: "低",
+    assumptions: ["菜单原文信息不足，不能确认食材、口味和过敏信息。"],
   };
 }
 
@@ -739,13 +803,28 @@ function renderDishes(data) {
   $("#dishList").innerHTML = state.dishes
     .map((dish) => {
       const tags = (dish.tags || []).map((tag) => `<span class="tag">${tag}</span>`).join("");
+      const cautions = (dish.cautions || []).map((item) => `<span class="risk-tag">${item}</span>`).join("");
+      const taste = (dish.taste || []).map((item) => `<span class="taste-tag">${item}</span>`).join("");
+      const assumptions = (dish.assumptions || []).map((item) => `<p class="dish-note">需确认：${item}</p>`).join("");
+      const meta = [
+        dish.category ? `分类：${dish.category}` : "",
+        dish.price ? `价格：${dish.price}` : "",
+        dish.confidence ? `可信度：${dish.confidence}` : "",
+      ].filter(Boolean).join(" · ");
       return `
         <label class="dish-card">
           <input type="checkbox" value="${dish.id}" />
           <div>
-            <h3>${dish.name_zh || dish.name_en}</h3>
-            <p><strong>${dish.name_en}</strong></p>
-            <p>${dish.description_zh || ""}</p>
+            <div class="dish-title-row">
+              <h3>${dish.name_zh || dish.name_en}</h3>
+              ${dish.price ? `<span class="price-pill">${dish.price}</span>` : ""}
+            </div>
+            <p class="dish-original">${dish.original_text || dish.name_en}</p>
+            ${meta ? `<p class="dish-meta">${meta}</p>` : ""}
+            <p class="dish-description">${dish.description_zh || ""}</p>
+            ${taste ? `<div class="tag-row">${taste}</div>` : ""}
+            ${cautions ? `<div class="tag-row">${cautions}</div>` : ""}
+            ${assumptions}
             <div class="tag-row">${tags}</div>
           </div>
         </label>
@@ -1008,4 +1087,4 @@ if ("serviceWorker" in navigator) {
 }
 
 renderHistory();
-renderRestaurants(demoRestaurants, "v21 已加载：页面只保留看懂菜单，官网链接已简化。");
+renderRestaurants(demoRestaurants, "v22 已加载：菜单解释包含原文、分类、注意事项和可信度。");

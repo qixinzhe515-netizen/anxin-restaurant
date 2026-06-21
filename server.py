@@ -44,21 +44,83 @@ def fallback_analyze(payload):
     items = [item for item in raw_items if is_probable_menu_item(item)][:18]
     dishes = []
     for idx, item in enumerate(items, start=1):
+        original_text = item
+        price = ""
+        price_match = re.search(r"(?:\$?\s?)(\d{1,3}(?:\.\d{1,2})?)\s*$", item)
+        if price_match:
+            price = f"${price_match.group(1)}"
+            item = item[: price_match.start()].strip(" |.-–—")
         lower = item.lower()
         description, tags = describe_menu_item(lower, item)
+        category, taste, cautions, assumptions, confidence = infer_menu_details(lower, item, tags)
         dishes.append(
             {
                 "id": str(idx),
                 "name_en": item,
                 "name_zh": translate_menu_name(lower, item),
+                "original_text": original_text,
+                "price": price,
+                "category": category,
+                "taste": taste,
+                "cautions": cautions,
+                "assumptions": assumptions,
+                "confidence": confidence,
+                "source": "菜单原文",
                 "description_zh": description,
                 "tags": tags or ["可询问服务员"],
             }
         )
     return {
-        "summary": "已把菜单整理成中文说明。当前是本地解释模式，适合先看懂大概和避开明显不合适的菜。",
+        "summary": "已把菜单整理成中文说明。英文原文会保留；没有写清楚的食材、过敏和辣度会标为需要确认。",
         "dishes": dishes,
     }
+
+
+def infer_menu_details(lower, item, tags):
+    category = "未分类"
+    taste = []
+    cautions = []
+    assumptions = []
+    confidence = "中"
+
+    if any(word in lower for word in ["panna cotta", "tiramisu", "cake", "pudding", "gelato", "ice cream", "dessert", "fairy floss", "pistachio"]):
+        category = "甜点"
+        taste.extend(["甜"])
+        confidence = "高"
+    elif any(word in lower for word in ["flat white", "long black", "latte", "coffee", "juice"]):
+        category = "饮品"
+    elif any(word in lower for word in ["toast", "egg", "omelette", "pancake", "bagel"]):
+        category = "早午餐"
+    elif any(word in lower for word in ["salad", "bread"]):
+        category = "前菜/配菜"
+    elif any(word in lower for word in ["pizza", "pasta", "linguine", "fettuccine", "burger", "steak", "lamb", "chicken", "fish", "seafood", "prawn"]):
+        category = "主菜"
+
+    if any(word in lower for word in ["panna cotta", "cream", "cheese", "flat white", "latte"]):
+        cautions.append("可能含奶制品")
+    if any(word in lower for word in ["pistachio", "peanut", "almond", "nut"]):
+        cautions.append("含坚果或可能含坚果")
+    if any(word in lower for word in ["prawn", "fish", "seafood", "salmon", "barramundi", "oyster", "mussel"]):
+        cautions.append("海鲜过敏者避免")
+    if any(word in lower for word in ["spicy", "chilli", "chili", "nduja"]):
+        cautions.append("可能偏辣")
+        taste.append("辣")
+    if any(word in lower for word in ["bread", "pasta", "pizza", "toast", "bagel", "pancake"]):
+        cautions.append("可能含麸质")
+
+    if any(word in lower for word in ["sweet", "honey", "dessert", "panna cotta", "cake", "tiramisu"]):
+        taste.append("甜")
+    if any(word in lower for word in ["garlic", "schnitzel", "parmigiana", "chips", "burger"]):
+        taste.append("咸香")
+    if any(word in lower for word in ["salad", "avocado", "fish", "barramundi"]):
+        taste.append("相对清淡")
+
+    if not cautions:
+        assumptions.append("菜单原文没有写清过敏信息，具体食材请现场确认。")
+    if item == translate_menu_name(lower, item):
+        confidence = "中" if category != "未分类" else "低"
+
+    return category, list(dict.fromkeys(taste)), list(dict.fromkeys(cautions)), assumptions, confidence
 
 
 FOOD_WORDS = re.compile(
@@ -443,8 +505,7 @@ def known_menu_cache(name="", area="", website=""):
     result["websiteUrl"] = "https://mummsonthemyall.com.au"
     result["source"] = "known_menu_cache"
     result["summary"] = (
-        "已使用本地可信菜单缓存。这里只显示确认度高的菜品；官网 PDF/图片菜单仍保留为原始菜单，"
-        "避免把 OCR 乱码当成菜。"
+        "已整理出可确认的菜单解释。英文原文会保留；没有写清楚的内容会标为需要确认。"
     )
     result["menuLinks"] = [
         {
@@ -874,6 +935,27 @@ def call_openai_json(system, user, fallback):
         return fallback
 
 
+def normalize_analyzed_dishes(data, source="菜单原文"):
+    for idx, dish in enumerate(data["dishes"], start=1):
+        name_en = str(dish.get("name_en") or dish.get("original_text") or "").strip()
+        lower = name_en.lower()
+        tags = dish.get("tags") if isinstance(dish.get("tags"), list) else []
+        category, taste, cautions, assumptions, confidence = infer_menu_details(lower, name_en, tags)
+        dish["id"] = str(dish.get("id") or idx)
+        dish["name_en"] = name_en
+        dish["name_zh"] = str(dish.get("name_zh") or translate_menu_name(lower, name_en) or name_en).strip()
+        dish["original_text"] = str(dish.get("original_text") or name_en).strip()
+        dish["price"] = str(dish.get("price") or "").strip()
+        dish["category"] = str(dish.get("category") or category).strip()
+        dish["taste"] = dish.get("taste") if isinstance(dish.get("taste"), list) else taste
+        dish["cautions"] = dish.get("cautions") if isinstance(dish.get("cautions"), list) else cautions
+        dish["assumptions"] = dish.get("assumptions") if isinstance(dish.get("assumptions"), list) else assumptions
+        dish["confidence"] = str(dish.get("confidence") or confidence).strip()
+        dish["source"] = str(dish.get("source") or source).strip()
+        dish["description_zh"] = str(dish.get("description_zh") or describe_menu_item(lower, name_en)[0]).strip()
+        dish["tags"] = tags or describe_menu_item(lower, name_en)[1] or ["可询问服务员"]
+
+
 def call_openai_vision_json(system, text, image_data_url, fallback):
     api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
@@ -1250,7 +1332,9 @@ def analyze_menu(payload):
     fallback = fallback_analyze(payload)
     system = (
         "You help Chinese-speaking people in Australia use restaurants without needing live English conversation. "
-        "Explain menus in simple Chinese. Return only valid JSON."
+        "Explain menus in simple Chinese. Preserve the exact menu wording as evidence. "
+        "Do not invent ingredients, prices, allergens, or spice levels. If something is inferred from common restaurant practice, "
+        "put it in assumptions and lower confidence. Return only valid JSON."
     )
     user = json.dumps(
         {
@@ -1267,6 +1351,14 @@ def analyze_menu(payload):
                         "id": "string id",
                         "name_en": "English dish name",
                         "name_zh": "simple Chinese name",
+                        "original_text": "exact original menu line",
+                        "price": "price exactly if visible, otherwise empty string",
+                        "category": "breakfast/main/dessert/drink/side/unknown in Chinese",
+                        "taste": ["甜/咸/奶香/清淡/辣 etc, only if supported or clearly inferred"],
+                        "cautions": ["contains dairy/nuts/seafood/gluten/spicy/raw etc in Chinese, only if visible or common inference"],
+                        "assumptions": ["Chinese notes for inferred uncertain details that need staff confirmation"],
+                        "confidence": "高/中/低",
+                        "source": "菜单原文/官网/PDF/照片",
                         "description_zh": "plain Chinese explanation, include taste and caution",
                         "tags": ["招牌/安全/偏辣/海鲜/适合老人 etc"],
                     }
@@ -1278,8 +1370,7 @@ def analyze_menu(payload):
     data = call_openai_json(system, user, fallback)
     if not isinstance(data, dict) or not isinstance(data.get("dishes"), list):
         return fallback
-    for idx, dish in enumerate(data["dishes"], start=1):
-        dish["id"] = str(dish.get("id") or idx)
+    normalize_analyzed_dishes(data, "菜单原文")
     return data
 
 
@@ -1300,7 +1391,8 @@ def analyze_menu_photo(payload):
         "You are helping Chinese-speaking people in Australia understand a restaurant menu photo. "
         "Read visible menu items from the image. Explain each item in simple Chinese, including taste, likely ingredients, "
         "allergen/diet cautions, whether it may be spicy, and whether it is suitable for older parents or children. "
-        "Return only valid JSON. Do not invent prices or dishes that are not visible."
+        "Return only valid JSON. Do not invent prices or dishes that are not visible. Preserve exact readable menu wording. "
+        "If OCR/vision is uncertain, use low confidence or omit the item."
     )
     user = json.dumps(
         {
@@ -1313,6 +1405,14 @@ def analyze_menu_photo(payload):
                         "id": "string id",
                         "name_en": "dish name as seen, or best readable English name",
                         "name_zh": "simple Chinese name",
+                        "original_text": "exact visible text if readable",
+                        "price": "price exactly if visible, otherwise empty string",
+                        "category": "早餐/主菜/甜点/饮品/配菜/未知",
+                        "taste": ["口味标签"],
+                        "cautions": ["过敏或饮食注意"],
+                        "assumptions": ["推测内容和需要现场确认的内容"],
+                        "confidence": "高/中/低",
+                        "source": "照片",
                         "description_zh": "plain Chinese explanation, taste, ingredients, caution",
                         "tags": ["安全/偏辣/海鲜/含奶/适合小孩/适合老人 etc"],
                     }
@@ -1324,13 +1424,12 @@ def analyze_menu_photo(payload):
     data = call_openai_vision_json(system, user, image_data_url, fallback)
     if not isinstance(data, dict) or not isinstance(data.get("dishes"), list):
         return fallback
-    for idx, dish in enumerate(data["dishes"], start=1):
-        dish["id"] = str(dish.get("id") or idx)
     if not data["dishes"]:
         return {
             "summary": "没有从照片里清楚识别出菜单菜品。请靠近一点、保持菜单平整、光线更亮后重新拍。",
             "dishes": [],
         }
+    normalize_analyzed_dishes(data, "照片")
     return data
 
 
