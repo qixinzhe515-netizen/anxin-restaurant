@@ -144,60 +144,18 @@ function renderMenuLinks(menuLinks = []) {
     list.innerHTML = "";
     return;
   }
-  const foodImages = menuLinks.filter((link) => link.type === "image" && !isDrinkMenu(link));
-  const pdfs = menuLinks.filter((link) => link.type === "pdf");
-  const drinks = menuLinks.filter((link) => isDrinkMenu(link));
+  const primaryLink = menuLinks.find((link) => link.type === "page") || menuLinks.find((link) => link.type === "pdf") || menuLinks[0];
   list.classList.remove("hidden");
   list.innerHTML = `
     <div class="menu-hub">
       <div>
-        <strong>已找到 ${menuLinks.length} 份官网菜单</strong>
-        <span>${foodImages.length ? `可自动整理 ${foodImages.length} 份食物图片菜单` : "PDF 菜单先集中打开查看"}${pdfs.length ? `，另有 ${pdfs.length} 份 PDF` : ""}${drinks.length ? "，酒水菜单不进入点菜列表" : ""}</span>
+        <strong>已找到官网菜单</strong>
+        <span>系统会直接整理成中文说明。需要核对时再打开原文。</span>
       </div>
-      ${foodImages.length ? `<button type="button" data-auto-food-menus>自动整理食物菜单</button>` : ""}
+      <a href="${primaryLink.url}" target="_blank" rel="noreferrer">打开原文</a>
     </div>
-    ${menuLinks
-    .map((link, index) => {
-      const drinkMenu = isDrinkMenu(link);
-      const label = link.type === "image"
-        ? drinkMenu ? "酒水/饮品菜单，先不进入点菜列表" : "食物图片菜单，可整理进点菜列表"
-        : link.type === "page" ? "官网菜单页，可打开确认"
-        : "PDF 菜单，集中打开查看";
-      return `
-      <div class="menu-link-card">
-        <div>
-          <strong>${link.title || `菜单 ${index + 1}`}</strong>
-          <span>${label}</span>
-        </div>
-        ${link.type === "image" && !drinkMenu ? `<button type="button" data-menu-image="${index}">整理</button>` : ""}
-        <a href="${link.url}" target="_blank" rel="noreferrer">打开</a>
-      </div>
-    `;
-    })
-    .join("")}
   `;
 
-  $$("[data-menu-image]").forEach((button) => {
-    button.addEventListener("click", async () => {
-      const link = menuLinks[Number(button.dataset.menuImage)];
-      button.disabled = true;
-      button.textContent = "识别中...";
-      try {
-        const data = await postJson("/api/menu-file-data-url", { url: link.url });
-        if (!data.dataUrl) throw new Error("No image data");
-        await analyzeImageDataUrl(data.dataUrl, link.title || "菜单图片");
-      } catch {
-        toast("图片菜单识别失败，可以打开后截图再试");
-      } finally {
-        button.disabled = false;
-        button.textContent = "识别";
-      }
-    });
-  });
-
-  $("[data-auto-food-menus]")?.addEventListener("click", async (event) => {
-    await autoAnalyzeFoodMenus(foodImages, event.currentTarget);
-  });
 }
 
 function isDrinkMenu(link) {
@@ -334,13 +292,97 @@ function fallbackLocalMenuData(menuText) {
     .map((name, index) => ({
       id: String(index + 1),
       name_en: name,
-      name_zh: name,
-      description_zh: "这是系统准备的菜单项。点“看懂菜单”可以生成更完整的中文解释。",
-      tags: ["待解释"],
+      ...describeLocalDish(name),
     }));
   return {
-    summary: "菜单已准备好。为了省时间，系统先展示菜名；点击“看懂菜单”会生成更完整中文解释。",
+    summary: "下面是菜单的中文解释。先看口味和注意事项，再勾选想点的菜。",
     dishes,
+  };
+}
+
+function describeLocalDish(name) {
+  const lower = name.toLowerCase();
+  if (lower.includes("turkish delight panna cotta")) {
+    return {
+      name_zh: "土耳其软糖风味意式奶冻",
+      description_zh: "一种像布丁一样软滑的奶冻甜点，通常偏甜，可能有玫瑰糖或土耳其软糖香气。适合饭后甜点；不适合不吃奶制品的人。",
+      tags: ["甜点", "奶制品", "偏甜", "口感软"],
+    };
+  }
+  if (lower.includes("persian fairy floss") || lower.includes("pistachio")) {
+    return {
+      name_zh: "波斯棉花糖配开心果",
+      description_zh: "偏甜的甜点，通常有轻盈棉花糖口感和开心果坚果香。对开心果或坚果过敏的人不要点。",
+      tags: ["甜点", "含坚果", "偏甜"],
+    };
+  }
+  if (lower.includes("flat white")) {
+    return {
+      name_zh: "澳式奶咖 Flat White",
+      description_zh: "澳洲常见咖啡，奶香明显但咖啡味比拿铁更重，适合想喝顺口奶咖的人。",
+      tags: ["咖啡", "含牛奶"],
+    };
+  }
+  if (lower.includes("long black")) {
+    return {
+      name_zh: "黑咖啡 Long Black",
+      description_zh: "不加奶的黑咖啡，咖啡味明显、偏苦，类似美式但通常更浓。",
+      tags: ["咖啡", "无奶", "偏苦"],
+    };
+  }
+  if (lower.includes("avocado toast")) {
+    return {
+      name_zh: "牛油果吐司",
+      description_zh: "早午餐常见菜，通常有牛油果和吐司，可能配水波蛋。想吃全熟蛋可以要求 fully cooked egg。",
+      tags: ["早午餐", "比较安全"],
+    };
+  }
+  if (lower.includes("panna cotta")) {
+    return {
+      name_zh: "意式奶冻",
+      description_zh: "口感像布丁的奶制甜点，通常偏甜，适合饭后分享。",
+      tags: ["甜点", "奶制品"],
+    };
+  }
+  if (lower.includes("prawn") || lower.includes("seafood") || lower.includes("fish") || lower.includes("barramundi")) {
+    return {
+      name_zh: name,
+      description_zh: "海鲜或鱼类菜。一般比较适合想吃清淡本地餐的人；对海鲜过敏的人不要点。",
+      tags: ["海鲜", "需注意过敏"],
+    };
+  }
+  if (lower.includes("pizza") || lower.includes("pasta") || lower.includes("linguine") || lower.includes("fettuccine")) {
+    return {
+      name_zh: name,
+      description_zh: "意式主食类，通常比较容易接受。披萨多含芝士；奶油意面会比较腻。",
+      tags: ["主食", "比较安全"],
+    };
+  }
+  if (lower.includes("chicken") || lower.includes("schnitzel") || lower.includes("parmigiana")) {
+    return {
+      name_zh: name,
+      description_zh: "鸡肉类菜，通常比较稳。Schnitzel/Parmigiana 多是炸鸡排，份量可能比较大。",
+      tags: ["鸡肉", "比较安全"],
+    };
+  }
+  if (lower.includes("salad")) {
+    return {
+      name_zh: name,
+      description_zh: "沙拉类，适合作为配菜或清淡选择。可以注意是否含芝士、培根或坚果。",
+      tags: ["沙拉", "清淡"],
+    };
+  }
+  if (lower.includes("tiramisu") || lower.includes("cake") || lower.includes("bread") || lower.includes("pancake")) {
+    return {
+      name_zh: name,
+      description_zh: "甜点或烘焙类，通常偏甜，适合饭后或咖啡搭配。",
+      tags: ["甜点", "偏甜"],
+    };
+  }
+  return {
+    name_zh: name,
+    description_zh: "这是一道菜单菜品。当前版本先给出基础解释，正式 AI 模式会补充更准确的口味、做法和注意事项。",
+    tags: ["待确认"],
   };
 }
 
@@ -487,11 +529,12 @@ function localKnownMenuCache(payload = {}) {
   const key = `${payload.restaurantName || ""} ${payload.areaName || ""} ${payload.websiteUri || ""} ${payload.url || ""}`.toLowerCase();
   if (!key.includes("mumm") && !key.includes("mummsonthemyall")) return null;
   const menuText = "Turkish delight panna cotta\nPersian fairy floss and pistachio";
+  const analyzed = fallbackLocalMenuData(menuText);
   return {
-    ...fallbackLocalMenuData(menuText),
+    ...analyzed,
     menuText,
     websiteUrl: "https://mummsonthemyall.com.au",
-    summary: "已使用内置可信菜单缓存。这里只显示确认度高的菜品；PDF/图片菜单保留为原始菜单，避免把 OCR 乱码当成菜。",
+    summary: "已整理出可确认的菜单解释。先看懂菜品，再决定要不要点。",
     menuLinks: [
       { title: "官网菜单页", url: "https://mummsonthemyall.com.au", type: "page" },
       { title: "DESSERT", url: "https://mummsonthemyall.com.au/uploads/1/1/5/2/115221607/dessert_april_2026_copy.png", type: "image" },
@@ -965,4 +1008,4 @@ if ("serviceWorker" in navigator) {
 }
 
 renderHistory();
-renderRestaurants(demoRestaurants, "v20 已加载：换区域会清空旧餐厅，避免上一次推荐卡住。");
+renderRestaurants(demoRestaurants, "v21 已加载：页面只保留看懂菜单，官网链接已简化。");

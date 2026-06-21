@@ -41,7 +41,7 @@ button {
 .app-shell {
   width: min(100%, 720px);
   margin: 0 auto;
-  padding: 18px 16px 48px;
+  padding: max(18px, env(safe-area-inset-top)) 16px 48px;
 }
 
 .topbar {
@@ -404,13 +404,16 @@ textarea:focus {
   line-height: 1.42;
 }
 
-.menu-hub button {
+.menu-hub a {
+  display: grid;
+  place-items: center;
   min-height: 48px;
   border-radius: 16px;
   background: var(--text);
   color: white;
   font-size: 16px;
   font-weight: 760;
+  text-decoration: none;
 }
 
 .menu-link-card {
