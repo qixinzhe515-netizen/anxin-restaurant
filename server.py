@@ -41,7 +41,7 @@ def load_env():
 
 def fallback_analyze(payload):
     raw_items = [normalize_ocr_menu_line(line) for line in payload.get("menuText", "").splitlines()]
-    items = [item for item in raw_items if is_probable_menu_item(item)][:18]
+    items = [item for item in raw_items if is_probable_menu_item(item)][:36]
     dishes = []
     for idx, item in enumerate(items, start=1):
         original_text = item
@@ -83,7 +83,12 @@ def infer_menu_details(lower, item, tags):
     assumptions = []
     confidence = "中"
 
-    if "seafood pancake" in lower:
+    if "fish cake" in lower:
+        category = "海鲜小吃"
+        taste.extend(["咸香", "油炸"])
+        cautions.extend(["鱼类过敏者避免", "可能含麸质"])
+        confidence = "高"
+    elif "seafood pancake" in lower:
         category = "前菜/分享"
         taste.extend(["咸香", "外脆"])
         cautions.extend(["海鲜过敏者避免", "含麸质"])
@@ -121,6 +126,76 @@ def infer_menu_details(lower, item, tags):
         cautions.extend(["鱼类过敏者避免", "可能含麸质"])
         assumptions.append("裹粉可能含麸质，具体请现场确认。")
         confidence = "高"
+    elif "fish cocktails and chips" in lower or "fish cocktails" in lower:
+        category = "海鲜小吃/外带"
+        taste.extend(["咸香", "油炸"])
+        cautions.extend(["鱼类过敏者避免", "可能含麸质"])
+        confidence = "高"
+    elif "gravy" in lower:
+        category = "酱汁/配料"
+        taste.extend(["咸香", "浓郁"])
+        cautions.extend(["可能含麸质", "配方需确认"])
+        confidence = "中"
+    elif "chicken nuggets" in lower:
+        category = "小吃/快餐"
+        taste.extend(["咸香", "油炸"])
+        cautions.extend(["可能含麸质", "油炸"])
+        confidence = "高"
+    elif any(word in lower for word in ["hamburger", "works burger", "fish burger", "chicken burger", "veggie burger", "steak sandwich"]):
+        category = "主食/快餐"
+        taste.append("咸香")
+        cautions.extend(["含麸质", "酱料和配料需确认"])
+        if "fish" in lower:
+            cautions.append("鱼类过敏者避免")
+        confidence = "高"
+    elif "egg and bacon roll" in lower:
+        category = "早餐/快餐"
+        taste.append("咸香")
+        cautions.extend(["含猪肉", "含麸质", "鸡蛋熟度需确认"])
+        confidence = "高"
+    elif lower == "chips" or "minimum chips" in lower:
+        category = "配菜/外带"
+        taste.extend(["咸香", "油炸"])
+        cautions.extend(["油炸", "可能和海鲜同油锅"])
+        confidence = "高"
+    elif "potato scallop" in lower or "hash brown" in lower:
+        category = "小吃/配菜"
+        taste.extend(["咸香", "油炸"])
+        cautions.append("油炸")
+        if "potato scallop" in lower:
+            cautions.append("含麸质")
+        confidence = "高"
+    elif any(word in lower for word in ["corn jack", "pluto pup", "chiko roll", "battered sav", "spring roll", "dim sim", "pineapple fritter"]):
+        category = "小吃/外带"
+        taste.extend(["咸香", "油炸"])
+        cautions.extend(["油炸", "可能含麸质", "馅料需确认"])
+        confidence = "中"
+    elif any(word in lower for word in ["prawn cutlet", "seafood stick", "tassie scallop", "prawn twister", "seafood cocktail"]):
+        category = "海鲜小吃"
+        taste.extend(["鲜味", "咸香", "油炸"])
+        cautions.extend(["海鲜过敏者避免", "可能含麸质"])
+        confidence = "高"
+    elif "salt and pepper squid" in lower or "calamari rings" in lower or "seven pieces calamari" in lower:
+        category = "海鲜小吃/分享"
+        taste.extend(["咸香", "油炸"])
+        cautions.extend(["海鲜过敏者避免", "可能含麸质"])
+        confidence = "高"
+    elif "grilled barramundi" in lower:
+        category = "主菜/鱼类"
+        taste.extend(["鲜味", "相对清淡"])
+        cautions.append("鱼类过敏者避免")
+        confidence = "高"
+    elif "tassie salmon" in lower:
+        category = "主菜/鱼类"
+        taste.extend(["鲜味", "鱼油香"])
+        cautions.append("鱼类过敏者避免")
+        confidence = "高"
+    elif "tinny special" in lower or "boatload special" in lower or "meal deal" in lower:
+        category = "套餐/分享"
+        taste.extend(["咸香", "油炸", "适合分享"])
+        cautions.extend(["海鲜过敏者避免", "可能含麸质", "具体内容需现场确认"])
+        assumptions.append("来自 Google Maps 菜单照片，价格和组合可能已经变化。")
+        confidence = "中"
     elif "oyster" in lower:
         category = "前菜/海鲜"
         taste.extend(["鲜味", "冷食"])
@@ -244,8 +319,10 @@ FOOD_WORDS = re.compile(
     r"\b("
     r"panna cotta|tiramisu|cake|tart|pudding|crumble|gelato|ice cream|sorbet|dessert|"
     r"pistachio|chocolate|vanilla|caramel|berry|berries|lemon|apple|pear|fig|honey|"
-    r"oyster|prawn|shrimp|fish|chips|fresh catch|catch of the day|calamari|salmon|barramundi|seafood|crab|mussel|scallop|"
-    r"steak|beef|lamb|chicken|pork|duck|burger|sandwich|schnitzel|parmigiana|"
+    r"oyster|prawn|shrimp|fish|chips|gravy|fresh catch|catch of the day|calamari|squid|salmon|barramundi|seafood|crab|mussel|scallop|"
+    r"steak|beef|lamb|chicken|pork|duck|hamburger|burger|sandwich|schnitzel|parmigiana|"
+    r"nugget|nuggets|potato scallop|hash brown|corn jack|pluto pup|chiko roll|battered sav|spring roll|dim sim|"
+    r"pineapple fritter|fish cocktail|fish cocktails|prawn cutlet|prawn cutlets|seafood stick|fish cake|prawn twister|tinny special|boatload special|meal deal|"
     r"pizza|pasta|linguine|fettuccine|risotto|gnocchi|salad|soup|bread|toast|"
     r"egg|eggs|omelette|benedict|pancake|waffle|bagel|avocado|mushroom|cheese|pistachio|"
     r"xiao long bao|soup dumpling|bao|bun|dumpling|wonton|noodle|noodles|ramen|gyoza|karaage|teriyaki|don|"
@@ -696,7 +773,42 @@ def translate_menu_name(lower, original):
         ("seafood platter", "海鲜拼盘"),
         ("seafood mornay", "奶油芝士焗海鲜"),
         ("fresh catch", "当日鲜鱼"),
+        ("grilled barramundi", "烤澳洲盲曹鱼配薯条"),
+        ("tassie salmon", "塔州三文鱼配薯条"),
+        ("seven pieces calamari", "七块鱿鱼配薯条"),
         ("fish and chips", "炸鱼薯条"),
+        ("fish cocktails and chips", "鱼块配薯条"),
+        ("fish cocktails", "炸鱼块"),
+        ("hamburger", "汉堡"),
+        ("steak sandwich", "牛排三明治"),
+        ("egg and bacon roll", "鸡蛋培根面包卷"),
+        ("chicken burger", "鸡肉汉堡"),
+        ("fish burger", "炸鱼汉堡"),
+        ("veggie burger", "素食汉堡"),
+        ("works burger", "豪华汉堡"),
+        ("chips", "薯条"),
+        ("gravy", "肉汁酱"),
+        ("chicken nuggets", "鸡块"),
+        ("potato scallop", "炸土豆饼"),
+        ("hash brown", "薯饼"),
+        ("corn jack", "澳洲炸物小吃 Corn Jack"),
+        ("pluto pup", "炸热狗/玉米狗"),
+        ("chiko roll", "澳洲炸春卷 Chiko Roll"),
+        ("battered sav", "裹粉炸香肠"),
+        ("spring roll", "春卷"),
+        ("dim sim", "澳式点心 Dim Sim"),
+        ("pineapple fritter", "炸菠萝圈"),
+        ("prawn cutlet", "炸虾排"),
+        ("seafood stick", "海鲜棒"),
+        ("tassie scallop", "塔州扇贝"),
+        ("salt and pepper squid", "椒盐鱿鱼"),
+        ("calamari rings", "鱿鱼圈"),
+        ("fish cake", "鱼饼"),
+        ("prawn twister", "炸虾卷"),
+        ("seafood cocktail", "海鲜小食拼"),
+        ("tinny special", "海鲜炸物小份套餐"),
+        ("boatload special", "海鲜炸物大份套餐"),
+        ("meal deal", "多人套餐"),
         ("oyster", "生蚝"),
         ("calamari", "鱿鱼/炸鱿鱼"),
         ("xiao long bao", "小笼包/汤包"),
@@ -792,6 +904,51 @@ def describe_menu_item(lower, original):
     elif "fish and chips" in lower:
         description = "澳洲常见炸鱼薯条，口味直接、份量通常不小。适合第一次尝试本地餐或带小孩的人；注意是油炸。"
         tags = ["澳洲本地", "鱼类", "比较安全"]
+    elif "fish cocktails and chips" in lower:
+        description = "小块炸鱼配薯条，适合分享或给小孩点。比整条炸鱼更容易分着吃；鱼类过敏者不要点。"
+        tags = ["炸鱼", "薯条", "适合小孩"]
+    elif any(word in lower for word in ["hamburger", "works burger", "fish burger", "chicken burger", "veggie burger"]):
+        description = "外带店常见汉堡，通常有面包、生菜、酱和肉/鱼/蔬菜饼。Works burger 配料通常更多。"
+        tags = ["汉堡", "快餐", "比较安全"]
+    elif "steak sandwich" in lower:
+        description = "牛排三明治，通常是牛肉片夹面包，可能配洋葱、酱和生菜。份量通常比普通三明治大。"
+        tags = ["牛肉", "三明治", "份量大"]
+    elif "egg and bacon roll" in lower:
+        description = "鸡蛋培根面包卷，早餐/快餐常见，口味咸香。不吃猪肉或不吃半熟蛋要确认。"
+        tags = ["早餐", "培根", "比较安全"]
+    elif lower == "chips" or "minimum chips" in lower:
+        description = "薯条，外带店最常见配菜，适合小孩和分享；注意偏油，可能和海鲜同油锅。"
+        tags = ["薯条", "配菜", "适合分享"]
+    elif "potato scallop" in lower:
+        description = "炸土豆饼，澳洲炸鱼薯条店常见小吃。这里的 scallop 不是海鲜扇贝。"
+        tags = ["土豆", "小吃", "不是海鲜"]
+    elif "hash brown" in lower:
+        description = "薯饼，炸土豆小吃，口味简单，适合小孩或当配菜。"
+        tags = ["土豆", "适合小孩", "油炸"]
+    elif any(word in lower for word in ["corn jack", "pluto pup", "chiko roll", "battered sav", "spring roll", "dim sim", "pineapple fritter"]):
+        description = "澳洲外带店常见炸物小吃，多数是油炸。具体肉馅、酱料或配料需要现场确认。"
+        tags = ["小吃", "外带", "需确认馅料"]
+    elif any(word in lower for word in ["prawn cutlet", "seafood stick", "tassie scallop", "prawn twister", "seafood cocktail"]):
+        description = "海鲜类外带小吃，多数是油炸。适合喜欢海鲜的人；海鲜过敏者不要点。"
+        tags = ["海鲜", "外带", "适合分享"]
+    elif "fish cocktails" in lower:
+        description = "炸鱼块，适合分享或给小孩点。比整条鱼更容易分着吃。"
+        tags = ["炸鱼", "适合分享", "比较安全"]
+    elif "fish cake" in lower:
+        description = "鱼饼/鱼糕类炸物，通常是鱼肉加工成饼状再煎炸或油炸。鱼类过敏者不要点。"
+        tags = ["鱼类", "小吃", "外带"]
+    elif "salt and pepper squid" in lower or "calamari rings" in lower or "seven pieces calamari" in lower:
+        description = "鱿鱼类炸物，口味咸香，适合分享。海鲜过敏者不要点；有时会比较有嚼劲。"
+        tags = ["鱿鱼", "适合分享", "海鲜"]
+    elif "grilled barramundi" in lower:
+        description = "烤澳洲盲曹鱼，通常比炸鱼清淡。适合想吃鱼但不想太油的人。"
+        tags = ["鱼类", "相对清淡", "主菜"]
+    elif "tassie salmon" in lower:
+        description = "塔州三文鱼配薯条，鱼味比白肉鱼更明显，油脂更丰富。适合喜欢三文鱼的人。"
+        tags = ["三文鱼", "主菜", "鱼类"]
+    elif "tinny special" in lower or "boatload special" in lower or "meal deal" in lower:
+        description = "多人分享套餐，通常包含多种炸海鲜和薯条。具体内容、价格和是否当天供应需要按店内菜单板确认。"
+        tags = ["套餐", "适合分享", "需确认"]
     elif "oyster" in lower:
         description = "生蚝或蚝类海鲜，通常是冷食/生食。喜欢海鲜的人会喜欢；孕妇、老人肠胃敏感或海鲜过敏者谨慎。"
         tags = ["海鲜", "可能生食", "需注意过敏"]
@@ -1183,14 +1340,52 @@ def known_restaurants(area_name=""):
         }
     if key not in {"teagarden", "teagardens"}:
         return None
+    hook_menu = "\n".join([
+        "Hamburger",
+        "Steak sandwich",
+        "Egg and bacon roll",
+        "Chicken burger",
+        "Fish burger",
+        "Veggie burger",
+        "Works burger",
+        "Chips",
+        "Gravy",
+        "Chicken nuggets",
+        "Potato scallop",
+        "Hash brown",
+        "Corn jack",
+        "Pluto pup",
+        "Chiko roll",
+        "Battered sav",
+        "Spring roll",
+        "Dim sim",
+        "Pineapple fritter",
+        "Prawn cutlets",
+        "Fish cocktails",
+        "Fish cocktails and chips",
+        "Seafood stick",
+        "Tassie scallop",
+        "Calamari rings",
+        "Salt and pepper squid",
+        "Fish cake",
+        "Prawn twister",
+        "Seafood cocktail",
+        "Grilled barramundi and chips",
+        "Tassie salmon and chips",
+        "Seven pieces calamari and chips",
+        "Tinny special",
+        "Boatload special",
+        "Meal deal for two",
+        "Meal deal for four",
+    ])
     restaurants = [
-        ("tea-gardens-hotel", "Tea Gardens Hotel", "Cnr Maxwell Street & Marine Drive, Tea Gardens", "澳洲酒吧餐，有官网", ["澳洲酒吧餐", "可查官网菜单"], "https://teagardenshotel.com/"),
-        ("tillermans", "Tillermans Cafe - Restaurant", "Tea Gardens", "咖啡和餐厅，适合轻食", ["咖啡/轻食", "餐厅"], ""),
-        ("waterfront-bistro", "Waterfront Restaurant & Bistro", "Cnr Maxwell Street & Marine Drive, Tea Gardens", "海边餐厅/小酒馆类型", ["Bistro", "本地餐厅"], ""),
-        ("hook-n-cook", "Hook'n Cook", "Tea Gardens", "炸鱼薯条和快餐类型", ["Fish And Chips", "快餐"], ""),
-        ("mumms-seafood", "Mumm's Seafood", "Tea Gardens", "海鲜餐厅，已知官网可找到菜单", ["Seafood", "有官网菜单"], "https://mummsonthemyall.com.au"),
-        ("mangrove-cafe", "Mangrove Cafe", "83 Marine Drive, Tea Gardens", "咖啡和轻食", ["咖啡/轻食"], ""),
-        ("jayz-myall", "Jayz At The Myall", "Tea Gardens", "咖啡/轻食，本地餐厅", ["咖啡/轻食"], ""),
+        ("tea-gardens-hotel", "Tea Gardens Hotel", "Cnr Maxwell Street & Marine Drive, Tea Gardens", "澳洲酒吧餐，有官网", ["澳洲酒吧餐", "可查官网菜单"], "https://teagardenshotel.com/", "", "", False),
+        ("tillermans", "Tillermans Cafe - Restaurant", "Tea Gardens", "咖啡和餐厅，适合轻食", ["咖啡/轻食", "餐厅"], "", "", "", False),
+        ("waterfront-bistro", "Waterfront Restaurant & Bistro", "Cnr Maxwell Street & Marine Drive, Tea Gardens", "海边餐厅/小酒馆类型", ["Bistro", "本地餐厅"], "", "", "", False),
+        ("hook-n-cook", "Hook'n Cook", "Tea Gardens", "Google Maps 菜单照片可见大量外带菜，适合先选好炸鱼薯条、汉堡和分享套餐。", ["Fish And Chips", "快餐", "地图照片菜单"], "", hook_menu, "Google Maps 菜单照片（约9个月前）", True),
+        ("mumms-seafood", "Mumm's Seafood", "Tea Gardens", "海鲜餐厅，已知官网可找到菜单", ["Seafood", "有官网菜单"], "https://mummsonthemyall.com.au", "", "", False),
+        ("mangrove-cafe", "Mangrove Cafe", "83 Marine Drive, Tea Gardens", "咖啡和轻食", ["咖啡/轻食"], "", "", "", False),
+        ("jayz-myall", "Jayz At The Myall", "Tea Gardens", "咖啡/轻食，本地餐厅", ["咖啡/轻食"], "", "", "", False),
     ]
     return {
         "source": "known_local",
@@ -1208,10 +1403,12 @@ def known_restaurants(area_name=""):
                 "tags": tags,
                 "googleMapsUri": "",
                 "websiteUri": website,
-                "hasMenu": bool(website),
-                "menuText": "",
+                "hasMenu": bool(website or menu_text),
+                "menuText": menu_text,
+                "menuSource": menu_source,
+                "menuVerified": menu_verified,
             }
-            for slug, name, address, note, tags, website in restaurants
+            for slug, name, address, note, tags, website, menu_text, menu_source, menu_verified in restaurants
         ],
     }
 

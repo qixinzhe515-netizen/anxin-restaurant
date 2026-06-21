@@ -362,7 +362,7 @@ function isUsefulLocalMenuLine(line = "") {
   const digits = (line.match(/\d/g) || []).length;
   const words = line.match(/[a-z]+/gi) || [];
   const shortWords = words.filter((word) => word.length <= 2);
-  const foodWords = /\b(panna cotta|tiramisu|cake|tart|pudding|crumble|gelato|ice cream|sorbet|dessert|pistachio|chocolate|vanilla|caramel|berry|berries|lemon|apple|pear|fig|honey|oyster|prawn|shrimp|fish|chips|fresh catch|catch of the day|calamari|salmon|barramundi|seafood|crab|mussel|scallop|steak|beef|lamb|chicken|pork|duck|burger|sandwich|schnitzel|parmigiana|pizza|pasta|linguine|fettuccine|risotto|gnocchi|salad|soup|bread|toast|egg|eggs|omelette|benedict|pancake|waffle|bagel|avocado|mushroom|cheese|bao|bun|dumpling|wonton|noodle|noodles|ramen|gyoza|karaage|teriyaki|don|bibimbap|bulgogi|kimchi|fried chicken|japchae|pad thai|curry|tom yum|papaya salad|sticky rice|mango)\b/i;
+  const foodWords = /\b(panna cotta|tiramisu|cake|tart|pudding|crumble|gelato|ice cream|sorbet|dessert|pistachio|chocolate|vanilla|caramel|berry|berries|lemon|apple|pear|fig|honey|oyster|prawn|shrimp|fish|chips|gravy|fresh catch|catch of the day|calamari|squid|salmon|barramundi|seafood|crab|mussel|scallop|steak|beef|lamb|chicken|pork|duck|hamburger|burger|sandwich|schnitzel|parmigiana|nugget|nuggets|potato scallop|hash brown|corn jack|pluto pup|chiko roll|battered sav|spring roll|dim sim|pineapple fritter|fish cocktail|fish cocktails|prawn cutlet|prawn cutlets|seafood stick|fish cake|prawn twister|tinny special|boatload special|meal deal|pizza|pasta|linguine|fettuccine|risotto|gnocchi|salad|soup|bread|toast|egg|eggs|omelette|benedict|pancake|waffle|bagel|avocado|mushroom|cheese|bao|bun|dumpling|wonton|noodle|noodles|ramen|gyoza|karaage|teriyaki|don|bibimbap|bulgogi|kimchi|fried chicken|japchae|pad thai|curry|tom yum|papaya salad|sticky rice|mango)\b/i;
   if (line.length < 5 || line.length > 100) return false;
   if (letters < 4) return false;
   if (/^[^a-zA-Z\u4e00-\u9fff]+$/.test(line)) return false;
@@ -451,6 +451,197 @@ function describeLocalDish(name) {
       tags: ["澳洲本地", "鱼类", "比较安全"],
       assumptions: ["裹粉可能含麸质，具体请现场确认。"],
       confidence: "高",
+    };
+  }
+  if (lower.includes("fish cocktails and chips")) {
+    return {
+      name_zh: "鱼块配薯条",
+      description_zh: "Fish cocktails 是小块炸鱼，配薯条更适合分享或给小孩点。口味咸香，比较安全；鱼类过敏者不要点。",
+      category: "主菜/外带",
+      taste: ["咸香", "油炸"],
+      cautions: ["鱼类过敏者避免", "可能含麸质"],
+      tags: ["炸鱼", "薯条", "适合小孩"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("gravy")) {
+    return {
+      name_zh: "肉汁酱",
+      description_zh: "常见热酱汁，通常浇在薯条或炸物上，味道咸香浓郁。配方可能含麸质。",
+      category: "酱汁/配料",
+      taste: ["咸香", "浓郁"],
+      cautions: ["可能含麸质", "配方需确认"],
+      tags: ["酱汁", "配薯条"],
+      confidence: "中",
+    };
+  }
+  if (lower.includes("chicken nuggets")) {
+    return {
+      name_zh: "鸡块",
+      description_zh: "油炸鸡块，适合小孩或当小吃。口味简单，但属于油炸，可能含麸质。",
+      category: "小吃/快餐",
+      taste: ["咸香", "油炸"],
+      cautions: ["可能含麸质", "油炸"],
+      tags: ["鸡肉", "适合小孩", "快餐"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("hamburger") || lower.includes("works burger") || lower.includes("fish burger") || lower.includes("chicken burger") || lower.includes("veggie burger")) {
+    const isFish = lower.includes("fish");
+    const isChicken = lower.includes("chicken");
+    const isVeggie = lower.includes("veggie");
+    return {
+      name_zh: isFish ? "炸鱼汉堡" : isChicken ? "鸡肉汉堡" : isVeggie ? "素食汉堡" : lower.includes("works") ? "豪华汉堡" : "汉堡",
+      description_zh: "外带店常见汉堡，通常有面包、生菜、酱和肉/鱼/蔬菜饼。Works burger 通常配料更多。适合想要简单主食的人。",
+      category: "主食/快餐",
+      taste: ["咸香"],
+      cautions: ["含麸质", "酱料和配料需确认"],
+      tags: ["汉堡", "快餐", "比较安全"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("steak sandwich")) {
+    return {
+      name_zh: "牛排三明治",
+      description_zh: "澳洲外带店常见主食，通常是牛肉片夹面包，可能配洋葱、酱和生菜。份量通常比普通三明治大。",
+      category: "主食/快餐",
+      taste: ["肉香", "咸香"],
+      cautions: ["含麸质", "酱料需确认"],
+      tags: ["牛肉", "三明治", "份量大"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("egg and bacon roll")) {
+    return {
+      name_zh: "鸡蛋培根面包卷",
+      description_zh: "早餐/快餐常见，鸡蛋和培根夹面包，口味咸香。适合早餐；不吃猪肉或不吃半熟蛋要确认。",
+      category: "早餐/快餐",
+      taste: ["咸香"],
+      cautions: ["含猪肉", "含麸质", "鸡蛋熟度需确认"],
+      tags: ["早餐", "培根", "比较安全"],
+      confidence: "高",
+    };
+  }
+  if (/^chips\b/.test(lower) || lower.includes("minimum chips")) {
+    return {
+      name_zh: "薯条",
+      description_zh: "外带店最常见配菜，油炸土豆条，口味咸香。适合小孩和分享；注意偏油。",
+      category: "配菜/外带",
+      taste: ["咸香", "油炸"],
+      cautions: ["油炸", "可能和海鲜同油锅"],
+      tags: ["薯条", "配菜", "适合分享"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("potato scallop")) {
+    return {
+      name_zh: "炸土豆饼",
+      description_zh: "澳洲炸鱼薯条店常见小吃，土豆片裹面糊油炸。不是海鲜 scallop。",
+      category: "小吃/配菜",
+      taste: ["咸香", "油炸"],
+      cautions: ["含麸质", "油炸"],
+      tags: ["土豆", "小吃", "不是海鲜"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("hash brown")) {
+    return {
+      name_zh: "薯饼",
+      description_zh: "炸土豆薯饼，口味简单，适合小孩或当配菜。",
+      category: "小吃/配菜",
+      taste: ["咸香", "油炸"],
+      cautions: ["油炸"],
+      tags: ["土豆", "适合小孩"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("corn jack") || lower.includes("pluto pup") || lower.includes("chiko roll") || lower.includes("battered sav") || lower.includes("spring roll") || lower.includes("dim sim")) {
+    return {
+      name_zh: lower.includes("pluto") ? "炸热狗/玉米狗" : lower.includes("dim sim") ? "澳式炸/蒸点心" : lower.includes("spring") ? "春卷" : "澳洲外带炸物小吃",
+      description_zh: "外带店常见小吃，多数是油炸，适合尝鲜或给孩子少量分享。具体肉馅和配料需要现场确认。",
+      category: "小吃/外带",
+      taste: ["咸香", "油炸"],
+      cautions: ["油炸", "可能含麸质", "馅料需确认"],
+      tags: ["小吃", "外带", "需确认馅料"],
+      confidence: "中",
+    };
+  }
+  if (lower.includes("prawn cutlet") || lower.includes("seafood stick") || lower.includes("seafood cocktail") || lower.includes("tassie scallop") || lower.includes("prawn twister")) {
+    return {
+      name_zh: lower.includes("prawn") ? "炸虾类小吃" : lower.includes("scallop") ? "扇贝/海鲜小吃" : "海鲜小吃",
+      description_zh: "海鲜类外带小吃，多数是油炸。适合喜欢海鲜的人；海鲜过敏者不要点。",
+      category: "海鲜小吃",
+      taste: ["鲜味", "咸香", "油炸"],
+      cautions: ["海鲜过敏者避免", "可能含麸质"],
+      tags: ["海鲜", "外带", "适合分享"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("fish cocktails")) {
+    return {
+      name_zh: "炸鱼块",
+      description_zh: "小块炸鱼，适合分享或给小孩点。比整条鱼更容易分着吃。",
+      category: "海鲜小吃",
+      taste: ["咸香", "油炸"],
+      cautions: ["鱼类过敏者避免", "可能含麸质"],
+      tags: ["炸鱼", "适合分享"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("fish cake")) {
+    return {
+      name_zh: "鱼饼",
+      description_zh: "鱼饼/鱼糕类炸物，通常是鱼肉加工成饼状再煎炸或油炸。鱼类过敏者不要点。",
+      category: "海鲜小吃",
+      taste: ["咸香", "油炸"],
+      cautions: ["鱼类过敏者避免", "可能含麸质"],
+      tags: ["鱼类", "小吃", "外带"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("calamari") || lower.includes("salt and pepper squid")) {
+    return {
+      name_zh: lower.includes("seven pieces") ? "七块鱿鱼配薯条" : lower.includes("salt and pepper") ? "椒盐鱿鱼" : "鱿鱼圈",
+      description_zh: "鱿鱼类炸物，口味咸香，适合分享。海鲜过敏者不要点；有时会比较有嚼劲。",
+      category: "海鲜小吃/分享",
+      taste: ["咸香", "油炸"],
+      cautions: ["海鲜过敏者避免", "可能含麸质"],
+      tags: ["鱿鱼", "适合分享"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("grilled barramundi")) {
+    return {
+      name_zh: "烤澳洲盲曹鱼配薯条",
+      description_zh: "Barramundi 是澳洲常见白肉鱼，烤的通常比炸鱼清淡。适合想吃鱼但不想太油的人。",
+      category: "主菜/鱼类",
+      taste: ["鲜味", "相对清淡"],
+      cautions: ["鱼类过敏者避免"],
+      tags: ["鱼类", "相对清淡"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("tassie salmon")) {
+    return {
+      name_zh: "塔州三文鱼配薯条",
+      description_zh: "三文鱼配薯条，鱼味比白肉鱼更明显，通常油脂更丰富。适合喜欢三文鱼的人。",
+      category: "主菜/鱼类",
+      taste: ["鲜味", "鱼油香"],
+      cautions: ["鱼类过敏者避免"],
+      tags: ["三文鱼", "主菜"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("tinny special") || lower.includes("boatload special") || lower.includes("meal deal")) {
+    return {
+      name_zh: lower.includes("boatload") ? "海鲜炸物大份套餐" : lower.includes("tinny") ? "海鲜炸物小份套餐" : "多人套餐",
+      description_zh: "套餐通常包含多种炸海鲜和薯条，适合两人或多人分享。具体内容可能按当天菜单板为准。",
+      category: "套餐/分享",
+      taste: ["咸香", "油炸", "适合分享"],
+      cautions: ["海鲜过敏者避免", "可能含麸质", "具体内容需现场确认"],
+      tags: ["套餐", "适合分享", "热门"],
+      assumptions: ["来自地图照片中的菜单板，价格和组合可能已经变化。"],
+      confidence: "中",
     };
   }
   if (lower.includes("fresh oysters") || lower.includes("oyster")) {
@@ -914,9 +1105,12 @@ const teaGardensRestaurants = [
     area: "Tea Gardens",
     address: "Tea Gardens",
     rating: "",
-    note: "炸鱼薯条和快餐类型，点餐压力相对低。",
-    tags: ["Fish And Chips", "快餐"],
-    hasMenu: false,
+    note: "Google Maps 菜单照片可见大量外带菜，适合先选好炸鱼薯条、汉堡和分享套餐。",
+    tags: ["Fish And Chips", "快餐", "地图照片菜单"],
+    hasMenu: true,
+    menuSource: "Google Maps 菜单照片（约9个月前）",
+    menuVerified: true,
+    menuText: hookNCookMenuText(),
   },
   {
     id: "known-mangrove-cafe",
@@ -929,6 +1123,47 @@ const teaGardensRestaurants = [
     hasMenu: false,
   },
 ];
+
+function hookNCookMenuText() {
+  return [
+    "Hamburger",
+    "Steak sandwich",
+    "Egg and bacon roll",
+    "Chicken burger",
+    "Fish burger",
+    "Veggie burger",
+    "Works burger",
+    "Chips",
+    "Gravy",
+    "Chicken nuggets",
+    "Potato scallop",
+    "Hash brown",
+    "Corn jack",
+    "Pluto pup",
+    "Chiko roll",
+    "Battered sav",
+    "Spring roll",
+    "Dim sim",
+    "Pineapple fritter",
+    "Prawn cutlets",
+    "Fish cocktails",
+    "Fish cocktails and chips",
+    "Seafood stick",
+    "Tassie scallop",
+    "Calamari rings",
+    "Salt and pepper squid",
+    "Fish cake",
+    "Prawn twister",
+    "Seafood cocktail",
+    "Grilled barramundi and chips",
+    "Tassie salmon and chips",
+    "Seven pieces calamari and chips",
+    "Tinny special",
+    "Boatload special",
+    "Meal deal for two",
+    "Meal deal for four",
+  ].join("\n");
+}
 
 const chatswoodRestaurants = [
   {
@@ -1651,4 +1886,4 @@ if ("serviceWorker" in navigator) {
 }
 
 renderHistory();
-renderRestaurants(demoRestaurants, "v26 已加载：菜单必须标明来源；菜系练习不再冒充真实餐厅菜单，也不能生成点餐卡。");
+renderRestaurants(demoRestaurants, "v27 已加载：已加入 Hook N Cook 的 Google Maps 菜单照片来源，并补齐外带店常见菜解释。");
