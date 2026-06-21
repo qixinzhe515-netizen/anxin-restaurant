@@ -1,0 +1,1431 @@
+#!/usr/bin/env python3
+import json
+import math
+import os
+import re
+import socket
+import base64
+import html as html_lib
+import urllib.error
+import urllib.parse
+import urllib.request
+from html.parser import HTMLParser
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent
+PORT = int(os.environ.get("PORT", "8787"))
+HOST = os.environ.get("HOST", "0.0.0.0")
+
+
+def local_ip():
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+            sock.connect(("8.8.8.8", 80))
+            return sock.getsockname()[0]
+    except OSError:
+        return "localhost"
+
+
+def load_env():
+    env_path = ROOT / ".env.local"
+    if not env_path.exists():
+        return
+    for raw in env_path.read_text().splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        os.environ.setdefault(key.strip(), value.strip())
+
+
+def fallback_analyze(payload):
+    raw_items = [normalize_ocr_menu_line(line) for line in payload.get("menuText", "").splitlines()]
+    items = [item for item in raw_items if is_probable_menu_item(item)][:18]
+    dishes = []
+    for idx, item in enumerate(items, start=1):
+        lower = item.lower()
+        description, tags = describe_menu_item(lower, item)
+        dishes.append(
+            {
+                "id": str(idx),
+                "name_en": item,
+                "name_zh": translate_menu_name(lower, item),
+                "description_zh": description,
+                "tags": tags or ["可询问服务员"],
+            }
+        )
+    return {
+        "summary": "已把菜单整理成中文说明。当前是本地解释模式，适合先看懂大概和避开明显不合适的菜。",
+        "dishes": dishes,
+    }
+
+
+FOOD_WORDS = re.compile(
+    r"\b("
+    r"panna cotta|tiramisu|cake|tart|pudding|crumble|gelato|ice cream|sorbet|dessert|"
+    r"pistachio|chocolate|vanilla|caramel|berry|berries|lemon|apple|pear|fig|honey|"
+    r"oyster|prawn|fish|chips|calamari|salmon|barramundi|seafood|crab|mussel|"
+    r"steak|beef|lamb|chicken|pork|duck|burger|sandwich|schnitzel|parmigiana|"
+    r"pizza|pasta|linguine|fettuccine|risotto|gnocchi|salad|soup|bread|toast|"
+    r"egg|omelette|pancake|waffle|bagel|avocado|mushroom|cheese|pistachio"
+    r")\b",
+    re.I,
+)
+
+
+def normalize_ocr_menu_line(item):
+    line = re.sub(r"\s+", " ", item or "").strip(" -•\t")
+    line = re.sub(r"[“”]", '"', line)
+    line = re.sub(r"\b(?:GFO|GF|DF|V|VG)\b", "", line, flags=re.I)
+    line = re.sub(r"\s*\|\s*\$?\d+(?:\.\d{1,2})?.*$", "", line)
+    line = re.sub(r"\s+\$?\d+(?:\.\d{1,2})?\s*$", "", line)
+    line = re.sub(r"\s+[a-z]{1,2}\s*\d+\s*$", "", line, flags=re.I)
+    line = re.sub(r"\s+(?:so|eo|no|a)\s*$", "", line, flags=re.I)
+    line = re.sub(r"^[~=\-–—\s]+", "", line)
+    line = re.sub(r"\s+", " ", line).strip(" -•\t|")
+    return line
+
+
+def is_probable_menu_item(item):
+    line = re.sub(r"\s+", " ", item or "").strip()
+    if len(line) < 5 or len(line) > 100:
+        return False
+    letters = len(re.findall(r"[A-Za-z]", line))
+    digits = len(re.findall(r"\d", line))
+    if letters < 4:
+        return False
+    if re.match(r"^[^A-Za-z]+$", line):
+        return False
+    if re.match(r"^[A-Za-z]{1,4}\s?[-$]?\d", line):
+        return False
+    if re.search(r"[=]{1,}|[A-Za-z]\s?=\s?[A-Za-z]", line):
+        return False
+    words = re.findall(r"[A-Za-z]+", line)
+    short_words = [word for word in words if len(word) <= 2]
+    if words and len(short_words) / len(words) > 0.35:
+        return False
+    if digits > letters and not re.search(r"\b(kids|piece|pieces|prawn|oyster|pizza|pasta|burger|steak|fish|chips)\b", line, re.I):
+        return False
+    if re.search(r"\b(wine|pinot|rose|sangiovese|sauvignon|chardonnay|merlot|shiraz|riesling|prosecco|beer|cocktail)\b", line, re.I):
+        return False
+    if re.match(r"^\W*[A-Za-z]{1,4}\W*$", line):
+        return False
+    if not FOOD_WORDS.search(line):
+        return False
+    return True
+
+
+class MenuHTMLParser(HTMLParser):
+    def __init__(self, base_url):
+        super().__init__()
+        self.base_url = base_url
+        self.links = []
+        self.text_parts = []
+        self._skip_depth = 0
+        self._current_link = None
+
+    def handle_starttag(self, tag, attrs):
+        attrs = dict(attrs)
+        if tag in {"script", "style", "noscript", "svg"}:
+            self._skip_depth += 1
+            return
+        if tag == "a" and attrs.get("href"):
+            self._current_link = {"href": urllib.parse.urljoin(self.base_url, attrs["href"]), "text": ""}
+
+    def handle_endtag(self, tag):
+        if tag in {"script", "style", "noscript", "svg"} and self._skip_depth:
+            self._skip_depth -= 1
+            return
+        if tag == "a" and self._current_link:
+            self.links.append(self._current_link)
+            self._current_link = None
+
+    def handle_data(self, data):
+        if self._skip_depth:
+            return
+        text = re.sub(r"\s+", " ", data).strip()
+        if not text:
+            return
+        self.text_parts.append(text)
+        if self._current_link is not None:
+            self._current_link["text"] += (" " + text).strip()
+
+
+def fetch_text(url, timeout=20):
+    req = urllib.request.Request(
+        url,
+        headers={
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "User-Agent": "Mozilla/5.0 AnxinRestaurantMVP/0.1",
+        },
+    )
+    with urllib.request.urlopen(req, timeout=timeout) as response:
+        content_type = response.headers.get("Content-Type", "")
+        raw = response.read(2_000_000)
+    if "pdf" in content_type.lower():
+        return "", content_type
+    return raw.decode("utf-8", errors="ignore"), content_type
+
+
+def normalize_menu_lines(text):
+    lines = []
+    bad = {
+        "home",
+        "contact",
+        "about",
+        "privacy",
+        "terms",
+        "facebook",
+        "instagram",
+        "copyright",
+        "subscribe",
+        "book now",
+    }
+    for raw in re.split(r"[\n\r]+|(?<=[.!?])\s{2,}", text):
+        line = re.sub(r"\s+", " ", raw).strip(" -•|\t")
+        if not line or len(line) < 3 or len(line) > 120:
+            continue
+        low = line.lower()
+        if low in bad or any(low.startswith(prefix) for prefix in ["http", "www.", "©"]):
+            continue
+        if re.search(r"\b(menu|lunch|dinner|breakfast|dessert|drink|wine|takeaway|entree|main|seafood|oyster|prawn|fish|chips|salad|burger|pasta|steak)\b", low) or re.search(r"\$\s?\d|\d{1,2}\.\d{2}", line):
+            lines.append(line)
+    deduped = []
+    seen = set()
+    for line in lines:
+        key = line.lower()
+        if key not in seen:
+            seen.add(key)
+            deduped.append(line)
+    return deduped[:80]
+
+
+def extract_menu_from_url(payload):
+    raw_url = (payload.get("url") or "").strip()
+    if not raw_url:
+        return {"summary": "请先粘贴餐厅官网或菜单网址。", "menuText": "", "dishes": []}
+    if not re.match(r"^https?://", raw_url):
+        raw_url = "https://" + raw_url
+
+    try:
+        html, content_type = fetch_text(raw_url)
+        if not html:
+            return {"summary": "这个链接像是 PDF 或非网页内容。当前版本请先截图/拍照菜单再识别。", "menuText": "", "dishes": []}
+        parser = MenuHTMLParser(raw_url)
+        parser.feed(html)
+        host = urllib.parse.urlparse(raw_url).netloc
+        candidates = []
+        menu_links = []
+        keywords = re.compile(r"menu|menus|lunch|dinner|breakfast|dessert|wine|drink|takeaway|food", re.I)
+        def collect_candidate_links(links, current_host):
+            found_pages = []
+            found_files = []
+            for link in links:
+                href = link["href"]
+                text = link.get("text", "")
+                parsed = urllib.parse.urlparse(href)
+                if parsed.netloc and parsed.netloc != current_host:
+                    continue
+                if keywords.search(text) or keywords.search(href):
+                    found_pages.append(href)
+                    if re.search(r"\.(pdf|png|jpe?g|webp)(\?|$)", href, re.I):
+                        found_files.append(
+                            {
+                                "title": text.strip() or urllib.parse.unquote(Path(parsed.path).name),
+                                "url": href,
+                                "type": "image" if re.search(r"\.(png|jpe?g|webp)(\?|$)", href, re.I) else "pdf",
+                            }
+                        )
+            return found_pages, found_files
+
+        page_candidates, file_candidates = collect_candidate_links(parser.links, host)
+        candidates.extend(page_candidates)
+        menu_links.extend(file_candidates)
+
+        pages = [raw_url]
+        for href in candidates:
+            if href not in pages:
+                pages.append(href)
+            if len(pages) >= 6:
+                break
+
+        all_lines = normalize_menu_lines("\n".join(parser.text_parts))
+        for page in pages[1:]:
+            try:
+                page_html, page_type = fetch_text(page, timeout=15)
+                if not page_html:
+                    continue
+                page_parser = MenuHTMLParser(page)
+                page_parser.feed(page_html)
+                page_host = urllib.parse.urlparse(page).netloc
+                _, page_files = collect_candidate_links(page_parser.links, page_host)
+                for item in page_files:
+                    if item["url"] not in [existing["url"] for existing in menu_links]:
+                        menu_links.append(item)
+                all_lines.extend(normalize_menu_lines("\n".join(page_parser.text_parts)))
+            except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, ValueError):
+                continue
+
+        deduped = []
+        seen = set()
+        for line in all_lines:
+            key = line.lower()
+            if key not in seen:
+                seen.add(key)
+                deduped.append(line)
+
+        menu_text = "\n".join(deduped[:80])
+        only_categories = menu_links and len(deduped) <= 8 and not any(re.search(r"\$\s?\d|\d{1,2}\.\d{2}", line) for line in deduped)
+        if not menu_text or only_categories:
+            return {
+                "summary": "找到了官网菜单文件。PDF 可以先打开查看；图片菜单可以直接识别。",
+                "menuText": "",
+                "dishes": [],
+                "menuLinks": menu_links,
+            }
+
+        analyzed = analyze_menu({**payload, "menuText": menu_text})
+        analyzed["menuText"] = menu_text
+        analyzed["menuLinks"] = menu_links
+        analyzed["websiteUrl"] = raw_url
+        analyzed["summary"] = "已从餐厅官网/菜单网页提取文字，并整理成中文说明。请检查是否有网页导航文字混入。"
+        return analyzed
+    except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, ValueError):
+        return {"summary": "暂时打不开这个菜单网址。可以换官网菜单页，或截图后用拍菜单识别。", "menuText": "", "dishes": []}
+
+
+def clean_duckduckgo_href(href):
+    href = html_lib.unescape(href or "")
+    if href.startswith("//"):
+        href = "https:" + href
+    parsed = urllib.parse.urlparse(href)
+    if "duckduckgo.com" in parsed.netloc and parsed.path.startswith("/l/"):
+        query = urllib.parse.parse_qs(parsed.query)
+        uddg = query.get("uddg", [""])[0]
+        if uddg:
+            return urllib.parse.unquote(uddg)
+    return href
+
+
+def discover_website_candidates(name, area):
+    query = f"{name} {area} official menu restaurant Australia"
+    params = urllib.parse.urlencode({"q": query})
+    html, _ = fetch_text(f"https://duckduckgo.com/html/?{params}", timeout=15)
+    raw_hrefs = re.findall(r'href="([^"]+)"', html)
+    blocked_hosts = [
+        "duckduckgo.com",
+        "google.",
+        "facebook.com",
+        "instagram.com",
+        "tripadvisor.",
+        "ubereats.",
+        "doordash.",
+        "menulog.",
+        "opentable.",
+        "thefork.",
+        "zomato.",
+        "yelp.",
+        "agfg.",
+        "restaurantguru.",
+        "yellowpages.",
+    ]
+    candidates = []
+    seen_hosts = set()
+    name_words = [word for word in re.findall(r"[a-z0-9]+", name.lower()) if len(word) > 2]
+    for href in raw_hrefs:
+        url = clean_duckduckgo_href(href)
+        if not re.match(r"^https?://", url):
+            continue
+        parsed = urllib.parse.urlparse(url)
+        host = parsed.netloc.lower().removeprefix("www.")
+        if not host or host in seen_hosts or any(blocked in host for blocked in blocked_hosts):
+            continue
+        score = 0
+        host_text = host.replace("-", "").replace(".", "")
+        if any(word in host_text for word in name_words):
+            score += 4
+        if ".com.au" in host:
+            score += 2
+        if re.search(r"menu|restaurant|cafe|hotel|seafood|bistro|bar", url, re.I):
+            score += 1
+        if score <= 0:
+            continue
+        seen_hosts.add(host)
+        candidates.append((score, url))
+    candidates.sort(key=lambda item: item[0], reverse=True)
+    return [url for _, url in candidates[:5]]
+
+
+def deterministic_website_candidates(name, area):
+    words = [word for word in re.findall(r"[a-z0-9]+", f"{name} {area}".lower()) if len(word) > 1]
+    name_words = [word for word in re.findall(r"[a-z0-9]+", name.lower()) if len(word) > 1]
+    area_words = [word for word in re.findall(r"[a-z0-9]+", area.lower()) if len(word) > 1]
+    compact_name = "".join(name_words)
+    compact_area = "".join(area_words)
+    candidates = []
+    for base in [
+        compact_name,
+        "".join(word.rstrip("s") for word in name_words),
+        f"{compact_name}{compact_area}",
+        f"{compact_name}{area_words[0] if area_words else ''}",
+    ]:
+        if len(base) >= 5:
+            candidates.append(f"https://{base}.com.au")
+    if "mumm" in compact_name and ("teagardens" in compact_area or "myall" in compact_area):
+        candidates.insert(0, "https://mummsonthemyall.com.au")
+    deduped = []
+    seen = set()
+    for url in candidates:
+        if url not in seen:
+            seen.add(url)
+            deduped.append(url)
+    return deduped[:6]
+
+
+def discover_menu(payload):
+    name = (payload.get("restaurantName") or "").strip()
+    area = (payload.get("areaName") or "").strip()
+    website = (payload.get("websiteUri") or "").strip()
+    cached = known_menu_cache(name, area, website)
+    if cached:
+        return cached
+    if website:
+        result = extract_menu_from_url({**payload, "url": website})
+        result["websiteUrl"] = website if re.match(r"^https?://", website) else "https://" + website
+        return result
+    if not name:
+        return {"summary": "请先选择一家餐厅。", "menuText": "", "dishes": [], "menuLinks": []}
+
+    candidates = deterministic_website_candidates(name, area)
+    try:
+        for url in discover_website_candidates(name, area):
+            if url not in candidates:
+                candidates.append(url)
+    except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, ValueError):
+        pass
+
+    best_with_links = None
+    for url in candidates[:3]:
+        result = extract_menu_from_url({**payload, "url": url})
+        result["websiteUrl"] = url
+        if result.get("dishes"):
+            result["summary"] = f"已自动找到可能的官网并提取菜单：{urllib.parse.urlparse(url).netloc}。请确认是否为这家餐厅。"
+            return result
+        if result.get("menuLinks") and best_with_links is None:
+            best_with_links = result
+
+    if best_with_links:
+        host = urllib.parse.urlparse(best_with_links.get("websiteUrl", "")).netloc
+        best_with_links["summary"] = f"已自动找到可能的官网菜单文件：{host}。图片菜单可直接识别；PDF 菜单当前先打开查看。请确认是否为这家餐厅。"
+        return best_with_links
+
+    return {
+        "summary": f"已自动搜索「{name}」的官网菜单，但没有找到可解析的菜单。可以换一家餐厅，或到店拍菜单识别。",
+        "menuText": "",
+        "dishes": [],
+        "menuLinks": [],
+    }
+
+
+def known_menu_cache(name="", area="", website=""):
+    key = re.sub(r"[^a-z0-9]+", "", f"{name} {area} {website}".lower())
+    if "mumm" not in key and "mummsonthemyall" not in key:
+        return None
+    menu_text = "\n".join(
+        [
+            "Turkish delight panna cotta",
+            "Persian fairy floss and pistachio",
+        ]
+    )
+    result = fallback_analyze({"menuText": menu_text})
+    result["menuText"] = menu_text
+    result["websiteUrl"] = "https://mummsonthemyall.com.au"
+    result["source"] = "known_menu_cache"
+    result["summary"] = (
+        "已使用本地可信菜单缓存。这里只显示确认度高的菜品；官网 PDF/图片菜单仍保留为原始菜单，"
+        "避免把 OCR 乱码当成菜。"
+    )
+    result["menuLinks"] = [
+        {
+            "title": "官网菜单页",
+            "url": "https://mummsonthemyall.com.au",
+            "type": "page",
+        },
+        {
+            "title": "DESSERT",
+            "url": "https://mummsonthemyall.com.au/uploads/1/1/5/2/115221607/dessert_april_2026_copy.png",
+            "type": "image",
+        },
+        {
+            "title": "LUNCH AND DINNER",
+            "url": "https://mummsonthemyall.com.au/uploads/1/1/5/2/115221607/mumms_lunch_and_dinner_may_2026_copy.pdf",
+            "type": "pdf",
+        },
+        {
+            "title": "BREAKFAST",
+            "url": "https://mummsonthemyall.com.au/uploads/1/1/5/2/115221607/1.png",
+            "type": "image",
+        },
+    ]
+    return result
+
+
+def menu_file_data_url(payload):
+    url = (payload.get("url") or "").strip()
+    if not re.match(r"^https?://", url):
+        return {"error": "invalid_url"}
+    try:
+        req = urllib.request.Request(
+            url,
+            headers={"User-Agent": "Mozilla/5.0 AnxinRestaurantMVP/0.1"},
+        )
+        with urllib.request.urlopen(req, timeout=20) as response:
+            content_type = response.headers.get("Content-Type", "").split(";")[0].strip().lower()
+            raw = response.read(4_000_000)
+        if content_type not in {"image/png", "image/jpeg", "image/webp"}:
+            return {"error": "not_image"}
+        encoded = base64.b64encode(raw).decode("ascii")
+        return {"dataUrl": f"data:{content_type};base64,{encoded}"}
+    except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, ValueError):
+        return {"error": "fetch_failed"}
+
+
+def translate_menu_name(lower, original):
+    rules = [
+        ("flat white", "澳式奶咖 Flat White"),
+        ("long black", "黑咖啡 Long Black"),
+        ("avocado toast", "牛油果吐司"),
+        ("poached eggs", "水波蛋"),
+        ("smoked salmon bagel", "烟熏三文鱼贝果"),
+        ("chicken schnitzel sandwich", "炸鸡排三明治"),
+        ("mushroom omelette", "蘑菇煎蛋卷"),
+        ("banana bread", "香蕉蛋糕"),
+        ("kids pancakes", "儿童松饼"),
+        ("turkish delight panna cotta", "土耳其软糖风味意式奶冻"),
+        ("panna cotta", "意式奶冻"),
+        ("persian fairy floss", "波斯棉花糖配开心果"),
+        ("pistachio", "开心果甜点"),
+        ("burrata", "布拉塔奶酪"),
+        ("king prawns", "大虾"),
+        ("margherita pizza", "玛格丽特披萨"),
+        ("nduja", "辣味意式香肠酱"),
+        ("lamb shoulder", "慢煮羊肩"),
+        ("barramundi", "澳洲盲曹鱼"),
+        ("rocket", "芝麻菜沙拉"),
+        ("tiramisu", "提拉米苏"),
+        ("garlic bread", "蒜香面包"),
+        ("caesar salad", "凯撒沙拉"),
+        ("pepperoni pizza", "辣香肠披萨"),
+        ("seafood linguine", "海鲜扁意面"),
+        ("fettuccine", "宽面"),
+        ("chicken parmigiana", "芝士番茄鸡排"),
+        ("panna cotta", "奶冻"),
+    ]
+    for key, value in rules:
+        if key in lower:
+            return value
+    return original
+
+
+def describe_menu_item(lower, original):
+    tags = []
+    description = "这道菜需要根据现场菜单确认细节。"
+
+    if "flat white" in lower:
+        description = "澳洲常见奶咖，咖啡味比拿铁更明显，奶泡细腻。适合想喝顺口牛奶咖啡的人。"
+        tags = ["咖啡", "含牛奶", "澳洲常见"]
+    elif "long black" in lower:
+        description = "黑咖啡，不加奶，味道比较苦、咖啡味重。类似美式但通常更浓。"
+        tags = ["咖啡", "无奶", "偏苦"]
+    elif "avocado toast" in lower:
+        description = "牛油果吐司，通常配水波蛋。口味清淡，适合早餐或早午餐；不吃生/半熟蛋可以要求 fully cooked egg。"
+        tags = ["早午餐", "比较安全", "可要求全熟蛋"]
+    elif "smoked salmon bagel" in lower:
+        description = "贝果夹烟熏三文鱼，常配奶油奶酪、酸豆或洋葱。烟熏鱼是冷食，口味偏咸。"
+        tags = ["鱼类", "冷食", "偏咸"]
+    elif "chicken schnitzel" in lower:
+        description = "炸鸡排三明治，通常比较顶饱，口味接近炸鸡汉堡。适合不想冒险的人。"
+        tags = ["鸡肉", "油炸", "比较安全"]
+    elif "mushroom omelette" in lower:
+        description = "蘑菇煎蛋卷，口味温和。适合早餐；如果不吃芝士或奶制品，需要问是否含 cheese 或 cream。"
+        tags = ["蛋类", "素食友好", "口味温和"]
+    elif "banana bread" in lower:
+        description = "香蕉蛋糕/香蕉面包，通常是甜点或咖啡配餐，可加热加黄油。适合老人和小孩。"
+        tags = ["甜点", "适合小孩", "咖啡配餐"]
+    elif "turkish delight panna cotta" in lower:
+        description = "土耳其软糖风味的意式奶冻，口感软滑，通常偏甜，可能带玫瑰或糖果香气。适合作为饭后甜点。"
+        tags = ["甜点", "奶制品", "偏甜", "口感软"]
+    elif "persian fairy floss" in lower or "pistachio" in lower:
+        description = "波斯棉花糖和开心果相关甜点，口感通常轻、甜，带坚果香。对开心果或坚果过敏的人不要点。"
+        tags = ["甜点", "含坚果", "偏甜"]
+    elif "kids pancakes" in lower or "pancakes" in lower:
+        description = "松饼，儿童版份量较小，通常偏甜，可能配糖浆、水果或冰淇淋。"
+        tags = ["儿童友好", "偏甜", "早餐"]
+    elif "burrata" in lower:
+        description = "布拉塔奶酪，外层像马苏里拉，里面很软很奶香，通常配番茄。适合喜欢奶酪的人。"
+        tags = ["奶制品", "冷前菜", "口味清爽"]
+    elif any(word in lower for word in ["prawn", "prawns", "shrimp"]):
+        description = "虾类菜，通常比较容易接受。对海鲜过敏的人不要点；可以要求少蒜或 sauce on the side。"
+        tags = ["海鲜", "可能有蒜", "适合分享"]
+    elif "margherita pizza" in lower:
+        description = "经典披萨，主要是番茄酱、芝士和罗勒。口味简单，适合小孩和不想踩雷的人。"
+        tags = ["披萨", "比较安全", "含芝士"]
+    elif any(word in lower for word in ["spicy", "chilli", "chili", "nduja"]):
+        description = "这道菜可能偏辣。Nduja 是辣味意式香肠酱，不太能吃辣的话建议选择 mild 或不要点。"
+        tags = ["可能偏辣", "肉类", "需确认辣度"]
+    elif "lamb" in lower:
+        description = "羊肉菜，通常味道较浓、份量较大，适合分享。不喜欢羊味的人谨慎。"
+        tags = ["羊肉", "适合分享", "味道较重"]
+    elif any(word in lower for word in ["barramundi", "fish"]):
+        description = "鱼类主菜。Barramundi 是澳洲常见白肉鱼，口味相对温和，适合想吃清淡一点的人。"
+        tags = ["鱼类", "口味温和", "主菜"]
+    elif "salad" in lower or "rocket" in lower:
+        description = "沙拉类。Rocket 是芝麻菜，带一点苦味和辛香，通常作为配菜更合适。"
+        tags = ["沙拉", "清爽", "配菜"]
+    elif "tiramisu" in lower:
+        description = "意式甜点，含咖啡味和奶油，通常是冷的。适合饭后分享。"
+        tags = ["甜点", "含咖啡", "适合分享"]
+    elif "garlic bread" in lower:
+        description = "蒜香面包，常作为前菜，味道明显有蒜，适合分享。"
+        tags = ["前菜", "有蒜", "适合分享"]
+    elif "caesar" in lower:
+        description = "凯撒沙拉，常有生菜、芝士、面包丁和凯撒酱，有时会加鸡肉或培根。"
+        tags = ["沙拉", "可能含培根", "可作配菜"]
+    elif "pepperoni" in lower:
+        description = "辣香肠披萨，通常不是很辣，但偏咸、偏油，含猪肉。"
+        tags = ["披萨", "猪肉", "偏咸"]
+    elif any(word in lower for word in ["seafood", "linguine"]):
+        description = "海鲜意面，可能有虾、贝类或鱼。对海鲜过敏的人不要点。"
+        tags = ["海鲜", "意面", "需注意过敏"]
+    elif any(word in lower for word in ["fettuccine", "pasta"]):
+        description = "意面类，通常比较容易接受。如果是 creamy，说明奶油味较重。"
+        tags = ["意面", "比较安全", "可能含奶"]
+    elif "parmigiana" in lower:
+        description = "澳洲酒吧常见鸡排，通常是炸鸡排上面加番茄酱和芝士，份量较大。"
+        tags = ["鸡肉", "含芝士", "份量大"]
+    elif "panna cotta" in lower:
+        description = "意式奶冻，口感像布丁，偏甜，通常适合作为饭后甜点。"
+        tags = ["甜点", "奶制品", "口感软"]
+
+    if any(word in lower for word in ["spicy", "chilli", "chili", "nduja"]) and "可能偏辣" not in tags:
+        tags.append("可能偏辣")
+    if any(word in lower for word in ["prawn", "fish", "barramundi", "seafood", "salmon"]) and "海鲜" not in tags and "鱼类" not in tags:
+        tags.append("海鲜")
+    if any(word in lower for word in ["kids", "pancakes"]) and "儿童友好" not in tags:
+        tags.append("儿童友好")
+
+    return description, tags[:4]
+
+
+def fallback_card(payload):
+    restaurant = payload.get("restaurantName") or "your restaurant"
+    party = payload.get("partySize") or "2"
+    time = payload.get("bookingTime") or "tonight"
+    dishes = payload.get("dishes", [])
+    restrictions = payload.get("restrictions", [])
+    special = payload.get("specialNotes") or ""
+    dish_lines = "\n".join(f"- {dish.get('name_en', '')}" for dish in dishes)
+    requests = []
+    for raw in restrictions + ([special] if special else []):
+        for item in re.split(r"[,，;；]", str(raw)):
+            item = item.strip()
+            if item and item.lower() not in [existing.lower() for existing in requests]:
+                requests.append(item)
+    request_text = ", ".join(requests)
+    return {
+        "bookingMessage": (
+            f"Hi {restaurant}, I would like to book a table for {party} people at {time}. "
+            "Could you please confirm if a table is available? Thank you."
+        ),
+        "orderCard": (
+            "We would like to order:\n"
+            f"{dish_lines}\n\n"
+            f"Special requests: {request_text or 'None'}\n\n"
+            "If anything is unavailable, please point to the menu or write it down for us."
+        ),
+        "fallbackCard": (
+            "Sorry, my English is limited.\n"
+            "Could you please speak slowly, point to the menu, or write it down?\n"
+            "Thank you for your help."
+        ),
+    }
+
+
+def fallback_restaurants(area_name=""):
+    known = known_restaurants(area_name)
+    if known:
+        return known
+    area = area_name or "Sydney"
+    sample_menus = {
+        "bistro": "\n".join(
+            [
+                "Burrata with heirloom tomatoes and basil oil",
+                "Grilled king prawns with garlic butter and lemon",
+                "Wood-fired margherita pizza",
+                "Spicy nduja pizza with mozzarella and chilli honey",
+                "Slow cooked lamb shoulder with rosemary potatoes",
+                "Pan roasted barramundi with fennel salad",
+                "Rocket parmesan salad",
+                "Tiramisu",
+                "Kids pasta with tomato sauce",
+            ]
+        ),
+        "cafe": "\n".join(
+            [
+                "Flat white",
+                "Long black",
+                "Avocado toast with poached eggs",
+                "Smoked salmon bagel",
+                "Chicken schnitzel sandwich",
+                "Mushroom omelette",
+                "Banana bread",
+                "Kids pancakes",
+            ]
+        ),
+        "italian": "\n".join(
+            [
+                "Garlic bread",
+                "Caesar salad",
+                "Margherita pizza",
+                "Pepperoni pizza",
+                "Seafood linguine",
+                "Creamy mushroom fettuccine",
+                "Chicken parmigiana",
+                "Panna cotta",
+            ]
+        ),
+        "pub": "\n".join(
+            [
+                "Fish and chips",
+                "Chicken parmigiana",
+                "Beef burger with chips",
+                "Caesar salad with grilled chicken",
+                "Salt and pepper calamari",
+                "Steak sandwich",
+                "Sticky date pudding",
+            ]
+        ),
+        "thai": "\n".join(
+            [
+                "Chicken pad thai",
+                "Green curry with beef",
+                "Massaman lamb curry",
+                "Tom yum prawns",
+                "Cashew nut stir fry",
+                "Coconut rice",
+                "Mango sticky rice",
+            ]
+        ),
+        "seafood": "\n".join(
+            [
+                "Fresh oysters",
+                "Grilled barramundi",
+                "Garlic prawns",
+                "Seafood platter",
+                "Calamari and chips",
+                "Greek salad",
+                "Lemon tart",
+            ]
+        ),
+        "japanese": "\n".join(
+            [
+                "Chicken teriyaki don",
+                "Salmon sashimi",
+                "Pork gyoza",
+                "Tempura udon",
+                "Karaage chicken",
+                "Miso soup",
+                "Green tea ice cream",
+            ]
+        ),
+        "breakfast": "\n".join(
+            [
+                "Eggs benedict",
+                "Big breakfast",
+                "Smashed avocado",
+                "Belgian waffles",
+                "Breakfast burrito",
+                "Iced latte",
+                "Fresh orange juice",
+            ]
+        ),
+    }
+    specs = [
+        ("local-bistro", f"{area} Local Bistro", "4.6", "适合第一次尝试本地西餐，选择比较稳。", ["西餐", "适合老人", "英文压力低"], "bistro", "$$"),
+        ("garden-cafe", f"{area} Garden Cafe", "4.5", "适合早午餐、咖啡和轻食，点餐相对简单。", ["早午餐", "咖啡", "儿童友好"], "cafe", "$"),
+        ("laneway-italian", f"{area} Laneway Italian", "4.4", "适合家庭聚餐，披萨和意面容易提前选好。", ["意餐", "家庭聚餐", "不容易踩雷"], "italian", "$$"),
+        ("harbour-pub", f"{area} Family Pub", "4.3", "澳洲常见酒吧餐，份量大，适合想体验本地餐的人。", ["澳洲本地", "份量大", "可点安全菜"], "pub", "$$"),
+        ("thai-kitchen", f"{area} Thai Kitchen", "4.4", "泰餐选择多，但要提前说明辣度。", ["泰餐", "需确认辣度", "适合分享"], "thai", "$$"),
+        ("seafood-grill", f"{area} Seafood Grill", "4.2", "适合海鲜，但过敏用户需要谨慎。", ["海鲜", "适合分享", "需注意过敏"], "seafood", "$$$"),
+        ("japanese-dining", f"{area} Japanese Dining", "4.5", "日餐菜单结构清楚，适合不想现场解释太多。", ["日餐", "选择清楚", "比较安全"], "japanese", "$$"),
+        ("breakfast-club", f"{area} Breakfast Club", "4.1", "早餐和咖啡类，适合白天先练习使用。", ["早餐", "咖啡", "轻食"], "breakfast", "$"),
+    ]
+    return {
+        "source": "demo",
+        "message": "真实餐厅暂时获取失败。下面是演示餐厅，不是真实地图结果。",
+        "restaurants": [
+            {
+                "id": f"demo-{slug}",
+                "name": name,
+                "area": area,
+                "address": f"{area}, NSW",
+                "rating": rating,
+                "userRatingCount": str(120 + index * 37),
+                "priceLevel": price,
+                "note": note,
+                "tags": tags,
+                "googleMapsUri": "",
+                "websiteUri": "",
+                "hasMenu": True,
+                "menuText": sample_menus[menu_key],
+            }
+            for index, (slug, name, rating, note, tags, menu_key, price) in enumerate(specs)
+        ],
+    }
+
+
+def known_restaurants(area_name=""):
+    key = re.sub(r"[^a-z0-9]+", "", (area_name or "").lower())
+    if key not in {"teagarden", "teagardens"}:
+        return None
+    restaurants = [
+        ("tea-gardens-hotel", "Tea Gardens Hotel", "Cnr Maxwell Street & Marine Drive, Tea Gardens", "澳洲酒吧餐，有官网", ["澳洲酒吧餐", "可查官网菜单"], "https://teagardenshotel.com/"),
+        ("tillermans", "Tillermans Cafe - Restaurant", "Tea Gardens", "咖啡和餐厅，适合轻食", ["咖啡/轻食", "餐厅"], ""),
+        ("waterfront-bistro", "Waterfront Restaurant & Bistro", "Cnr Maxwell Street & Marine Drive, Tea Gardens", "海边餐厅/小酒馆类型", ["Bistro", "本地餐厅"], ""),
+        ("hook-n-cook", "Hook'n Cook", "Tea Gardens", "炸鱼薯条和快餐类型", ["Fish And Chips", "快餐"], ""),
+        ("mumms-seafood", "Mumm's Seafood", "Tea Gardens", "海鲜餐厅，已知官网可找到菜单", ["Seafood", "有官网菜单"], "https://mummsonthemyall.com.au"),
+        ("mangrove-cafe", "Mangrove Cafe", "83 Marine Drive, Tea Gardens", "咖啡和轻食", ["咖啡/轻食"], ""),
+        ("jayz-myall", "Jayz At The Myall", "Tea Gardens", "咖啡/轻食，本地餐厅", ["咖啡/轻食"], ""),
+    ]
+    return {
+        "source": "known_local",
+        "message": "真实地图服务暂时不稳定。下面使用本地真实餐厅库，不是演示餐厅。",
+        "restaurants": [
+            {
+                "id": f"known-{slug}",
+                "name": name,
+                "area": "Tea Gardens",
+                "address": address,
+                "rating": "",
+                "userRatingCount": "",
+                "priceLevel": "",
+                "note": note,
+                "tags": tags,
+                "googleMapsUri": "",
+                "websiteUri": website,
+                "hasMenu": bool(website),
+                "menuText": "",
+            }
+            for slug, name, address, note, tags, website in restaurants
+        ],
+    }
+
+
+def extract_json(text):
+    text = text.strip()
+    if text.startswith("```"):
+        text = re.sub(r"^```(?:json)?", "", text).strip()
+        text = re.sub(r"```$", "", text).strip()
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        match = re.search(r"\{.*\}", text, re.S)
+        if not match:
+            raise
+        return json.loads(match.group(0))
+
+
+def call_openai_json(system, user, fallback):
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key:
+        return fallback
+
+    body = {
+        "model": os.environ.get("OPENAI_MODEL", "gpt-4.1-mini"),
+        "input": [
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
+        ],
+        "temperature": 0.3,
+    }
+    req = urllib.request.Request(
+        "https://api.openai.com/v1/responses",
+        data=json.dumps(body).encode("utf-8"),
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        },
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=35) as response:
+            data = json.loads(response.read().decode("utf-8"))
+        text = data.get("output_text")
+        if not text:
+            parts = []
+            for item in data.get("output", []):
+                for content in item.get("content", []):
+                    if content.get("type") in {"output_text", "text"}:
+                        parts.append(content.get("text", ""))
+            text = "\n".join(parts)
+        return extract_json(text)
+    except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, json.JSONDecodeError, KeyError):
+        return fallback
+
+
+def call_openai_vision_json(system, text, image_data_url, fallback):
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key:
+        return fallback
+
+    body = {
+        "model": os.environ.get("OPENAI_VISION_MODEL", os.environ.get("OPENAI_MODEL", "gpt-4.1-mini")),
+        "input": [
+            {
+                "role": "user",
+                "content": [
+                    {"type": "input_text", "text": system + "\n\n" + text},
+                    {"type": "input_image", "image_url": image_data_url},
+                ],
+            }
+        ],
+        "temperature": 0.2,
+    }
+    req = urllib.request.Request(
+        "https://api.openai.com/v1/responses",
+        data=json.dumps(body).encode("utf-8"),
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        },
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=60) as response:
+            data = json.loads(response.read().decode("utf-8"))
+        text_out = data.get("output_text")
+        if not text_out:
+            parts = []
+            for item in data.get("output", []):
+                for content in item.get("content", []):
+                    if content.get("type") in {"output_text", "text"}:
+                        parts.append(content.get("text", ""))
+            text_out = "\n".join(parts)
+        return extract_json(text_out)
+    except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, json.JSONDecodeError, KeyError):
+        return fallback
+
+
+def call_google_places(path, body, field_mask):
+    api_key = os.environ.get("GOOGLE_MAPS_API_KEY")
+    if not api_key:
+        raise RuntimeError("GOOGLE_MAPS_API_KEY is not configured")
+    req = urllib.request.Request(
+        f"https://places.googleapis.com/v1/{path}",
+        data=json.dumps(body).encode("utf-8"),
+        headers={
+            "Content-Type": "application/json",
+            "X-Goog-Api-Key": api_key,
+            "X-Goog-FieldMask": field_mask,
+        },
+        method="POST",
+    )
+    with urllib.request.urlopen(req, timeout=20) as response:
+        return json.loads(response.read().decode("utf-8"))
+
+
+def http_json(url, timeout=20):
+    req = urllib.request.Request(
+        url,
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "AnxinRestaurantMVP/0.1 local-test contact@example.com",
+        },
+    )
+    with urllib.request.urlopen(req, timeout=timeout) as response:
+        return json.loads(response.read().decode("utf-8"))
+
+
+def haversine_km(lat1, lng1, lat2, lng2):
+    radius = 6371.0
+    p1 = math.radians(lat1)
+    p2 = math.radians(lat2)
+    dp = math.radians(lat2 - lat1)
+    dl = math.radians(lng2 - lng1)
+    a = math.sin(dp / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dl / 2) ** 2
+    return 2 * radius * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+
+def known_area_coords(area_name):
+    key = re.sub(r"[^a-z0-9]+", "", (area_name or "").lower())
+    known = {
+        "teagarden": (-32.6671, 152.1609, "Tea Gardens"),
+        "teagardens": (-32.6671, 152.1609, "Tea Gardens"),
+        "chatswood": (-33.7969, 151.1803, "Chatswood"),
+        "hurstville": (-33.9667, 151.1020, "Hurstville"),
+        "sydneycbd": (-33.8688, 151.2093, "Sydney CBD"),
+        "sydney": (-33.8688, 151.2093, "Sydney CBD"),
+        "parramatta": (-33.8150, 151.0011, "Parramatta"),
+    }
+    return known.get(key)
+
+
+def geocode_area_osm(area_name):
+    known = known_area_coords(area_name)
+    if known:
+        return known
+    query = area_name or "Sydney NSW Australia"
+    params = urllib.parse.urlencode(
+        {
+            "q": f"{query}, Australia",
+            "format": "jsonv2",
+            "limit": 1,
+            "countrycodes": "au",
+        }
+    )
+    data = http_json(f"https://nominatim.openstreetmap.org/search?{params}", timeout=15)
+    if not data:
+        return None
+    first = data[0]
+    return float(first["lat"]), float(first["lon"]), first.get("display_name", query)
+
+
+def osm_restaurant_tags(tags):
+    cuisine = (tags.get("cuisine") or "").replace("_", " ")
+    amenity = tags.get("amenity", "")
+    result = []
+    if cuisine:
+        result.append(cuisine.title())
+    if amenity == "cafe":
+        result.append("咖啡/轻食")
+    elif amenity == "pub":
+        result.append("澳洲酒吧餐")
+    elif amenity == "fast_food":
+        result.append("快餐")
+    else:
+        result.append("餐厅")
+    if tags.get("outdoor_seating") == "yes":
+        result.append("可户外座位")
+    if tags.get("takeaway") == "yes":
+        result.append("可外带")
+    return result[:4]
+
+
+def osm_note(tags, distance):
+    parts = []
+    cuisine = (tags.get("cuisine") or "").replace("_", " ")
+    if cuisine:
+        parts.append(f"{cuisine.title()} 类型")
+    if distance is not None:
+        parts.append(f"约 {distance:.1f} km")
+    if tags.get("opening_hours"):
+        parts.append("有营业时间信息")
+    return "，".join(parts) or "OpenStreetMap 附近餐厅。"
+
+
+def normalize_osm_element(element, center_lat, center_lng, area_name):
+    tags = element.get("tags") or {}
+    name = tags.get("name")
+    if not name:
+        return None
+    lat = element.get("lat") or element.get("center", {}).get("lat")
+    lng = element.get("lon") or element.get("center", {}).get("lon")
+    distance = None
+    if center_lat is not None and center_lng is not None and lat is not None and lng is not None:
+        distance = haversine_km(center_lat, center_lng, float(lat), float(lng))
+    address_bits = [
+        tags.get("addr:housenumber"),
+        tags.get("addr:street"),
+        tags.get("addr:suburb") or area_name,
+    ]
+    address = " ".join(bit for bit in address_bits if bit) or f"{area_name}, NSW"
+    return {
+        "id": f"osm-{element.get('type')}-{element.get('id')}",
+        "name": name,
+        "area": area_name,
+        "address": address,
+        "rating": "",
+        "userRatingCount": "",
+        "priceLevel": "",
+        "note": osm_note(tags, distance),
+        "tags": osm_restaurant_tags(tags),
+        "googleMapsUri": "",
+        "websiteUri": tags.get("website") or tags.get("contact:website") or "",
+        "hasMenu": False,
+        "menuText": "",
+        "lat": lat,
+        "lng": lng,
+    }
+
+
+def nearby_restaurants_osm(area_name="", lat=None, lng=None):
+    area_label = area_name or "当前位置"
+    if lat is None and lng is None and area_name:
+        geocoded = geocode_area_osm(area_name)
+        if geocoded:
+            lat, lng, display_name = geocoded
+            area_label = display_name.split(",")[0] or area_name
+
+    if lat is not None and lng is not None:
+        lat, lng = float(lat), float(lng)
+        query = f"""
+        [out:json][timeout:20];
+        (
+          node["amenity"~"^(restaurant|cafe|fast_food|pub)$"](around:6000,{lat},{lng});
+          way["amenity"~"^(restaurant|cafe|fast_food|pub)$"](around:6000,{lat},{lng});
+          relation["amenity"~"^(restaurant|cafe|fast_food|pub)$"](around:6000,{lat},{lng});
+        );
+        out center tags 50;
+        """
+        center_lat, center_lng = lat, lng
+    else:
+        safe_area = (area_name or "Sydney").replace('"', '\\"')
+        query = f"""
+        [out:json][timeout:25];
+        area["name"="{safe_area}"]["place"]->.searchArea;
+        (
+          node["amenity"~"^(restaurant|cafe|fast_food|pub)$"](area.searchArea);
+          way["amenity"~"^(restaurant|cafe|fast_food|pub)$"](area.searchArea);
+          relation["amenity"~"^(restaurant|cafe|fast_food|pub)$"](area.searchArea);
+        );
+        out center tags 30;
+        """
+        center_lat, center_lng = None, None
+    params = urllib.parse.urlencode({"data": query})
+    data = http_json(f"https://overpass-api.de/api/interpreter?{params}", timeout=30)
+    restaurants = []
+    seen_names = set()
+    for element in data.get("elements", []):
+        normalized = normalize_osm_element(element, center_lat, center_lng, area_label)
+        if not normalized:
+            continue
+        key = normalized["name"].strip().lower()
+        if key in seen_names:
+            continue
+        seen_names.add(key)
+        restaurants.append(normalized)
+    if not restaurants:
+        raise RuntimeError("OSM restaurants empty")
+    return {
+        "source": "openstreetmap",
+        "message": "当前使用 OpenStreetMap 免费数据源。餐厅是真实地点，但评分和菜单可能不完整。",
+        "restaurants": restaurants[:12],
+    }
+
+
+def place_price_level(value):
+    if not value:
+        return ""
+    mapping = {
+        "PRICE_LEVEL_FREE": "免费",
+        "PRICE_LEVEL_INEXPENSIVE": "$",
+        "PRICE_LEVEL_MODERATE": "$$",
+        "PRICE_LEVEL_EXPENSIVE": "$$$",
+        "PRICE_LEVEL_VERY_EXPENSIVE": "$$$$",
+    }
+    return mapping.get(value, "")
+
+
+def place_tags(place):
+    types = place.get("types") or []
+    tags = []
+    if "cafe" in types:
+        tags.append("咖啡/早午餐")
+    if "italian_restaurant" in types:
+        tags.append("意餐")
+    if "seafood_restaurant" in types:
+        tags.append("海鲜")
+    if "chinese_restaurant" in types:
+        tags.append("中餐")
+    if place.get("rating", 0) >= 4.4:
+        tags.append("评分较高")
+    if place.get("userRatingCount", 0) >= 200:
+        tags.append("评论较多")
+    return tags[:4] or ["餐厅"]
+
+
+def place_note(place):
+    tags = place_tags(place)
+    rating = place.get("rating")
+    count = place.get("userRatingCount")
+    parts = []
+    if rating:
+        parts.append(f"Google 评分 {rating}")
+    if count:
+        parts.append(f"{count} 条评论")
+    if tags:
+        parts.append(" / ".join(tags))
+    return "，".join(parts) or "附近餐厅。"
+
+
+def place_menu_hint(place):
+    return ""
+
+
+def normalize_place(place):
+    display_name = place.get("displayName", {}).get("text", "Unnamed restaurant")
+    address = place.get("shortFormattedAddress") or place.get("formattedAddress") or ""
+    return {
+        "id": place.get("id") or place.get("name") or display_name,
+        "name": display_name,
+        "area": address.split(",")[0] if address else "",
+        "address": address,
+        "rating": str(place.get("rating", "")),
+        "userRatingCount": str(place.get("userRatingCount", "")),
+        "priceLevel": place_price_level(place.get("priceLevel")),
+        "note": place_note(place),
+        "tags": place_tags(place),
+        "googleMapsUri": place.get("googleMapsUri", ""),
+        "websiteUri": place.get("websiteUri", ""),
+        "hasMenu": False,
+        "menuText": place_menu_hint(place),
+    }
+
+
+def nearby_restaurants(payload):
+    area_name = payload.get("areaName", "").strip()
+    lat = payload.get("latitude")
+    lng = payload.get("longitude")
+    field_mask = ",".join(
+        [
+            "places.id",
+            "places.displayName",
+            "places.shortFormattedAddress",
+            "places.formattedAddress",
+            "places.rating",
+            "places.userRatingCount",
+            "places.priceLevel",
+            "places.types",
+            "places.googleMapsUri",
+            "places.websiteUri",
+        ]
+    )
+    if not os.environ.get("GOOGLE_MAPS_API_KEY"):
+        try:
+            return nearby_restaurants_osm(area_name, lat, lng)
+        except (RuntimeError, urllib.error.URLError, urllib.error.HTTPError, TimeoutError, ValueError, KeyError):
+            return fallback_restaurants(area_name)
+
+    try:
+        if lat is not None and lng is not None:
+            data = call_google_places(
+                "places:searchNearby",
+                {
+                    "includedTypes": ["restaurant"],
+                    "maxResultCount": 8,
+                    "rankPreference": "POPULARITY",
+                    "locationRestriction": {
+                        "circle": {
+                            "center": {"latitude": float(lat), "longitude": float(lng)},
+                            "radius": 1500.0,
+                        }
+                    },
+                },
+                field_mask,
+            )
+        else:
+            query = f"restaurants in {area_name or 'Sydney NSW Australia'}"
+            data = call_google_places(
+                "places:searchText",
+                {
+                    "textQuery": query,
+                    "includedType": "restaurant",
+                    "strictTypeFiltering": True,
+                    "regionCode": "AU",
+                    "languageCode": "en",
+                    "maxResultCount": 8,
+                },
+                field_mask,
+            )
+        restaurants = [normalize_place(place) for place in data.get("places", [])]
+        if not restaurants:
+            return fallback_restaurants(area_name)
+        return {"source": "google_places", "message": "", "restaurants": restaurants}
+    except (RuntimeError, urllib.error.URLError, urllib.error.HTTPError, TimeoutError, ValueError, KeyError):
+        return fallback_restaurants(area_name)
+
+
+def analyze_menu(payload):
+    fallback = fallback_analyze(payload)
+    system = (
+        "You help Chinese-speaking people in Australia use restaurants without needing live English conversation. "
+        "Explain menus in simple Chinese. Return only valid JSON."
+    )
+    user = json.dumps(
+        {
+            "task": "Analyze this restaurant menu for a Chinese-speaking user in Australia.",
+            "restaurantName": payload.get("restaurantName", ""),
+            "partySize": payload.get("partySize", ""),
+            "bookingTime": payload.get("bookingTime", ""),
+            "specialNotes": payload.get("specialNotes", ""),
+            "menuText": payload.get("menuText", ""),
+            "required_json_shape": {
+                "summary": "short Chinese overview",
+                "dishes": [
+                    {
+                        "id": "string id",
+                        "name_en": "English dish name",
+                        "name_zh": "simple Chinese name",
+                        "description_zh": "plain Chinese explanation, include taste and caution",
+                        "tags": ["招牌/安全/偏辣/海鲜/适合老人 etc"],
+                    }
+                ],
+            },
+        },
+        ensure_ascii=False,
+    )
+    data = call_openai_json(system, user, fallback)
+    if not isinstance(data, dict) or not isinstance(data.get("dishes"), list):
+        return fallback
+    for idx, dish in enumerate(data["dishes"], start=1):
+        dish["id"] = str(dish.get("id") or idx)
+    return data
+
+
+def analyze_menu_photo(payload):
+    fallback = {
+        "summary": "菜单照片识别需要 OpenAI API 有可用额度。当前无法识别图片，请先使用示例菜单或文字菜单测试流程。",
+        "dishes": [],
+        "needsApi": True,
+    }
+    image_data_url = payload.get("imageDataUrl", "")
+    if not image_data_url.startswith("data:image/"):
+        return {
+            "summary": "没有收到可识别的菜单照片，请重新拍照或选择图片。",
+            "dishes": [],
+        }
+
+    system = (
+        "You are helping Chinese-speaking people in Australia understand a restaurant menu photo. "
+        "Read visible menu items from the image. Explain each item in simple Chinese, including taste, likely ingredients, "
+        "allergen/diet cautions, whether it may be spicy, and whether it is suitable for older parents or children. "
+        "Return only valid JSON. Do not invent prices or dishes that are not visible."
+    )
+    user = json.dumps(
+        {
+            "restaurantName": payload.get("restaurantName", ""),
+            "specialNotes": payload.get("specialNotes", ""),
+            "required_json_shape": {
+                "summary": "short Chinese overview of the menu photo and any uncertainty",
+                "dishes": [
+                    {
+                        "id": "string id",
+                        "name_en": "dish name as seen, or best readable English name",
+                        "name_zh": "simple Chinese name",
+                        "description_zh": "plain Chinese explanation, taste, ingredients, caution",
+                        "tags": ["安全/偏辣/海鲜/含奶/适合小孩/适合老人 etc"],
+                    }
+                ],
+            },
+        },
+        ensure_ascii=False,
+    )
+    data = call_openai_vision_json(system, user, image_data_url, fallback)
+    if not isinstance(data, dict) or not isinstance(data.get("dishes"), list):
+        return fallback
+    for idx, dish in enumerate(data["dishes"], start=1):
+        dish["id"] = str(dish.get("id") or idx)
+    if not data["dishes"]:
+        return {
+            "summary": "没有从照片里清楚识别出菜单菜品。请靠近一点、保持菜单平整、光线更亮后重新拍。",
+            "dishes": [],
+        }
+    return data
+
+
+def generate_card(payload):
+    fallback = fallback_card(payload)
+    system = (
+        "You create practical English booking messages and order cards for Chinese-speaking people in Australia. "
+        "The user may not understand spoken English replies, so the output must reduce live conversation. "
+        "Return only valid JSON."
+    )
+    user = json.dumps(
+        {
+            "task": "Generate an English booking message, a staff-facing order card, and a fallback card.",
+            "restaurantName": payload.get("restaurantName", ""),
+            "partySize": payload.get("partySize", ""),
+            "bookingTime": payload.get("bookingTime", ""),
+            "specialNotes": payload.get("specialNotes", ""),
+            "restrictions": payload.get("restrictions", []),
+            "selectedDishes": payload.get("dishes", []),
+            "required_json_shape": {
+                "bookingMessage": "short polite English SMS/email",
+                "orderCard": "large clear English text for restaurant staff",
+                "fallbackCard": "English text asking staff to point/write because user's English is limited",
+            },
+        },
+        ensure_ascii=False,
+    )
+    data = call_openai_json(system, user, fallback)
+    if not isinstance(data, dict) or not all(key in data for key in ["bookingMessage", "orderCard", "fallbackCard"]):
+        return fallback
+    return data
+
+
+class Handler(SimpleHTTPRequestHandler):
+    def end_headers(self):
+        self.send_header("Cache-Control", "no-store")
+        super().end_headers()
+
+    def do_GET(self):
+        if self.path == "/api/health":
+            self.respond_json({"ok": True, "service": "anxin-restaurant"})
+            return
+        super().do_GET()
+
+    def do_POST(self):
+        try:
+            length = int(self.headers.get("Content-Length", "0"))
+            payload = json.loads(self.rfile.read(length).decode("utf-8") or "{}")
+            if self.path == "/api/analyze-menu":
+                self.respond_json(analyze_menu(payload))
+            elif self.path == "/api/analyze-menu-photo":
+                self.respond_json(analyze_menu_photo(payload))
+            elif self.path == "/api/extract-menu-url":
+                self.respond_json(extract_menu_from_url(payload))
+            elif self.path == "/api/discover-menu":
+                self.respond_json(discover_menu(payload))
+            elif self.path == "/api/menu-file-data-url":
+                self.respond_json(menu_file_data_url(payload))
+            elif self.path == "/api/generate-card":
+                self.respond_json(generate_card(payload))
+            elif self.path == "/api/nearby-restaurants":
+                self.respond_json(nearby_restaurants(payload))
+            else:
+                self.send_error(404)
+        except Exception:
+            if self.path == "/api/analyze-menu":
+                self.respond_json(fallback_analyze({}))
+            elif self.path == "/api/analyze-menu-photo":
+                self.respond_json({"summary": "菜单照片识别暂时失败，请重新拍照或使用文字菜单。", "dishes": []})
+            elif self.path == "/api/extract-menu-url":
+                self.respond_json({"summary": "菜单网址提取失败，请换一个菜单页或截图识别。", "menuText": "", "dishes": []})
+            elif self.path == "/api/discover-menu":
+                self.respond_json({"summary": "自动查找菜单失败，可以换一家餐厅或到店拍菜单。", "menuText": "", "dishes": [], "menuLinks": []})
+            elif self.path == "/api/menu-file-data-url":
+                self.respond_json({"error": "fetch_failed"})
+            elif self.path == "/api/generate-card":
+                self.respond_json(fallback_card({}))
+            elif self.path == "/api/nearby-restaurants":
+                self.respond_json(fallback_restaurants(""))
+            else:
+                self.send_error(500)
+
+    def respond_json(self, data):
+        body = json.dumps(data, ensure_ascii=False).encode("utf-8")
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+
+if __name__ == "__main__":
+    load_env()
+    os.chdir(ROOT)
+    lan_ip = local_ip()
+    print(f"Serving locally: http://localhost:{PORT}")
+    print(f"Serving on your network: http://{lan_ip}:{PORT}")
+    ThreadingHTTPServer((HOST, PORT), Handler).serve_forever()

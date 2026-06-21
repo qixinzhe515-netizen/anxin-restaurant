@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="zh-Hans">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f5f5f7" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="安心点餐" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <title>餐厅安心点餐</title>
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/icon.svg" />
+    <link rel="stylesheet" href="/styles.css?v=18" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <nav class="topbar" aria-label="应用">
+        <div class="brand-mark">点</div>
+        <div>
+          <strong>餐厅安心点餐</strong>
+          <span>Restaurant Order Card · v18</span>
+        </div>
+      </nav>
+
+      <section class="hero">
+        <p class="eyebrow">给不会英文的人</p>
+        <h1>先选好，到店给服务员看。</h1>
+        <p class="subhead">找附近餐厅，看中文菜单解释，生成一张清楚的英文点餐卡。</p>
+        <div class="hero-actions" aria-label="核心功能">
+          <span>找餐厅</span>
+          <span>看菜单</span>
+          <span>出示点餐卡</span>
+        </div>
+      </section>
+
+      <section class="progress" aria-label="步骤">
+        <div class="step-dot active" data-step-dot="1">1</div>
+        <div class="step-line"></div>
+        <div class="step-dot" data-step-dot="2">2</div>
+        <div class="step-line"></div>
+        <div class="step-dot" data-step-dot="3">3</div>
+      </section>
+
+      <section class="panel active" data-step="1">
+        <div class="panel-heading">
+          <h2>先选一家餐厅</h2>
+          <p>输入区域，或先用示例跑完整流程。</p>
+        </div>
+
+        <div class="choice-grid">
+          <section class="choice-card">
+            <div class="choice-icon">⌖</div>
+            <h3>按区域找</h3>
+            <p>输入 suburb，先看附近可尝试的餐厅。</p>
+            <div class="location-row">
+              <label class="field compact">
+                <span>你在哪个区域？</span>
+                <input id="areaName" type="text" placeholder="例如: Tea Gardens" />
+              </label>
+              <button class="secondary-button small" id="nearbyButton" type="button">推荐</button>
+            </div>
+            <button class="ghost-button tight" id="locationButton" type="button">使用我当前位置</button>
+          </section>
+
+          <section class="choice-card">
+            <div class="choice-icon">▣</div>
+            <h3>拍菜单</h3>
+            <p>拍照后直接识别菜名，并给中文解释。</p>
+            <label class="photo-button full">
+              选择菜单照片
+              <input id="menuPhoto" type="file" accept="image/*" capture="environment" />
+            </label>
+          </section>
+        </div>
+
+        <div class="area-shortcuts" aria-label="常用区域">
+          <button type="button" data-area="Chatswood">Chatswood</button>
+          <button type="button" data-area="Hurstville">Hurstville</button>
+          <button type="button" data-area="Sydney CBD">Sydney CBD</button>
+          <button type="button" data-area="Parramatta">Parramatta</button>
+          <button type="button" data-area="Tea Gardens">Tea Gardens</button>
+        </div>
+
+        <div id="sourceNotice" class="source-notice hidden"></div>
+        <div id="restaurantList" class="restaurant-list"></div>
+
+        <label class="field">
+          <span>已选择餐厅</span>
+          <input id="restaurantName" type="text" placeholder="从上面选择，或输入餐厅名" />
+        </label>
+
+        <div class="grid two">
+          <label class="field">
+            <span>人数</span>
+            <input id="partySize" type="number" min="1" value="2" />
+          </label>
+          <label class="field">
+            <span>时间</span>
+            <input id="bookingTime" type="text" placeholder="例如: 今天 6:30pm" />
+          </label>
+        </div>
+
+        <label class="field menu-field">
+          <span>菜单</span>
+          <textarea id="menuText" rows="10" placeholder="系统找到的菜单会出现在这里。没有线上菜单时，可以直接拍菜单识别。"></textarea>
+        </label>
+
+        <div class="url-import-box">
+          <label class="field compact">
+            <span>官网或菜单网址</span>
+            <input id="menuUrl" type="url" placeholder="例如: https://mummsonthemyall.com.au" />
+          </label>
+          <button class="secondary-button small" id="menuUrlButton" type="button">提取菜单</button>
+        </div>
+        <div id="menuLinkList" class="menu-link-list hidden"></div>
+
+        <label class="field">
+          <span>特别要求</span>
+          <input id="specialNotes" type="text" placeholder="例如: 不要香菜，少辣，有小孩，对花生过敏" />
+        </label>
+
+        <button class="ghost-button" id="sampleButton" type="button">查看示例餐厅</button>
+        <button class="primary-button" id="analyzeButton" type="button">看懂菜单</button>
+      </section>
+
+      <section class="panel" data-step="2">
+        <div class="panel-heading">
+          <h2>看懂后再选菜</h2>
+          <p>每道菜先看中文解释、口味和注意事项，再勾选要点的菜。</p>
+        </div>
+
+        <div id="summaryBox" class="soft-box hidden"></div>
+        <div id="dishList" class="dish-list"></div>
+
+        <div class="quick-options">
+          <p>常用要求</p>
+          <div class="chip-row">
+            <label class="chip"><input type="checkbox" value="not spicy" />不要辣</label>
+            <label class="chip"><input type="checkbox" value="mild spice" />少辣</label>
+            <label class="chip"><input type="checkbox" value="no coriander" />不要香菜</label>
+            <label class="chip"><input type="checkbox" value="kids friendly" />有小孩</label>
+            <label class="chip"><input type="checkbox" value="no peanuts" />不要花生</label>
+          </div>
+        </div>
+
+        <div class="button-row">
+          <button class="secondary-button" data-back="1" type="button">返回</button>
+          <button class="primary-button" id="cardButton" type="button">生成点餐卡</button>
+        </div>
+      </section>
+
+      <section class="panel" data-step="3">
+        <div class="panel-heading">
+          <h2>可以直接使用</h2>
+          <p>预约信息可以复制发送。到店后把点餐卡给服务员看。</p>
+        </div>
+
+        <article class="result-card">
+          <div class="result-title">
+            <h3>预约短信 / 邮件</h3>
+            <button class="icon-button" data-copy="bookingMessage" type="button" aria-label="复制预约信息">复制</button>
+          </div>
+          <pre id="bookingMessage"></pre>
+        </article>
+
+        <article class="show-card">
+          <p class="show-label">Show this to staff</p>
+          <h3>My English is limited. Please read this order card.</h3>
+          <pre id="orderCard"></pre>
+        </article>
+
+        <article class="result-card">
+          <div class="result-title">
+            <h3>听不懂时给对方看</h3>
+            <button class="icon-button" data-copy="fallbackCard" type="button" aria-label="复制兜底卡">复制</button>
+          </div>
+          <pre id="fallbackCard"></pre>
+        </article>
+
+        <div class="button-row">
+          <button class="secondary-button" data-back="2" type="button">返回修改</button>
+          <button class="primary-button" id="saveButton" type="button">保存到记录</button>
+        </div>
+      </section>
+
+      <section class="history">
+        <div class="history-heading">
+          <h2>最近记录</h2>
+          <button class="text-button" id="clearHistory" type="button">清空</button>
+        </div>
+        <div id="historyList" class="history-list"></div>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <script src="/app.js?v=18" type="module"></script>
+  </body>
+</html>

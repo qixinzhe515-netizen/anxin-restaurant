@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: anxin-restaurant
+    env: python
+    plan: free
+    buildCommand: ""
+    startCommand: python3 server.py
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        value: 10000
