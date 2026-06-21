@@ -6,6 +6,7 @@ const state = {
   restaurants: [],
   selectedRestaurantId: "",
   menuLinks: [],
+  restaurantSearchId: 0,
 };
 
 const sampleMenu = `Burrata with heirloom tomatoes and basil oil
@@ -86,6 +87,23 @@ function formPayload() {
     menuText: $("#menuText").value.trim(),
     specialNotes: $("#specialNotes").value.trim(),
   };
+}
+
+function clearRestaurantSelection() {
+  state.selectedRestaurantId = "";
+  state.dishes = [];
+  state.selectedIds = new Set();
+  state.generated = null;
+  $("#restaurantName").value = "";
+  $("#menuText").value = "";
+  $("#menuUrl").value = "";
+  $("#summaryBox").textContent = "";
+  $("#summaryBox").classList.add("hidden");
+  $("#dishList").innerHTML = "";
+  $("#bookingMessage").textContent = "";
+  $("#orderCard").textContent = "";
+  $("#fallbackCard").textContent = "";
+  renderMenuLinks([]);
 }
 
 function renderRestaurants(restaurants = demoRestaurants, notice = "") {
@@ -371,6 +389,100 @@ const teaGardensRestaurants = [
   },
 ];
 
+const areaDemoMenus = {
+  bistro: sampleMenu,
+  cafe: `Flat white
+Long black
+Avocado toast with poached eggs
+Smoked salmon bagel
+Chicken schnitzel sandwich
+Mushroom omelette
+Banana bread
+Kids pancakes`,
+  italian: `Garlic bread
+Caesar salad
+Margherita pizza
+Pepperoni pizza
+Seafood linguine
+Creamy mushroom fettuccine
+Chicken parmigiana
+Panna cotta`,
+  pub: `Fish and chips
+Chicken parmigiana
+Beef burger with chips
+Caesar salad with grilled chicken
+Salt and pepper calamari
+Steak sandwich
+Sticky date pudding`,
+  thai: `Chicken pad thai
+Green curry with beef
+Massaman lamb curry
+Tom yum prawns
+Cashew nut stir fry
+Coconut rice
+Mango sticky rice`,
+};
+
+function titleCaseArea(areaName = "") {
+  return areaName
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ") || "Sydney CBD";
+}
+
+function staticDemoRestaurantsForArea(areaName = "") {
+  const area = titleCaseArea(areaName);
+  return [
+    {
+      id: `demo-${area.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-bistro`,
+      name: `${area} Local Bistro`,
+      area,
+      rating: "4.6",
+      note: "适合第一次尝试本地西餐，菜单不复杂，有鱼、虾、披萨和甜点。",
+      tags: ["适合老人", "可点安全菜", "英文压力低"],
+      menu: areaDemoMenus.bistro,
+    },
+    {
+      id: `demo-${area.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-cafe`,
+      name: `${area} Garden Cafe`,
+      area,
+      rating: "4.5",
+      note: "适合早午餐和咖啡，点餐卡很有用，现场不用解释太多。",
+      tags: ["早午餐", "适合父母", "儿童友好"],
+      menu: areaDemoMenus.cafe,
+    },
+    {
+      id: `demo-${area.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-italian`,
+      name: `${area} Laneway Italian`,
+      area,
+      rating: "4.4",
+      note: "适合家庭聚餐，披萨和意面容易提前选好。",
+      tags: ["家庭聚餐", "披萨意面", "不容易踩雷"],
+      menu: areaDemoMenus.italian,
+    },
+    {
+      id: `demo-${area.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-pub`,
+      name: `${area} Family Pub`,
+      area,
+      rating: "4.3",
+      note: "澳洲常见酒吧餐，份量大，适合想体验本地餐的人。",
+      tags: ["澳洲本地", "份量大", "可点安全菜"],
+      menu: areaDemoMenus.pub,
+    },
+    {
+      id: `demo-${area.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-thai`,
+      name: `${area} Thai Kitchen`,
+      area,
+      rating: "4.4",
+      note: "泰餐选择多，但要提前说明辣度。",
+      tags: ["泰餐", "需确认辣度", "适合分享"],
+      menu: areaDemoMenus.thai,
+    },
+  ];
+}
+
 function localKnownMenuCache(payload = {}) {
   const key = `${payload.restaurantName || ""} ${payload.areaName || ""} ${payload.websiteUri || ""} ${payload.url || ""}`.toLowerCase();
   if (!key.includes("mumm") && !key.includes("mummsonthemyall")) return null;
@@ -400,8 +512,8 @@ function localNearbyRestaurants(payload = {}) {
   }
   return {
     source: "static_demo",
-    message: "当前是公网静态内测版：先显示示例餐厅。接入 Render/Google Places 后会换成真实附近餐厅。",
-    restaurants: demoRestaurants,
+    message: `当前是公网静态内测版：先显示 ${titleCaseArea(area)} 示例餐厅。接入 Render/Google Places 后会换成真实附近餐厅。`,
+    restaurants: staticDemoRestaurantsForArea(area),
   };
 }
 
@@ -444,16 +556,21 @@ function localApi(url, payload = {}) {
 }
 
 async function postJson(url, payload) {
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), 6000);
   try {
     const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
+      signal: controller.signal,
     });
     if (!response.ok) throw new Error("Request failed");
     return response.json();
   } catch (error) {
     return localApi(url, payload);
+  } finally {
+    window.clearTimeout(timeoutId);
   }
 }
 
@@ -695,21 +812,31 @@ $("#menuUrlButton").addEventListener("click", async () => {
 });
 
 async function loadNearbyRestaurants(payload, loadingText = "正在查找...") {
+  const searchId = state.restaurantSearchId + 1;
+  state.restaurantSearchId = searchId;
+  state.menuDiscoveryId += 1;
+  clearRestaurantSelection();
+  const requestedArea = payload.areaName || "当前位置";
+  renderRestaurants([], `正在查找「${requestedArea}」附近餐厅...`);
   const button = $("#nearbyButton");
   const oldText = button.textContent;
   button.disabled = true;
   button.textContent = loadingText;
   try {
     const data = await postJson("/api/nearby-restaurants", payload);
+    if (searchId !== state.restaurantSearchId) return;
     renderRestaurants(data.restaurants || demoRestaurants, data.message || "");
-    const isRealSource = data.source === "google_places" || data.source === "openstreetmap" || data.source === "known_local";
+    const isRealSource = data.source === "google_places" || data.source === "openstreetmap" || data.source === "known_local" || data.source === "static_known";
     toast(isRealSource ? "已找到真实附近餐厅" : "已显示示例餐厅");
   } catch {
+    if (searchId !== state.restaurantSearchId) return;
     renderRestaurants(demoRestaurants, "附近餐厅暂时获取失败，先显示示例餐厅。");
     toast("附近餐厅获取失败");
   } finally {
-    button.disabled = false;
-    button.textContent = oldText;
+    if (searchId === state.restaurantSearchId) {
+      button.disabled = false;
+      button.textContent = oldText;
+    }
   }
 }
 
@@ -838,4 +965,4 @@ if ("serviceWorker" in navigator) {
 }
 
 renderHistory();
-renderRestaurants(demoRestaurants, "v19 已加载：公网静态内测可用，后端部署后会自动升级真实地图和 AI 识别。");
+renderRestaurants(demoRestaurants, "v20 已加载：换区域会清空旧餐厅，避免上一次推荐卡住。");
