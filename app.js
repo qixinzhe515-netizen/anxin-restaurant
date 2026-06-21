@@ -362,7 +362,7 @@ function isUsefulLocalMenuLine(line = "") {
   const digits = (line.match(/\d/g) || []).length;
   const words = line.match(/[a-z]+/gi) || [];
   const shortWords = words.filter((word) => word.length <= 2);
-  const foodWords = /\b(panna cotta|tiramisu|cake|tart|pudding|crumble|gelato|ice cream|sorbet|dessert|pistachio|chocolate|vanilla|caramel|berry|berries|lemon|apple|pear|fig|honey|oyster|prawn|shrimp|fish|chips|gravy|fresh catch|catch of the day|calamari|squid|salmon|barramundi|seafood|crab|mussel|scallop|steak|beef|lamb|chicken|pork|duck|hamburger|burger|sandwich|schnitzel|parmigiana|nugget|nuggets|potato scallop|hash brown|corn jack|pluto pup|chiko roll|battered sav|spring roll|dim sim|pineapple fritter|fish cocktail|fish cocktails|prawn cutlet|prawn cutlets|seafood stick|fish cake|prawn twister|tinny special|boatload special|meal deal|pizza|pasta|linguine|fettuccine|risotto|gnocchi|salad|soup|bread|toast|egg|eggs|omelette|benedict|pancake|waffle|bagel|avocado|mushroom|cheese|bao|bun|dumpling|wonton|noodle|noodles|ramen|gyoza|karaage|teriyaki|don|bibimbap|bulgogi|kimchi|fried chicken|japchae|pad thai|curry|tom yum|papaya salad|sticky rice|mango)\b/i;
+  const foodWords = /\b(panna cotta|tiramisu|cake|tart|pudding|crumble|gelato|ice cream|sorbet|dessert|pistachio|chocolate|vanilla|caramel|berry|berries|lemon|apple|pear|fig|honey|oyster|prawn|shrimp|fish|chips|gravy|fresh catch|catch of the day|calamari|squid|salmon|barramundi|seafood|crab|mussel|scallop|steak|beef|lamb|chicken|pork|duck|hamburger|burger|sandwich|schnitzel|parmigiana|nugget|nuggets|poke bowl|bangers|mash|nachos|burrito|bolognese|lava cake|pecan pie|seasonal vegetables|house salad|potato scallop|hash brown|corn jack|pluto pup|chiko roll|battered sav|spring roll|dim sim|pineapple fritter|fish cocktail|fish cocktails|prawn cutlet|prawn cutlets|seafood stick|fish cake|prawn twister|tinny special|boatload special|meal deal|pizza|pasta|linguine|fettuccine|risotto|gnocchi|salad|soup|bread|toast|egg|eggs|omelette|benedict|pancake|waffle|bagel|avocado|mushroom|cheese|bao|bun|dumpling|wonton|noodle|noodles|ramen|gyoza|karaage|teriyaki|don|bibimbap|bulgogi|kimchi|fried chicken|japchae|pad thai|curry|tom yum|papaya salad|sticky rice|mango)\b/i;
   if (line.length < 5 || line.length > 100) return false;
   if (letters < 4) return false;
   if (/^[^a-zA-Z\u4e00-\u9fff]+$/.test(line)) return false;
@@ -441,7 +441,7 @@ function describeLocalDish(name) {
       confidence: "高",
     };
   }
-  if (lower.includes("fish and chips")) {
+  if (lower.includes("fish & chips") || lower.includes("fish and chips")) {
     return {
       name_zh: "炸鱼薯条",
       description_zh: "澳洲常见安全菜，炸鱼配薯条，口味直接、份量通常不小。适合第一次尝试本地餐或带小孩的人；注意是油炸。",
@@ -473,6 +473,149 @@ function describeLocalDish(name) {
       cautions: ["可能含麸质", "配方需确认"],
       tags: ["酱汁", "配薯条"],
       confidence: "中",
+    };
+  }
+  if (lower.includes("smoked chicken wings")) {
+    return {
+      name_zh: "烟熏鸡翅",
+      description_zh: "烟熏鸡翅通常是腌制后烟熏/烤制，肉香明显，适合分享；口味可能偏咸。",
+      category: "前菜/分享",
+      taste: ["烟熏味", "咸香"],
+      cautions: ["可能偏咸", "酱料需确认"],
+      tags: ["鸡肉", "适合分享"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("poke bowl")) {
+    return {
+      name_zh: "Poke 碗饭",
+      description_zh: "Poke 碗饭通常有米饭、蔬菜、蛋白质和酱汁，偏清爽。具体鱼/肉和酱料需要看当天菜单。",
+      category: "主食/碗饭",
+      taste: ["清爽", "可能偏酸"],
+      cautions: ["配料和酱汁需确认"],
+      tags: ["碗饭", "相对清爽", "需确认配料"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("asian chicken salad")) {
+    return {
+      name_zh: "亚洲风味鸡肉沙拉",
+      description_zh: "通常有蔬菜、鸡肉和偏甜/酸的酱汁。想清淡可以要求 dressing on the side。",
+      category: "沙拉/主菜",
+      taste: ["清爽", "可能酸甜"],
+      cautions: ["酱料需确认", "可能微辣"],
+      tags: ["鸡肉", "沙拉", "可酱汁分开"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("bangers") && lower.includes("mash")) {
+    return {
+      name_zh: "香肠土豆泥",
+      description_zh: "英澳 pub 常见菜，香肠配土豆泥和肉汁。通常份量扎实；可能含猪肉和奶制品。",
+      category: "主菜/pub food",
+      taste: ["肉香", "咸香"],
+      cautions: ["可能含猪肉", "可能含奶制品"],
+      tags: ["pub food", "香肠", "份量扎实"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("nachos")) {
+    return {
+      name_zh: "牛肉玉米片",
+      description_zh: "玉米片配牛肉、芝士、酱和酸奶油等，适合分享。可能偏咸或微辣。",
+      category: "主菜/分享",
+      taste: ["咸香", "可能辣"],
+      cautions: ["可能含奶制品", "酱料辣度需确认"],
+      tags: ["适合分享", "含芝士", "可能微辣"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("burrito")) {
+    return {
+      name_zh: "鱼肉卷饼",
+      description_zh: "卷饼类主食，里面通常有鱼/肉、米饭或蔬菜和酱。不能吃辣要确认 sauce not spicy。",
+      category: "主食",
+      taste: ["咸香", "可能辣"],
+      cautions: ["可能含麸质", "酱料辣度需确认"],
+      tags: ["卷饼", "主食", "需确认辣度"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("bolognese")) {
+    return {
+      name_zh: lower.includes("linguine") ? "肉酱扁意面" : "肉酱意面",
+      description_zh: "番茄肉酱意面，口味比较熟悉，适合不想冒险的人。通常含麸质，可能撒芝士。",
+      category: "意面/主食",
+      taste: ["番茄味", "肉酱味"],
+      cautions: ["含麸质", "可能含奶制品"],
+      tags: ["意面", "肉酱", "比较安全"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("chocolate lava cake")) {
+    return {
+      name_zh: "巧克力熔岩蛋糕",
+      description_zh: "巧克力味浓、甜度高的甜点，通常适合饭后分享。",
+      category: "甜点",
+      taste: ["甜", "巧克力味"],
+      cautions: ["可能含奶制品", "可能含麸质"],
+      tags: ["甜点", "巧克力", "偏甜"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("pecan pie")) {
+    return {
+      name_zh: "山核桃派",
+      description_zh: "坚果香明显，通常很甜。坚果过敏者不要点。",
+      category: "甜点",
+      taste: ["甜", "坚果香"],
+      cautions: ["含坚果", "可能含奶制品", "可能含麸质"],
+      tags: ["甜点", "含坚果", "偏甜"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("seasonal vegetables")) {
+    return {
+      name_zh: "时令蔬菜",
+      description_zh: "蔬菜配菜，适合想吃清淡一点或给老人搭配主菜。",
+      category: "配菜",
+      taste: ["清淡"],
+      cautions: ["调味需确认"],
+      tags: ["蔬菜", "配菜", "清淡"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("mashed potato")) {
+    return {
+      name_zh: "土豆泥配肉汁",
+      description_zh: "口感软，适合老人和小孩；可能含奶制品。",
+      category: "配菜",
+      taste: ["咸香", "口感软"],
+      cautions: ["可能含奶制品", "肉汁配方需确认"],
+      tags: ["配菜", "口感软"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("veggie supreme pizza")) {
+    return {
+      name_zh: "蔬菜披萨",
+      description_zh: "蔬菜披萨，通常有芝士和多种蔬菜，适合不想吃肉的人；仍可能含奶制品和麸质。",
+      category: "披萨/主食",
+      taste: ["咸香", "芝士味"],
+      cautions: ["含奶制品", "含麸质"],
+      tags: ["披萨", "蔬菜"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("garlic prawn pizza")) {
+    return {
+      name_zh: "蒜香虾披萨",
+      description_zh: "虾和蒜香风味披萨，适合喜欢海鲜的人；海鲜过敏者不要点。",
+      category: "披萨/主食",
+      taste: ["蒜香", "鲜味", "咸香"],
+      cautions: ["海鲜过敏者避免", "含奶制品", "含麸质"],
+      tags: ["披萨", "海鲜", "蒜香"],
+      confidence: "高",
     };
   }
   if (lower.includes("chicken nuggets")) {
@@ -526,6 +669,17 @@ function describeLocalDish(name) {
     return {
       name_zh: "薯条",
       description_zh: "外带店最常见配菜，油炸土豆条，口味咸香。适合小孩和分享；注意偏油。",
+      category: "配菜/外带",
+      taste: ["咸香", "油炸"],
+      cautions: ["油炸", "可能和海鲜同油锅"],
+      tags: ["薯条", "配菜", "适合分享"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("bowl of chips")) {
+    return {
+      name_zh: "一碗薯条",
+      description_zh: "一份薯条，适合作为配菜或分享；注意偏油，可能和海鲜同油锅。",
       category: "配菜/外带",
       taste: ["咸香", "油炸"],
       cautions: ["油炸", "可能和海鲜同油锅"],
@@ -601,7 +755,7 @@ function describeLocalDish(name) {
   }
   if (lower.includes("calamari") || lower.includes("salt and pepper squid")) {
     return {
-      name_zh: lower.includes("seven pieces") ? "七块鱿鱼配薯条" : lower.includes("salt and pepper") ? "椒盐鱿鱼" : "鱿鱼圈",
+      name_zh: lower.includes("fritti") ? "意式炸鱿鱼" : lower.includes("cone") ? "招牌鱿鱼杯" : lower.includes("seven pieces") ? "七块鱿鱼配薯条" : lower.includes("salt and pepper") ? "椒盐鱿鱼" : "鱿鱼圈",
       description_zh: "鱿鱼类炸物，口味咸香，适合分享。海鲜过敏者不要点；有时会比较有嚼劲。",
       category: "海鲜小吃/分享",
       taste: ["咸香", "油炸"],
@@ -618,6 +772,17 @@ function describeLocalDish(name) {
       taste: ["鲜味", "相对清淡"],
       cautions: ["鱼类过敏者避免"],
       tags: ["鱼类", "相对清淡"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("fish cone")) {
+    return {
+      name_zh: "炸鱼杯",
+      description_zh: "Tea Gardens Hotel 的炸鱼杯，通常是外带/分享形式的炸鱼。鱼类过敏者不要点。",
+      category: "海鲜小吃/分享",
+      taste: ["咸香", "油炸"],
+      cautions: ["鱼类过敏者避免", "可能含麸质"],
+      tags: ["炸鱼", "适合分享"],
       confidence: "高",
     };
   }
@@ -1087,6 +1252,9 @@ const teaGardensRestaurants = [
     tags: ["澳洲酒吧餐", "可查官网菜单"],
     websiteUri: "https://teagardenshotel.com/",
     hasMenu: true,
+    menuSource: "官网 Food + Drinks 菜单",
+    menuVerified: true,
+    menuText: teaGardensHotelMenuText(),
   },
   {
     id: "known-mumms-seafood",
@@ -1162,6 +1330,44 @@ function hookNCookMenuText() {
     "Boatload special",
     "Meal deal for two",
     "Meal deal for four",
+  ].join("\n");
+}
+
+function teaGardensHotelMenuText() {
+  return [
+    "Garlic Bread",
+    "Smoked Chicken Wings",
+    "Calamari Fritti",
+    "Tea Gardens Asian Chicken Salad",
+    "Poke Bowl",
+    "Caesar Salad",
+    "TGH Beef Burger",
+    "Grilled Chicken Burger",
+    "Crispy Fish Burger",
+    "Chicken Parmigiana",
+    "Fish & Chips",
+    "Tea Gardens Famous Calamari Cone",
+    "Tea Gardens Fish Cone",
+    "Meat lovers pizza",
+    "Hawaiian pizza",
+    "Bangers & Mash",
+    "Fish Burrito",
+    "Supreme Beef Nachos",
+    "Bolognese Linguine",
+    "Margherita pizza",
+    "Pepperoni pizza",
+    "Veggie Supreme pizza",
+    "Garlic Prawn pizza",
+    "Chicken Nuggets",
+    "Grilled Chicken Breast",
+    "Battered Fish",
+    "Bolognese Pasta",
+    "Chocolate Lava Cake",
+    "Pecan Pie",
+    "Bowl of Chips",
+    "Seasonal Vegetables",
+    "Tea Gardens House Salad",
+    "Mashed Potato & Gravy",
   ].join("\n");
 }
 
@@ -1886,4 +2092,4 @@ if ("serviceWorker" in navigator) {
 }
 
 renderHistory();
-renderRestaurants(demoRestaurants, "v27 已加载：已加入 Hook N Cook 的 Google Maps 菜单照片来源，并补齐外带店常见菜解释。");
+renderRestaurants(demoRestaurants, "v28 已加载：Tea Gardens Hotel 官网菜单和 Hook N Cook 地图照片菜单已入库，并标明来源。");

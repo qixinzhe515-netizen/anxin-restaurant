@@ -131,6 +131,16 @@ def infer_menu_details(lower, item, tags):
         taste.extend(["咸香", "油炸"])
         cautions.extend(["鱼类过敏者避免", "可能含麸质"])
         confidence = "高"
+    elif "bowl of chips" in lower:
+        category = "配菜/外带"
+        taste.extend(["咸香", "油炸"])
+        cautions.extend(["油炸", "可能和海鲜同油锅"])
+        confidence = "高"
+    elif "mashed potato" in lower:
+        category = "配菜"
+        taste.extend(["咸香", "口感软"])
+        cautions.extend(["可能含奶制品", "肉汁配方需确认"])
+        confidence = "高"
     elif "gravy" in lower:
         category = "酱汁/配料"
         taste.extend(["咸香", "浓郁"])
@@ -140,6 +150,48 @@ def infer_menu_details(lower, item, tags):
         category = "小吃/快餐"
         taste.extend(["咸香", "油炸"])
         cautions.extend(["可能含麸质", "油炸"])
+        confidence = "高"
+    elif "poke bowl" in lower:
+        category = "主食/碗饭"
+        taste.extend(["清爽", "可能偏酸"])
+        cautions.extend(["配料和酱汁需确认"])
+        confidence = "高"
+    elif "bangers" in lower and "mash" in lower:
+        category = "主菜/pub food"
+        taste.extend(["肉香", "咸香"])
+        cautions.extend(["可能含猪肉", "可能含奶制品"])
+        confidence = "高"
+    elif "nachos" in lower:
+        category = "主菜/分享"
+        taste.extend(["咸香", "可能辣"])
+        cautions.extend(["可能含奶制品", "酱料辣度需确认"])
+        confidence = "高"
+    elif "burrito" in lower:
+        category = "主食"
+        taste.extend(["咸香", "可能辣"])
+        cautions.extend(["可能含麸质", "酱料辣度需确认"])
+        confidence = "高"
+    elif "chicken parmigiana" in lower:
+        category = "主菜/pub food"
+        taste.extend(["咸香", "芝士味"])
+        cautions.extend(["含奶制品", "可能含麸质"])
+        confidence = "高"
+    elif "grilled chicken breast" in lower:
+        category = "主菜/鸡肉"
+        taste.extend(["咸香", "相对清淡"])
+        cautions.extend(["酱汁需确认"])
+        confidence = "高"
+    elif "bolognese" in lower:
+        category = "意面/主食"
+        taste.extend(["番茄味", "肉酱味"])
+        cautions.extend(["含麸质", "可能含奶制品"])
+        confidence = "高"
+    elif "chocolate lava cake" in lower or "pecan pie" in lower:
+        category = "甜点"
+        taste.extend(["甜", "浓郁"])
+        cautions.extend(["可能含奶制品", "可能含麸质"])
+        if "pecan" in lower:
+            cautions.append("含坚果")
         confidence = "高"
     elif any(word in lower for word in ["hamburger", "works burger", "fish burger", "chicken burger", "veggie burger", "steak sandwich"]):
         category = "主食/快餐"
@@ -275,7 +327,7 @@ def infer_menu_details(lower, item, tags):
         cautions.append("含椰奶")
     elif any(word in lower for word in ["flat white", "long black", "latte", "coffee", "juice"]):
         category = "饮品"
-    elif any(word in lower for word in ["toast", "egg", "omelette", "pancake", "bagel"]):
+    elif re.search(r"\b(toast|egg|eggs|omelette|pancake|bagel)\b", lower):
         category = "早午餐"
     elif any(word in lower for word in ["salad", "bread"]):
         category = "前菜/配菜"
@@ -321,7 +373,7 @@ FOOD_WORDS = re.compile(
     r"pistachio|chocolate|vanilla|caramel|berry|berries|lemon|apple|pear|fig|honey|"
     r"oyster|prawn|shrimp|fish|chips|gravy|fresh catch|catch of the day|calamari|squid|salmon|barramundi|seafood|crab|mussel|scallop|"
     r"steak|beef|lamb|chicken|pork|duck|hamburger|burger|sandwich|schnitzel|parmigiana|"
-    r"nugget|nuggets|potato scallop|hash brown|corn jack|pluto pup|chiko roll|battered sav|spring roll|dim sim|"
+    r"nugget|nuggets|poke bowl|bangers|mash|nachos|burrito|bolognese|lava cake|pecan pie|potato scallop|hash brown|corn jack|pluto pup|chiko roll|battered sav|spring roll|dim sim|"
     r"pineapple fritter|fish cocktail|fish cocktails|prawn cutlet|prawn cutlets|seafood stick|fish cake|prawn twister|tinny special|boatload special|meal deal|"
     r"pizza|pasta|linguine|fettuccine|risotto|gnocchi|salad|soup|bread|toast|"
     r"egg|eggs|omelette|benedict|pancake|waffle|bagel|avocado|mushroom|cheese|pistachio|"
@@ -756,6 +808,13 @@ def menu_file_data_url(payload):
 
 def translate_menu_name(lower, original):
     rules = [
+        ("mashed potato & gravy", "土豆泥配肉汁"),
+        ("bowl of chips", "一碗薯条"),
+        ("fish & chips", "炸鱼薯条"),
+        ("tea gardens famous calamari cone", "Tea Gardens 招牌鱿鱼杯"),
+        ("tea gardens fish cone", "Tea Gardens 炸鱼杯"),
+        ("veggie supreme pizza", "蔬菜披萨"),
+        ("garlic prawn pizza", "蒜香虾披萨"),
         ("flat white", "澳式奶咖 Flat White"),
         ("long black", "黑咖啡 Long Black"),
         ("avocado toast", "牛油果吐司"),
@@ -833,17 +892,47 @@ def translate_menu_name(lower, original):
         ("burrata", "布拉塔奶酪"),
         ("king prawns", "大虾"),
         ("margherita pizza", "玛格丽特披萨"),
+        ("meat lovers pizza", "肉食披萨"),
+        ("hawaiian pizza", "夏威夷披萨"),
+        ("veggie supreme pizza", "蔬菜披萨"),
+        ("garlic prawn pizza", "蒜香虾披萨"),
         ("nduja", "辣味意式香肠酱"),
         ("lamb shoulder", "慢煮羊肩"),
         ("barramundi", "澳洲盲曹鱼"),
         ("rocket", "芝麻菜沙拉"),
         ("tiramisu", "提拉米苏"),
         ("garlic bread", "蒜香面包"),
+        ("smoked chicken wings", "烟熏鸡翅"),
+        ("calamari fritti", "意式炸鱿鱼"),
+        ("asian chicken salad", "亚洲风味鸡肉沙拉"),
+        ("poke bowl", "Poke 碗饭"),
         ("caesar salad", "凯撒沙拉"),
+        ("tgh beef burger", "Tea Gardens 牛肉汉堡"),
+        ("grilled chicken burger", "烤鸡汉堡"),
+        ("crispy fish burger", "脆炸鱼汉堡"),
+        ("tea gardens famous calamari cone", "Tea Gardens 招牌鱿鱼杯"),
+        ("tea gardens fish cone", "Tea Gardens 炸鱼杯"),
+        ("meat lovers pizza", "肉食披萨"),
+        ("hawaiian pizza", "夏威夷披萨"),
+        ("bangers", "香肠土豆泥"),
+        ("fish burrito", "鱼肉卷饼"),
+        ("supreme beef nachos", "牛肉玉米片"),
+        ("bolognese linguine", "肉酱扁意面"),
         ("pepperoni pizza", "辣香肠披萨"),
         ("seafood linguine", "海鲜扁意面"),
         ("fettuccine", "宽面"),
         ("chicken parmigiana", "芝士番茄鸡排"),
+        ("grilled chicken breast", "烤鸡胸肉"),
+        ("battered fish", "炸鱼"),
+        ("bolognese pasta", "肉酱意面"),
+        ("chocolate lava cake", "巧克力熔岩蛋糕"),
+        ("pecan pie", "山核桃派"),
+        ("bowl of chips", "一碗薯条"),
+        ("seasonal vegetables", "时令蔬菜"),
+        ("house salad", "店家沙拉"),
+        ("mashed potato & gravy", "土豆泥配肉汁"),
+        ("bowl of chips", "一碗薯条"),
+        ("mashed potato", "土豆泥"),
         ("panna cotta", "奶冻"),
     ]
     for key, value in rules:
@@ -1033,9 +1122,45 @@ def describe_menu_item(lower, original):
     elif "garlic bread" in lower:
         description = "蒜香面包，常作为前菜，味道明显有蒜，适合分享。"
         tags = ["前菜", "有蒜", "适合分享"]
+    elif "smoked chicken wings" in lower:
+        description = "烟熏鸡翅，通常是腌制后烟熏/烤制，肉香明显。适合分享；口味可能偏咸。"
+        tags = ["鸡肉", "适合分享", "可能偏咸"]
+    elif "calamari fritti" in lower or "calamari cone" in lower or "fish cone" in lower:
+        description = "pub 常见炸海鲜小吃，通常配酱和柠檬，适合分享。海鲜过敏者不要点。"
+        tags = ["海鲜", "油炸", "适合分享"]
+    elif "asian chicken salad" in lower:
+        description = "亚洲风味鸡肉沙拉，通常有蔬菜、鸡肉和偏甜/酸的酱汁。想清淡可以要求 dressing on the side。"
+        tags = ["鸡肉", "沙拉", "可酱汁分开"]
+    elif "poke bowl" in lower:
+        description = "Poke 碗饭通常有米饭、蔬菜、蛋白质和酱汁，偏清爽。具体鱼/肉和酱料需要看当天菜单。"
+        tags = ["碗饭", "相对清爽", "需确认配料"]
     elif "caesar" in lower:
         description = "凯撒沙拉，常有生菜、芝士、面包丁和凯撒酱，有时会加鸡肉或培根。"
         tags = ["沙拉", "可能含培根", "可作配菜"]
+    elif "bangers" in lower and "mash" in lower:
+        description = "英澳 pub 常见菜，香肠配土豆泥和肉汁。通常份量扎实；可能含猪肉和奶制品。"
+        tags = ["pub food", "香肠", "份量扎实"]
+    elif "nachos" in lower:
+        description = "玉米片配牛肉、芝士、酱和酸奶油等，适合分享。可能偏咸或微辣。"
+        tags = ["适合分享", "含芝士", "可能微辣"]
+    elif "burrito" in lower:
+        description = "卷饼类主食，里面通常有鱼/肉、米饭或蔬菜和酱。不能吃辣要确认 sauce not spicy。"
+        tags = ["卷饼", "主食", "需确认辣度"]
+    elif "bolognese" in lower:
+        description = "番茄肉酱意面，口味比较熟悉，适合不想冒险的人。通常含麸质，可能撒芝士。"
+        tags = ["意面", "肉酱", "比较安全"]
+    elif "chocolate lava cake" in lower:
+        description = "巧克力熔岩蛋糕，甜度高、巧克力味浓，通常适合饭后分享。"
+        tags = ["甜点", "巧克力", "偏甜"]
+    elif "pecan pie" in lower:
+        description = "山核桃派，坚果香明显，通常很甜。坚果过敏者不要点。"
+        tags = ["甜点", "含坚果", "偏甜"]
+    elif "seasonal vegetables" in lower:
+        description = "时令蔬菜配菜，适合想吃清淡一点或给老人搭配主菜。"
+        tags = ["蔬菜", "配菜", "清淡"]
+    elif "mashed potato" in lower:
+        description = "土豆泥配肉汁，口感软，适合老人和小孩；可能含奶制品。"
+        tags = ["配菜", "口感软", "可能含奶"]
     elif "pepperoni" in lower:
         description = "辣香肠披萨，通常不是很辣，但偏咸、偏油，含猪肉。"
         tags = ["披萨", "猪肉", "偏咸"]
@@ -1378,8 +1503,43 @@ def known_restaurants(area_name=""):
         "Meal deal for two",
         "Meal deal for four",
     ])
+    tea_gardens_hotel_menu = "\n".join([
+        "Garlic Bread",
+        "Smoked Chicken Wings",
+        "Calamari Fritti",
+        "Tea Gardens Asian Chicken Salad",
+        "Poke Bowl",
+        "Caesar Salad",
+        "TGH Beef Burger",
+        "Grilled Chicken Burger",
+        "Crispy Fish Burger",
+        "Chicken Parmigiana",
+        "Fish & Chips",
+        "Tea Gardens Famous Calamari Cone",
+        "Tea Gardens Fish Cone",
+        "Meat lovers pizza",
+        "Hawaiian pizza",
+        "Bangers & Mash",
+        "Fish Burrito",
+        "Supreme Beef Nachos",
+        "Bolognese Linguine",
+        "Margherita pizza",
+        "Pepperoni pizza",
+        "Veggie Supreme pizza",
+        "Garlic Prawn pizza",
+        "Chicken Nuggets",
+        "Grilled Chicken Breast",
+        "Battered Fish",
+        "Bolognese Pasta",
+        "Chocolate Lava Cake",
+        "Pecan Pie",
+        "Bowl of Chips",
+        "Seasonal Vegetables",
+        "Tea Gardens House Salad",
+        "Mashed Potato & Gravy",
+    ])
     restaurants = [
-        ("tea-gardens-hotel", "Tea Gardens Hotel", "Cnr Maxwell Street & Marine Drive, Tea Gardens", "澳洲酒吧餐，有官网", ["澳洲酒吧餐", "可查官网菜单"], "https://teagardenshotel.com/", "", "", False),
+        ("tea-gardens-hotel", "Tea Gardens Hotel", "Cnr Maxwell Street & Marine Drive, Tea Gardens", "澳洲酒吧餐，有官网菜单，适合体验本地 pub food。", ["澳洲酒吧餐", "官网菜单", "适合家庭"], "https://teagardenshotel.com/food-drinks", tea_gardens_hotel_menu, "官网 Food + Drinks 菜单", True),
         ("tillermans", "Tillermans Cafe - Restaurant", "Tea Gardens", "咖啡和餐厅，适合轻食", ["咖啡/轻食", "餐厅"], "", "", "", False),
         ("waterfront-bistro", "Waterfront Restaurant & Bistro", "Cnr Maxwell Street & Marine Drive, Tea Gardens", "海边餐厅/小酒馆类型", ["Bistro", "本地餐厅"], "", "", "", False),
         ("hook-n-cook", "Hook'n Cook", "Tea Gardens", "Google Maps 菜单照片可见大量外带菜，适合先选好炸鱼薯条、汉堡和分享套餐。", ["Fish And Chips", "快餐", "地图照片菜单"], "", hook_menu, "Google Maps 菜单照片（约9个月前）", True),
