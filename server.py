@@ -83,7 +83,37 @@ def infer_menu_details(lower, item, tags):
     assumptions = []
     confidence = "中"
 
-    if "fish cake" in lower:
+    if "pla's pork ribs" in lower or "pork ribs" in lower:
+        category = "招牌主菜"
+        taste.extend(["酸甜", "肉香", "浓郁"])
+        cautions.extend(["含猪肉", "酱汁成分需确认"])
+        confidence = "高"
+    elif "massaman" in lower or "green curry" in lower or "gaeng " in lower:
+        category = "咖喱/主菜"
+        taste.extend(["香料味", "浓郁"])
+        cautions.extend(["可能含椰奶", "辣度需确认"])
+        confidence = "高"
+    elif "tom yum" in lower:
+        category = "汤/海鲜"
+        taste.extend(["酸", "辣", "鲜味"])
+        cautions.extend(["虾/海鲜过敏者避免", "通常偏辣"])
+        confidence = "高"
+    elif "pad thai" in lower:
+        category = "米粉/主食"
+        taste.extend(["酸甜", "咸香"])
+        cautions.extend(["含花生", "含鸡蛋", "可能含虾米"])
+        confidence = "高"
+    elif "pad see eiw" in lower or "kee mao" in lower or "khao pad" in lower:
+        category = "米粉/米饭主食"
+        taste.extend(["咸香", "锅气"])
+        cautions.extend(["可能含鸡蛋", "可能有辣椒"])
+        confidence = "高"
+    elif "som tum" in lower or "papaya salad" in lower:
+        category = "沙拉/前菜"
+        taste.extend(["酸", "辣", "清爽"])
+        cautions.extend(["含花生", "可能含虾米", "通常偏辣"])
+        confidence = "高"
+    elif "fish cake" in lower:
         category = "海鲜小吃"
         taste.extend(["咸香", "油炸"])
         cautions.extend(["鱼类过敏者避免", "可能含麸质"])
@@ -260,6 +290,7 @@ def infer_menu_details(lower, item, tags):
         category = "点心/主食"
         taste.extend(["咸鲜"])
         cautions.extend(["可能含猪肉", "可能含麸质"])
+        confidence = "高"
         if "wonton" in lower:
             cautions.append("可能含虾")
         if "bao" in lower or "dumpling" in lower:
@@ -378,7 +409,8 @@ FOOD_WORDS = re.compile(
     r"pizza|pasta|linguine|fettuccine|risotto|gnocchi|salad|soup|bread|toast|"
     r"egg|eggs|omelette|benedict|pancake|waffle|bagel|avocado|mushroom|cheese|pistachio|"
     r"xiao long bao|soup dumpling|bao|bun|dumpling|wonton|noodle|noodles|ramen|gyoza|karaage|teriyaki|don|"
-    r"bibimbap|bulgogi|kimchi|korean fried chicken|seafood pancake|japchae|pad thai|curry|tom yum|papaya salad|mango sticky rice|mango"
+    r"bibimbap|bulgogi|kimchi|korean fried chicken|seafood pancake|japchae|pad thai|pad see eiw|kee mao|khao pad|biryani|"
+    r"curry|massaman|gaeng|tom yum|som tum|larb|papaya salad|mango sticky rice|roti|mango|betel|sriracha|tamarind"
     r")\b",
     re.I,
 )
@@ -808,6 +840,38 @@ def menu_file_data_url(payload):
 
 def translate_menu_name(lower, original):
     rules = [
+        ("pla's pork ribs", "泰式罗望子猪肋排"),
+        ("massaman", "玛莎曼牛肉咖喱"),
+        ("gaeng keaw wan", "泰式青咖喱鸡"),
+        ("green curry", "泰式青咖喱"),
+        ("gaeng ngor", "红咖喱鸭"),
+        ("tom yum", "冬阴功虾汤"),
+        ("gaeng pla", "普吉鱼咖喱"),
+        ("gai yang", "香茅姜黄烤鸡"),
+        ("kra pao", "泰式打抛"),
+        ("gai nam prik pao", "腰果辣椒酱炒鸡"),
+        ("nua pad cha pru", "咖喱香叶炒牛肉"),
+        ("kana moo krob", "芥兰脆皮猪肉"),
+        ("crying tiger", "泰式烤牛排"),
+        ("salt and pepper calamari", "椒盐炸鱿鱼"),
+        ("pla tao si", "豆豉炒鱼片"),
+        ("pla neung manow", "青柠辣汁蒸鱼"),
+        ("yum nashi pear", "水梨软壳蟹沙拉"),
+        ("hoy pad ped", "辣炒小蛤蜊"),
+        ("yum mango", "青芒果炸鱼沙拉"),
+        ("makua tord", "红咖喱炸茄子"),
+        ("pad pak", "豆腐炒杂菜"),
+        ("pad see eiw", "泰式酱油炒河粉"),
+        ("kuy teaw kee mao", "泰式醉鬼炒河粉"),
+        ("khao pad man goong", "虾膏虾仁炒饭"),
+        ("khao pad", "泰式炒饭"),
+        ("goong ob woon sen", "粉丝焖虾"),
+        ("moo grob prik khing", "红咖喱脆皮猪肉"),
+        ("steam coral trout", "姜葱豉油蒸鱼"),
+        ("black sticky rice", "黑糯米甜点"),
+        ("prawn toast", "炸虾吐司"),
+        ("som tum", "青木瓜沙拉"),
+        ("larb wings", "拉伯风味炸鸡翅"),
         ("mashed potato & gravy", "土豆泥配肉汁"),
         ("bowl of chips", "一碗薯条"),
         ("fish & chips", "炸鱼薯条"),
@@ -945,7 +1009,34 @@ def describe_menu_item(lower, original):
     tags = []
     description = "这道菜需要根据现场菜单确认细节。"
 
-    if "flat white" in lower:
+    if "pla's pork ribs" in lower or "pork ribs" in lower:
+        description = "Khao Pla 官网菜单里的招牌菜，猪肋排二次烹调后配罗望子酱，通常酸甜咸香、肉味重。适合喜欢肉类和泰式酸甜口的人。"
+        tags = ["招牌", "猪肉", "酸甜"]
+    elif "massaman" in lower:
+        description = "南泰风格咖喱，Khao Pla 菜单写的是慢炖牛脸肉、罗望子和棕榈糖。口味通常温和浓郁、带酸甜，不是最辣的咖喱。"
+        tags = ["泰餐", "咖喱", "牛肉"]
+    elif "gaeng keaw wan" in lower or "green curry" in lower:
+        description = "青咖喱配鸡肉、泰国茄子、野姜、青柠叶、辣椒和罗勒。香料味明显，通常会辣，适合能吃一点辣的人。"
+        tags = ["泰餐", "咖喱", "需确认辣度"]
+    elif "tom yum" in lower:
+        description = "酸辣汤，菜单写有香蕉虾、香茅、南姜、青柠叶和香菜。味道鲜、酸、辣都明显；不吃辣或海鲜过敏者要避开。"
+        tags = ["泰餐", "海鲜", "酸辣"]
+    elif "pad thai" in lower:
+        description = "经典泰餐，Khao Pla 菜单写有鸡肉、鸡蛋、花生、豆芽、罗望子、虾米和棕榈糖。酸甜咸香，通常比较安全，但花生过敏者不能点。"
+        tags = ["泰餐", "主食", "花生风险"]
+    elif "pad see eiw" in lower:
+        description = "宽河粉配鸡肉、鸡蛋、黑酱油和芥兰，味道比 Pad Thai 更咸香，不太酸甜。适合不想吃太辣的人。"
+        tags = ["泰餐", "主食", "相对安全"]
+    elif "som tum" in lower or "papaya salad" in lower:
+        description = "泰式青木瓜沙拉，通常酸、辣、脆，菜单写有花生、虾米、罗望子和青柠汁。非常需要确认辣度。"
+        tags = ["泰餐", "需确认辣度", "花生风险"]
+    elif "prawn toast" in lower:
+        description = "虾肉铺在酸面包上油炸，菜单写有芝麻油和白泡菜蛋黄酱。外脆、海鲜味明显，适合分享。"
+        tags = ["泰餐", "海鲜", "适合分享"]
+    elif "salt and pepper calamari" in lower:
+        description = "炸鱿鱼配冬阴功香料盐，咸香、微辣、适合分享。海鲜过敏者不要点。"
+        tags = ["海鲜", "适合分享", "可能微辣"]
+    elif "flat white" in lower:
         description = "澳洲常见奶咖，咖啡味比拿铁更明显，奶泡细腻。适合想喝顺口牛奶咖啡的人。"
         tags = ["咖啡", "含牛奶", "澳洲常见"]
     elif "long black" in lower:
@@ -1357,7 +1448,67 @@ def fallback_restaurants(area_name=""):
 def known_restaurants(area_name=""):
     key = re.sub(r"[^a-z0-9]+", "", (area_name or "").lower())
     if key in {"cw", "chatswood"}:
+        khao_pla_menu = "\n".join([
+            "Massaman beef cheek curry 25",
+            "Gaeng Keaw Wan green curry chicken 25",
+            "Gaeng Ngor confit duck curry 29",
+            "Tom Yum banana prawn soup 30",
+            "Gaeng Pla Phuket curry with Coral trout and betel leaf 31",
+            "Gai Yang char grilled turmeric lemongrass half chicken 18",
+            "Kra Pao minced chicken with chilli and holy basil 21",
+            "Gai Nam Prik Pao chicken with cashew nut and chilli jam 21",
+            "Nua Pad Cha Pru beef with Phuket curry paste and betel leaf 24",
+            "Kana Moo Krob crispy pork belly with Chinese broccoli 24.5",
+            "Crying Tiger Wagyu striploin 27",
+            "Salt and Pepper Calamari with Tom Yum spice salt 19",
+            "Pla Tao Si fish fillets with black beans 24",
+            "Pla Neung Manow steamed Basa fillet with chilli lime dressing 24",
+            "Yum Nashi Pear salad with crispy soft shell crab 28",
+            "Hoy Pad Ped baby clam with Sriracha sauce 28",
+            "Yum Mango green mango salad with crispy whole fish",
+            "Makua Tord fried red curry battered eggplant 14",
+            "Salt and Pepper Tofu and Mushroom 18",
+            "Pad Pak mixed vegetables with tofu 20",
+            "Kana Fai Dang Chinese broccoli with tofu and chilli 21",
+            "Tao Hu Prik Khing tofu and mushroom with red curry paste 22",
+            "Kra Pao Jay tofu and vegetables with holy basil 21",
+            "Hed Pad Nam Man Hoy four mushrooms with mushroom sauce 21",
+            "Pad Thai chicken noodle with egg peanuts tamarind and dried shrimp 20",
+            "Pad See Eiw flat rice noodle with chicken egg and Chinese broccoli 20",
+            "Kuy Teaw Kee Mao drunken noodles with chicken chilli and holy basil 20",
+            "Khao Pad fried rice with chicken egg tomato and Chinese broccoli 20",
+            "Biryani Thai style rice with braised beef 25",
+            "Khao Pad Man Goong fried rice with banana prawns and shrimp paste 28",
+            "Goong Ob Woon Sen banana prawns with vermicelli noodles 28",
+            "Moo Grob Prik Khing crispy pork belly with red curry paste 25.5",
+            "Pla's Pork Ribs with tamarind sauce 27",
+            "Steam Coral Trout with ginger and soy 31",
+            "Kids Meal fried rice or noodles with fried chicken wings 17",
+            "Black Sticky Rice with Thai milk tea ice cream 11",
+        ])
         restaurants = [
+            (
+                "cw-khao-pla",
+                "Khao Pla Chatswood",
+                "Shop 7/370-374 Victoria Avenue, Chatswood NSW 2067",
+                "官网 PDF 菜单已整理，泰餐选择多，适合先看懂辣度、花生、海鲜和招牌菜。",
+                ["泰餐", "官网菜单", "真实菜单"],
+                "https://khaopla.com.au/",
+                khao_pla_menu,
+                "官网 PDF 菜单（Khao Pla）",
+                True,
+            ),
+            (
+                "cw-new-shanghai",
+                "New Shanghai Chatswood Chase",
+                "Chatswood Chase, Chatswood NSW",
+                "官网确认 Chatswood Chase 门店和小笼包/上海菜定位。这里只放官网可确认代表菜，不当完整菜单。",
+                ["上海菜", "官网确认", "非完整菜单"],
+                "https://www.newshanghai.com.au/",
+                "Xiao long bao dumplings",
+                "官网确认代表菜（非完整菜单）",
+                True,
+            ),
             (
                 "cw-dumpling",
                 "Chatswood 菜系练习：点心/小笼包",
@@ -1373,6 +1524,8 @@ def known_restaurants(area_name=""):
                     "Salt and pepper calamari",
                     "Mango pancakes",
                 ]),
+                "菜系练习",
+                False,
             ),
             (
                 "cw-thai",
@@ -1389,6 +1542,8 @@ def known_restaurants(area_name=""):
                     "Papaya salad",
                     "Mango sticky rice",
                 ]),
+                "菜系练习",
+                False,
             ),
             (
                 "cw-ramen",
@@ -1405,6 +1560,8 @@ def known_restaurants(area_name=""):
                     "Teriyaki chicken don",
                     "Green tea ice cream",
                 ]),
+                "菜系练习",
+                False,
             ),
             (
                 "cw-korean",
@@ -1421,6 +1578,8 @@ def known_restaurants(area_name=""):
                     "Seafood pancake",
                     "Japchae glass noodles",
                 ]),
+                "菜系练习",
+                False,
             ),
             (
                 "cw-cafe",
@@ -1437,11 +1596,13 @@ def known_restaurants(area_name=""):
                     "Chicken schnitzel sandwich",
                     "Banana bread",
                 ]),
+                "菜系练习",
+                False,
             ),
         ]
         return {
             "source": "known_local",
-            "message": "当前没有后端 Google Places key，Chatswood 先显示菜系练习菜单，不冒充真实餐厅菜单。真实餐厅需要接 Google Places/OSM 或人工确认库。",
+            "message": "Chatswood 先显示已确认来源的真实餐厅菜单；练习菜单只放在后面兜底，不冒充真实餐厅。",
             "restaurants": [
                 {
                     "id": f"known-{slug}",
@@ -1457,10 +1618,10 @@ def known_restaurants(area_name=""):
                     "websiteUri": website,
                     "hasMenu": True,
                     "menuText": menu_text,
-                    "menuSource": "菜系练习",
-                    "menuVerified": False,
+                    "menuSource": menu_source,
+                    "menuVerified": menu_verified,
                 }
-                for slug, name, address, note, tags, website, menu_text in restaurants
+                for slug, name, address, note, tags, website, menu_text, menu_source, menu_verified in restaurants
             ],
         }
     if key not in {"teagarden", "teagardens"}:

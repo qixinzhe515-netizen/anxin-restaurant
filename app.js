@@ -362,7 +362,7 @@ function isUsefulLocalMenuLine(line = "") {
   const digits = (line.match(/\d/g) || []).length;
   const words = line.match(/[a-z]+/gi) || [];
   const shortWords = words.filter((word) => word.length <= 2);
-  const foodWords = /\b(panna cotta|tiramisu|cake|tart|pudding|crumble|gelato|ice cream|sorbet|dessert|pistachio|chocolate|vanilla|caramel|berry|berries|lemon|apple|pear|fig|honey|oyster|prawn|shrimp|fish|chips|gravy|fresh catch|catch of the day|calamari|squid|salmon|barramundi|seafood|crab|mussel|scallop|steak|beef|lamb|chicken|pork|duck|hamburger|burger|sandwich|schnitzel|parmigiana|nugget|nuggets|poke bowl|bangers|mash|nachos|burrito|bolognese|lava cake|pecan pie|seasonal vegetables|house salad|potato scallop|hash brown|corn jack|pluto pup|chiko roll|battered sav|spring roll|dim sim|pineapple fritter|fish cocktail|fish cocktails|prawn cutlet|prawn cutlets|seafood stick|fish cake|prawn twister|tinny special|boatload special|meal deal|pizza|pasta|linguine|fettuccine|risotto|gnocchi|salad|soup|bread|toast|egg|eggs|omelette|benedict|pancake|waffle|bagel|avocado|mushroom|cheese|bao|bun|dumpling|wonton|noodle|noodles|ramen|gyoza|karaage|teriyaki|don|bibimbap|bulgogi|kimchi|fried chicken|japchae|pad thai|curry|tom yum|papaya salad|sticky rice|mango)\b/i;
+  const foodWords = /\b(panna cotta|tiramisu|cake|tart|pudding|crumble|gelato|ice cream|sorbet|dessert|pistachio|chocolate|vanilla|caramel|berry|berries|lemon|apple|pear|fig|honey|oyster|prawn|shrimp|fish|chips|gravy|fresh catch|catch of the day|calamari|squid|salmon|barramundi|seafood|crab|mussel|scallop|steak|beef|lamb|chicken|pork|duck|hamburger|burger|sandwich|schnitzel|parmigiana|nugget|nuggets|poke bowl|bangers|mash|nachos|burrito|bolognese|lava cake|pecan pie|seasonal vegetables|house salad|potato scallop|hash brown|corn jack|pluto pup|chiko roll|battered sav|spring roll|dim sim|pineapple fritter|fish cocktail|fish cocktails|prawn cutlet|prawn cutlets|seafood stick|fish cake|prawn twister|tinny special|boatload special|meal deal|pizza|pasta|linguine|fettuccine|risotto|gnocchi|salad|soup|bread|toast|egg|eggs|omelette|benedict|pancake|waffle|bagel|avocado|mushroom|cheese|bao|bun|dumpling|wonton|noodle|noodles|ramen|gyoza|karaage|teriyaki|don|bibimbap|bulgogi|kimchi|fried chicken|japchae|pad thai|pad see eiw|kee mao|khao pad|biryani|curry|massaman|gaeng|tom yum|som tum|larb|papaya salad|sticky rice|roti|mango|betel|sriracha|tamarind)\b/i;
   if (line.length < 5 || line.length > 100) return false;
   if (letters < 4) return false;
   if (/^[^a-zA-Z\u4e00-\u9fff]+$/.test(line)) return false;
@@ -405,6 +405,105 @@ function splitDishPrice(line) {
 
 function describeLocalDish(name) {
   const lower = name.toLowerCase();
+  if (lower.includes("pla's pork ribs") || lower.includes("pork ribs")) {
+    return {
+      name_zh: "泰式罗望子猪肋排",
+      description_zh: "Khao Pla 官网菜单里的招牌菜，猪肋排二次烹调后配罗望子酱，通常酸甜咸香、肉味重。适合喜欢肉类和泰式酸甜口的人。",
+      category: "招牌主菜",
+      taste: ["酸甜", "肉香", "浓郁"],
+      cautions: ["含猪肉", "酱汁成分需确认"],
+      tags: ["招牌", "猪肉", "酸甜"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("massaman")) {
+    return {
+      name_zh: "玛莎曼牛肉咖喱",
+      description_zh: "南泰风格咖喱，Khao Pla 菜单写的是慢炖牛脸肉、罗望子和棕榈糖。口味通常温和浓郁、带酸甜，不是最辣的咖喱。",
+      category: "咖喱/主菜",
+      taste: ["浓郁", "微甜", "香料味"],
+      cautions: ["含牛肉", "可能含坚果或椰奶，过敏者需确认"],
+      tags: ["泰餐", "咖喱", "牛肉"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("gaeng keaw wan") || lower.includes("green curry")) {
+    return {
+      name_zh: "泰式青咖喱鸡",
+      description_zh: "青咖喱配鸡腿肉、泰国茄子、野姜、青柠叶、辣椒和罗勒。香料味明显，通常会辣，适合能吃一点辣的人。",
+      category: "咖喱/主菜",
+      taste: ["椰香", "香料味", "可能偏辣"],
+      cautions: ["含鸡肉", "通常有辣椒", "可能含椰奶"],
+      tags: ["泰餐", "咖喱", "需确认辣度"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("tom yum")) {
+    return {
+      name_zh: "冬阴功虾汤",
+      description_zh: "酸辣汤，菜单写有香蕉虾、香茅、南姜、青柠叶和香菜。味道鲜、酸、辣都明显；不吃辣或海鲜过敏者要避开。",
+      category: "汤/海鲜",
+      taste: ["酸", "辣", "鲜味"],
+      cautions: ["虾/海鲜过敏者避免", "通常偏辣"],
+      tags: ["泰餐", "海鲜", "酸辣"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("pad thai")) {
+    return {
+      name_zh: "泰式炒河粉",
+      description_zh: "经典泰餐，Khao Pla 菜单写有鸡肉、鸡蛋、花生、豆芽、罗望子、虾米和棕榈糖。酸甜咸香，通常比较安全，但花生过敏者不能点。",
+      category: "米粉/主食",
+      taste: ["酸甜", "咸香"],
+      cautions: ["含花生", "含鸡蛋", "可能含虾米"],
+      tags: ["泰餐", "主食", "花生风险"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("pad see eiw")) {
+    return {
+      name_zh: "泰式酱油炒河粉",
+      description_zh: "宽河粉配鸡肉、鸡蛋、黑酱油和芥兰，味道比 Pad Thai 更咸香，不太酸甜。适合不想吃太辣的人，但仍需确认是否加辣。",
+      category: "米粉/主食",
+      taste: ["咸香", "酱香"],
+      cautions: ["含鸡蛋", "可能含麸质/酱油"],
+      tags: ["泰餐", "主食", "相对安全"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("som tum") || lower.includes("papaya salad")) {
+    return {
+      name_zh: "青木瓜沙拉",
+      description_zh: "泰式青木瓜沙拉，通常酸、辣、脆，菜单写有花生、虾米、罗望子和青柠汁。非常需要确认辣度。",
+      category: "沙拉/前菜",
+      taste: ["酸", "辣", "清爽"],
+      cautions: ["含花生", "可能含虾米", "通常偏辣"],
+      tags: ["泰餐", "需确认辣度", "花生风险"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("prawn toast")) {
+    return {
+      name_zh: "炸虾吐司",
+      description_zh: "虾肉铺在酸面包上油炸，菜单写有芝麻油和白泡菜蛋黄酱。外脆、海鲜味明显，适合分享。",
+      category: "前菜/小吃",
+      taste: ["咸香", "油炸", "鲜味"],
+      cautions: ["虾/海鲜过敏者避免", "含麸质", "可能含蛋黄酱"],
+      tags: ["泰餐", "海鲜", "适合分享"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("salt and pepper calamari")) {
+    return {
+      name_zh: "椒盐炸鱿鱼",
+      description_zh: "炸鱿鱼配冬阴功香料盐，咸香、微辣、适合分享。海鲜过敏者不要点。",
+      category: "前菜/海鲜",
+      taste: ["咸香", "油炸", "微辣"],
+      cautions: ["海鲜过敏者避免", "可能含麸质"],
+      tags: ["海鲜", "适合分享"],
+      confidence: "高",
+    };
+  }
   if (lower.includes("seafood platter")) {
     return {
       name_zh: "海鲜拼盘",
@@ -1373,6 +1472,73 @@ function teaGardensHotelMenuText() {
 
 const chatswoodRestaurants = [
   {
+    id: "cw-khao-pla",
+    name: "Khao Pla Chatswood",
+    area: "Chatswood",
+    address: "Shop 7/370-374 Victoria Avenue, Chatswood NSW 2067",
+    rating: "",
+    note: "官网 PDF 菜单已整理，泰餐选择多，适合先看懂辣度、花生、海鲜和招牌菜。",
+    tags: ["泰餐", "官网菜单", "真实菜单"],
+    hasMenu: true,
+    websiteUri: "https://khaopla.com.au/",
+    menuSource: "官网 PDF 菜单（Khao Pla）",
+    menuVerified: true,
+    menuText: [
+      "Massaman beef cheek curry 25",
+      "Gaeng Keaw Wan green curry chicken 25",
+      "Gaeng Ngor confit duck curry 29",
+      "Tom Yum banana prawn soup 30",
+      "Gaeng Pla Phuket curry with Coral trout and betel leaf 31",
+      "Gai Yang char grilled turmeric lemongrass half chicken 18",
+      "Kra Pao minced chicken with chilli and holy basil 21",
+      "Gai Nam Prik Pao chicken with cashew nut and chilli jam 21",
+      "Nua Pad Cha Pru beef with Phuket curry paste and betel leaf 24",
+      "Kana Moo Krob crispy pork belly with Chinese broccoli 24.5",
+      "Crying Tiger Wagyu striploin 27",
+      "Salt and Pepper Calamari with Tom Yum spice salt 19",
+      "Pla Tao Si fish fillets with black beans 24",
+      "Pla Neung Manow steamed Basa fillet with chilli lime dressing 24",
+      "Yum Nashi Pear salad with crispy soft shell crab 28",
+      "Hoy Pad Ped baby clam with Sriracha sauce 28",
+      "Yum Mango green mango salad with crispy whole fish",
+      "Makua Tord fried red curry battered eggplant 14",
+      "Salt and Pepper Tofu and Mushroom 18",
+      "Pad Pak mixed vegetables with tofu 20",
+      "Kana Fai Dang Chinese broccoli with tofu and chilli 21",
+      "Tao Hu Prik Khing tofu and mushroom with red curry paste 22",
+      "Kra Pao Jay tofu and vegetables with holy basil 21",
+      "Hed Pad Nam Man Hoy four mushrooms with mushroom sauce 21",
+      "Pad Thai chicken noodle with egg peanuts tamarind and dried shrimp 20",
+      "Pad See Eiw flat rice noodle with chicken egg and Chinese broccoli 20",
+      "Kuy Teaw Kee Mao drunken noodles with chicken chilli and holy basil 20",
+      "Khao Pad fried rice with chicken egg tomato and Chinese broccoli 20",
+      "Biryani Thai style rice with braised beef 25",
+      "Khao Pad Man Goong fried rice with banana prawns and shrimp paste 28",
+      "Goong Ob Woon Sen banana prawns with vermicelli noodles 28",
+      "Moo Grob Prik Khing crispy pork belly with red curry paste 25.5",
+      "Pla's Pork Ribs with tamarind sauce 27",
+      "Steam Coral Trout with ginger and soy 31",
+      "Kids Meal fried rice or noodles with fried chicken wings 17",
+      "Black Sticky Rice with Thai milk tea ice cream 11",
+    ].join("\n"),
+  },
+  {
+    id: "cw-new-shanghai",
+    name: "New Shanghai Chatswood Chase",
+    area: "Chatswood",
+    address: "Chatswood Chase, Chatswood NSW",
+    rating: "",
+    note: "官网确认 Chatswood Chase 门店和小笼包/上海菜定位。这里只放官网可确认代表菜，不当完整菜单。",
+    tags: ["上海菜", "官网确认", "非完整菜单"],
+    hasMenu: true,
+    websiteUri: "https://www.newshanghai.com.au/",
+    menuSource: "官网确认代表菜（非完整菜单）",
+    menuVerified: true,
+    menuText: [
+      "Xiao long bao dumplings",
+    ].join("\n"),
+  },
+  {
     id: "cw-dumpling",
     name: "Chatswood 菜系练习：点心/小笼包",
     area: "Chatswood",
@@ -1602,7 +1768,7 @@ function localNearbyRestaurants(payload = {}) {
   if (/^(cw|chatswood)$/i.test(area)) {
     return {
       source: "static_known",
-      message: "当前没有后端 Google Places key，Chatswood 先显示菜系练习菜单，不冒充真实餐厅菜单。真实餐厅需要接 Google Places/OSM 或人工确认库。",
+      message: "Chatswood 先显示已确认来源的真实餐厅菜单；练习菜单只放在后面兜底，不冒充真实餐厅。",
       restaurants: chatswoodRestaurants,
     };
   }
@@ -1718,7 +1884,7 @@ async function recognizeMenuTextInBrowser(file) {
 function cleanOcrMenuText(text, label = "") {
   const isDrink = /\b(wine|drink|drinks|cocktail|beer|beverage|bar)\b/i.test(label);
   if (isDrink) return "";
-  const foodWords = /\b(panna cotta|tiramisu|cake|tart|pudding|crumble|gelato|ice cream|sorbet|dessert|pistachio|chocolate|vanilla|caramel|berry|berries|lemon|apple|pear|fig|honey|oyster|prawn|shrimp|fish|chips|fresh catch|catch of the day|calamari|salmon|barramundi|seafood|crab|mussel|scallop|steak|beef|lamb|chicken|pork|duck|burger|sandwich|schnitzel|parmigiana|pizza|pasta|linguine|fettuccine|risotto|gnocchi|salad|soup|bread|toast|egg|eggs|omelette|benedict|pancake|waffle|bagel|avocado|mushroom|cheese|bao|bun|dumpling|wonton|noodle|ramen|gyoza|karaage|teriyaki|don|bibimbap|bulgogi|kimchi|fried chicken|japchae|pad thai|curry|tom yum|papaya salad|sticky rice|mango)\b/i;
+  const foodWords = /\b(panna cotta|tiramisu|cake|tart|pudding|crumble|gelato|ice cream|sorbet|dessert|pistachio|chocolate|vanilla|caramel|berry|berries|lemon|apple|pear|fig|honey|oyster|prawn|shrimp|fish|chips|fresh catch|catch of the day|calamari|salmon|barramundi|seafood|crab|mussel|scallop|steak|beef|lamb|chicken|pork|duck|burger|sandwich|schnitzel|parmigiana|pizza|pasta|linguine|fettuccine|risotto|gnocchi|salad|soup|bread|toast|egg|eggs|omelette|benedict|pancake|waffle|bagel|avocado|mushroom|cheese|bao|bun|dumpling|wonton|noodle|ramen|gyoza|karaage|teriyaki|don|bibimbap|bulgogi|kimchi|fried chicken|japchae|pad thai|pad see eiw|kee mao|khao pad|biryani|curry|massaman|gaeng|tom yum|som tum|larb|papaya salad|sticky rice|roti|mango|betel|sriracha|tamarind)\b/i;
   return text
     .split("\n")
     .map((line) => line
@@ -2092,4 +2258,4 @@ if ("serviceWorker" in navigator) {
 }
 
 renderHistory();
-renderRestaurants(demoRestaurants, "v28 已加载：Tea Gardens Hotel 官网菜单和 Hook N Cook 地图照片菜单已入库，并标明来源。");
+renderRestaurants(demoRestaurants, "v29 已加载：Chatswood 已加入 Khao Pla 官网 PDF 真实菜单；Tea Gardens 真实菜单库继续保留。");
