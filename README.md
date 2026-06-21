@@ -26,6 +26,14 @@ That address is only a local network test address. It will not work when the pho
 
 ## Public Test Deployment
 
+Current public static test URL:
+
+```text
+https://qixinzhe515-netizen.github.io/anxin-restaurant/
+```
+
+This GitHub Pages version is a stable HTTPS entry for early phone testing. It uses browser-side fallback logic when `/api/*` is unavailable, including Tea Gardens known restaurant data, Mumm's Seafood trusted menu cache, local menu explanation, and order-card generation. Render is still the target for the full backend version with live restaurant search, website fetching, and AI vision.
+
 This repo includes `render.yaml` for a minimal Render deployment.
 
 1. Push this folder to a GitHub repository.
