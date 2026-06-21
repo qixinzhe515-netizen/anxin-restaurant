@@ -326,15 +326,135 @@ function fallbackLocalMenuData(menuText) {
   };
 }
 
+const teaGardensRestaurants = [
+  {
+    id: "known-tea-gardens-hotel",
+    name: "Tea Gardens Hotel",
+    area: "Tea Gardens",
+    address: "Cnr Maxwell Street & Marine Drive, Tea Gardens",
+    rating: "",
+    note: "澳洲酒吧餐，有官网，适合体验本地餐。",
+    tags: ["澳洲酒吧餐", "可查官网菜单"],
+    websiteUri: "https://teagardenshotel.com/",
+    hasMenu: true,
+  },
+  {
+    id: "known-mumms-seafood",
+    name: "Mumm's Seafood",
+    area: "Tea Gardens",
+    address: "Tea Gardens",
+    rating: "",
+    note: "海鲜餐厅，官网可找到菜单；当前版本内置了可信甜点菜单。",
+    tags: ["Seafood", "有官网菜单"],
+    websiteUri: "https://mummsonthemyall.com.au",
+    hasMenu: true,
+  },
+  {
+    id: "known-hook-n-cook",
+    name: "Hook'n Cook",
+    area: "Tea Gardens",
+    address: "Tea Gardens",
+    rating: "",
+    note: "炸鱼薯条和快餐类型，点餐压力相对低。",
+    tags: ["Fish And Chips", "快餐"],
+    hasMenu: false,
+  },
+  {
+    id: "known-mangrove-cafe",
+    name: "Mangrove Cafe",
+    area: "Tea Gardens",
+    address: "83 Marine Drive, Tea Gardens",
+    rating: "",
+    note: "咖啡和轻食，适合先从简单菜单开始。",
+    tags: ["咖啡/轻食"],
+    hasMenu: false,
+  },
+];
+
+function localKnownMenuCache(payload = {}) {
+  const key = `${payload.restaurantName || ""} ${payload.areaName || ""} ${payload.websiteUri || ""} ${payload.url || ""}`.toLowerCase();
+  if (!key.includes("mumm") && !key.includes("mummsonthemyall")) return null;
+  const menuText = "Turkish delight panna cotta\nPersian fairy floss and pistachio";
+  return {
+    ...fallbackLocalMenuData(menuText),
+    menuText,
+    websiteUrl: "https://mummsonthemyall.com.au",
+    summary: "已使用内置可信菜单缓存。这里只显示确认度高的菜品；PDF/图片菜单保留为原始菜单，避免把 OCR 乱码当成菜。",
+    menuLinks: [
+      { title: "官网菜单页", url: "https://mummsonthemyall.com.au", type: "page" },
+      { title: "DESSERT", url: "https://mummsonthemyall.com.au/uploads/1/1/5/2/115221607/dessert_april_2026_copy.png", type: "image" },
+      { title: "LUNCH AND DINNER", url: "https://mummsonthemyall.com.au/uploads/1/1/5/2/115221607/mumms_lunch_and_dinner_may_2026_copy.pdf", type: "pdf" },
+      { title: "BREAKFAST", url: "https://mummsonthemyall.com.au/uploads/1/1/5/2/115221607/1.png", type: "image" },
+    ],
+  };
+}
+
+function localNearbyRestaurants(payload = {}) {
+  const area = (payload.areaName || "").trim();
+  if (/tea gardens?/i.test(area)) {
+    return {
+      source: "static_known",
+      message: "当前是公网静态内测版：先使用内置 Tea Gardens 真实餐厅库。",
+      restaurants: teaGardensRestaurants,
+    };
+  }
+  return {
+    source: "static_demo",
+    message: "当前是公网静态内测版：先显示示例餐厅。接入 Render/Google Places 后会换成真实附近餐厅。",
+    restaurants: demoRestaurants,
+  };
+}
+
+function localAnalyzeMenu(payload = {}) {
+  return fallbackLocalMenuData(payload.menuText || "");
+}
+
+function localGenerateCard(payload = {}) {
+  const restaurant = payload.restaurantName || "your restaurant";
+  const party = payload.partySize || "2";
+  const time = payload.bookingTime || "tonight";
+  const dishes = payload.dishes || [];
+  const restrictions = [...(payload.restrictions || []), payload.specialNotes || ""].filter(Boolean);
+  const dishLines = dishes.map((dish) => `- ${dish.name_en || dish.name_zh}`).join("\n");
+  const requestText = restrictions.join(", ") || "None";
+  return {
+    bookingMessage: `Hi ${restaurant}, I would like to book a table for ${party} people at ${time}. Could you please confirm if a table is available? Thank you.`,
+    orderCard: `We would like to order:\n${dishLines}\n\nSpecial requests: ${requestText}\n\nIf anything is unavailable, please point to the menu or write it down for us.`,
+    fallbackCard: "Sorry, my English is limited.\nCould you please speak slowly, point to the menu, or write it down?\nThank you for your help.",
+  };
+}
+
+function localApi(url, payload = {}) {
+  if (url === "/api/nearby-restaurants") return localNearbyRestaurants(payload);
+  if (url === "/api/discover-menu" || url === "/api/extract-menu-url") {
+    return localKnownMenuCache(payload) || {
+      summary: "公网静态内测版暂时没有自动提取到这家官网菜单。可以拍菜单照片，或先用 Mumm's Seafood 测试官网菜单流程。",
+      menuText: "",
+      dishes: [],
+      menuLinks: [],
+    };
+  }
+  if (url === "/api/analyze-menu") return localAnalyzeMenu(payload);
+  if (url === "/api/analyze-menu-photo") {
+    return { summary: "公网静态内测版会先尝试本机 OCR。正式后端部署后会接 AI 视觉识别。", dishes: [] };
+  }
+  if (url === "/api/menu-file-data-url") return { error: "static_mode" };
+  if (url === "/api/generate-card") return localGenerateCard(payload);
+  throw new Error("No local API fallback");
+}
 
 async function postJson(url, payload) {
-  const response = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  if (!response.ok) throw new Error("Request failed");
-  return response.json();
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) throw new Error("Request failed");
+    return response.json();
+  } catch (error) {
+    return localApi(url, payload);
+  }
 }
 
 function fileToCompressedDataUrl(file) {
@@ -718,4 +838,4 @@ if ("serviceWorker" in navigator) {
 }
 
 renderHistory();
-renderRestaurants(demoRestaurants, "v18 已加载：公网内测部署准备完成，可添加到手机主屏幕。");
+renderRestaurants(demoRestaurants, "v19 已加载：公网静态内测可用，后端部署后会自动升级真实地图和 AI 识别。");
