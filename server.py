@@ -83,7 +83,17 @@ def infer_menu_details(lower, item, tags):
     assumptions = []
     confidence = "中"
 
-    if any(word in lower for word in ["panna cotta", "tiramisu", "cake", "pudding", "gelato", "ice cream", "dessert", "fairy floss", "pistachio"]):
+    if "seafood pancake" in lower:
+        category = "前菜/分享"
+        taste.extend(["咸香", "外脆"])
+        cautions.extend(["海鲜过敏者避免", "含麸质"])
+        confidence = "高"
+    elif "mango pancake" in lower:
+        category = "甜点"
+        taste.extend(["甜", "奶香", "水果味"])
+        cautions.extend(["含奶制品", "可能含麸质"])
+        confidence = "高"
+    elif re.search(r"\b(panna cotta|tiramisu|cake|pudding|gelato|ice cream|dessert|fairy floss|pistachio)\b", lower):
         category = "甜点"
         taste.extend(["甜"])
         confidence = "高"
@@ -127,6 +137,11 @@ def infer_menu_details(lower, item, tags):
             cautions.append("可能含虾")
         if "bao" in lower or "dumpling" in lower:
             cautions.append("小心烫口")
+    elif "shanghai fried noodle" in lower:
+        category = "主食"
+        taste.extend(["咸香", "酱香"])
+        cautions.extend(["含麸质", "可能含猪肉或海鲜"])
+        confidence = "高"
     elif "ramen" in lower:
         category = "汤面"
         taste.extend(["咸香", "浓郁"])
@@ -155,6 +170,26 @@ def infer_menu_details(lower, item, tags):
         category = "主菜/分享"
         taste.extend(["油炸", "可能甜辣"])
         cautions.extend(["可能偏辣", "可能含麸质"])
+    elif "japchae" in lower:
+        category = "主食/配菜"
+        taste.extend(["甜咸", "咸香"])
+        cautions.extend(["可能含芝麻", "可能含大豆"])
+        confidence = "高"
+    elif "teriyaki chicken" in lower:
+        category = "主食"
+        taste.extend(["甜咸", "咸香"])
+        cautions.extend(["可能含大豆", "酱汁可能偏甜"])
+        confidence = "高"
+    elif "green tea ice cream" in lower:
+        category = "甜点"
+        taste.extend(["甜", "抹茶味", "奶香"])
+        cautions.append("含奶制品")
+        confidence = "高"
+    elif "eggs benedict" in lower:
+        category = "早午餐"
+        taste.extend(["奶香", "咸香"])
+        cautions.extend(["可能有半熟蛋", "可能含奶制品", "可能含麸质"])
+        confidence = "高"
     elif "papaya salad" in lower:
         category = "沙拉/前菜"
         taste.extend(["酸", "辣", "清爽"])
@@ -196,19 +231,25 @@ def infer_menu_details(lower, item, tags):
     if confidence != "高" and item == translate_menu_name(lower, item):
         confidence = "中" if category != "未分类" else "低"
 
-    return category, list(dict.fromkeys(taste)), list(dict.fromkeys(cautions)), assumptions, confidence
+    deduped_cautions = list(dict.fromkeys(cautions))
+    if "含麸质" in deduped_cautions and "可能含麸质" in deduped_cautions:
+        deduped_cautions.remove("可能含麸质")
+    if "含奶制品" in deduped_cautions and "可能含奶制品" in deduped_cautions:
+        deduped_cautions.remove("可能含奶制品")
+
+    return category, list(dict.fromkeys(taste)), deduped_cautions, assumptions, confidence
 
 
 FOOD_WORDS = re.compile(
     r"\b("
     r"panna cotta|tiramisu|cake|tart|pudding|crumble|gelato|ice cream|sorbet|dessert|"
     r"pistachio|chocolate|vanilla|caramel|berry|berries|lemon|apple|pear|fig|honey|"
-    r"oyster|prawn|fish|chips|fresh catch|catch of the day|calamari|salmon|barramundi|seafood|crab|mussel|"
+    r"oyster|prawn|shrimp|fish|chips|fresh catch|catch of the day|calamari|salmon|barramundi|seafood|crab|mussel|scallop|"
     r"steak|beef|lamb|chicken|pork|duck|burger|sandwich|schnitzel|parmigiana|"
     r"pizza|pasta|linguine|fettuccine|risotto|gnocchi|salad|soup|bread|toast|"
-    r"egg|omelette|pancake|waffle|bagel|avocado|mushroom|cheese|pistachio|"
-    r"xiao long bao|soup dumpling|dumpling|wonton|noodle|ramen|gyoza|karaage|"
-    r"bibimbap|bulgogi|kimchi|korean fried chicken|japchae|papaya salad|mango sticky rice"
+    r"egg|eggs|omelette|benedict|pancake|waffle|bagel|avocado|mushroom|cheese|pistachio|"
+    r"xiao long bao|soup dumpling|bao|bun|dumpling|wonton|noodle|noodles|ramen|gyoza|karaage|teriyaki|don|"
+    r"bibimbap|bulgogi|kimchi|korean fried chicken|seafood pancake|japchae|pad thai|curry|tom yum|papaya salad|mango sticky rice|mango"
     r")\b",
     re.I,
 )
@@ -643,6 +684,7 @@ def translate_menu_name(lower, original):
         ("mushroom omelette", "蘑菇煎蛋卷"),
         ("banana bread", "香蕉蛋糕"),
         ("kids pancakes", "儿童松饼"),
+        ("eggs benedict", "班尼迪克蛋"),
         ("turkish delight panna cotta", "土耳其软糖风味意式奶冻"),
         ("panna cotta", "意式奶冻"),
         ("persian fairy floss", "波斯棉花糖配开心果"),
@@ -657,6 +699,10 @@ def translate_menu_name(lower, original):
         ("soup dumpling", "汤包"),
         ("pan fried pork bun", "生煎包/猪肉煎包"),
         ("wonton noodle", "云吞面"),
+        ("shanghai fried noodle", "上海炒面"),
+        ("mango pancake", "芒果班戟"),
+        ("teriyaki chicken", "照烧鸡肉饭"),
+        ("green tea ice cream", "抹茶冰淇淋"),
         ("ramen", "日式拉面"),
         ("gyoza", "日式煎饺"),
         ("karaage", "日式炸鸡"),
@@ -724,6 +770,9 @@ def describe_menu_item(lower, original):
     elif "kids pancakes" in lower or "pancakes" in lower:
         description = "松饼，儿童版份量较小，通常偏甜，可能配糖浆、水果或冰淇淋。"
         tags = ["儿童友好", "偏甜", "早餐"]
+    elif "eggs benedict" in lower:
+        description = "班尼迪克蛋，早午餐常见菜，通常有面包、火腿/三文鱼、半熟水波蛋和荷兰酱。想吃全熟蛋要说 fully cooked eggs。"
+        tags = ["早午餐", "蛋类", "需确认熟度"]
     elif "burrata" in lower:
         description = "布拉塔奶酪，外层像马苏里拉，里面很软很奶香，通常配番茄。适合喜欢奶酪的人。"
         tags = ["奶制品", "冷前菜", "口味清爽"]
@@ -754,6 +803,12 @@ def describe_menu_item(lower, original):
     elif "wonton noodle" in lower:
         description = "云吞面，通常是虾/猪肉云吞配细面和清汤。口味相对清淡；海鲜或猪肉忌口需要确认。"
         tags = ["中餐", "汤面", "比较安全"]
+    elif "shanghai fried noodle" in lower:
+        description = "上海炒面，通常是粗面配肉丝、青菜和酱油风味，口味咸香、比较顶饱。素食或不吃猪肉要确认配料。"
+        tags = ["中餐", "主食", "熟食"]
+    elif "mango pancake" in lower:
+        description = "港式芒果班戟，薄饼皮包奶油和芒果，口感软、偏甜。含奶制品，适合饭后分享。"
+        tags = ["甜点", "港式", "含奶"]
     elif "ramen" in lower:
         description = "日式拉面。Tonkotsu 通常是猪骨汤，Miso 是味噌汤底；汤底可能较咸，配料可能有叉烧和蛋。"
         tags = ["日餐", "拉面", "主食"]
@@ -763,6 +818,12 @@ def describe_menu_item(lower, original):
     elif "karaage" in lower:
         description = "日式炸鸡块，外脆里嫩，口味咸香。通常比较安全，但属于油炸，可能含麸质。"
         tags = ["日餐", "鸡肉", "油炸"]
+    elif "teriyaki chicken" in lower:
+        description = "照烧鸡肉饭，甜咸口鸡肉配米饭，通常不辣，比较稳。酱汁可能含大豆。"
+        tags = ["日餐", "鸡肉", "比较安全"]
+    elif "green tea ice cream" in lower:
+        description = "抹茶冰淇淋，甜中带一点茶味微苦，通常含奶制品。适合饭后甜点。"
+        tags = ["日餐", "甜点", "含奶"]
     elif "bibimbap" in lower:
         description = "韩式拌饭，米饭配蔬菜、肉、蛋和韩式辣酱。可以要求 sauce on the side 或 not spicy。"
         tags = ["韩餐", "主食", "可能辣"]
@@ -775,6 +836,12 @@ def describe_menu_item(lower, original):
     elif "korean fried chicken" in lower:
         description = "韩式炸鸡，可能有甜辣酱、蒜香酱或原味。不能吃辣要选 original 或确认 sauce not spicy。"
         tags = ["韩餐", "鸡肉", "适合分享"]
+    elif "seafood pancake" in lower:
+        description = "韩式海鲜煎饼，通常有葱、面糊和海鲜，适合分享。海鲜或麸质过敏者不要点。"
+        tags = ["韩餐", "海鲜", "适合分享"]
+    elif "japchae" in lower:
+        description = "韩式炒粉丝，通常是甜咸口，配蔬菜和肉，不太辣。可能含芝麻和酱油。"
+        tags = ["韩餐", "不太辣", "主食"]
     elif "papaya salad" in lower:
         description = "青木瓜沙拉，通常酸辣清爽，可能含鱼露、花生或虾米。不能吃辣或花生过敏需要确认。"
         tags = ["泰餐", "可能偏辣", "可能含花生"]

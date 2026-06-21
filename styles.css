@@ -475,10 +475,6 @@ textarea:focus {
   transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
 }
 
-.restaurant-card:active {
-  transform: scale(0.99);
-}
-
 .restaurant-card.selected {
   border-color: var(--leaf);
   box-shadow: 0 0 0 4px rgba(47, 111, 94, 0.12);
@@ -508,6 +504,34 @@ textarea:focus {
   color: var(--muted);
   font-size: 15px;
   line-height: 1.42;
+}
+
+.restaurant-actions {
+  display: grid;
+  grid-template-columns: 1.3fr 0.85fr 0.85fr;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.restaurant-actions button,
+.restaurant-actions a {
+  display: grid;
+  min-height: 44px;
+  place-items: center;
+  border-radius: 14px;
+  background: #eeeeea;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 760;
+  line-height: 1.1;
+  padding: 8px 10px;
+  text-align: center;
+  text-decoration: none;
+}
+
+.restaurant-select-button {
+  background: var(--text) !important;
+  color: white !important;
 }
 
 .menu-field textarea {

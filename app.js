@@ -113,8 +113,11 @@ function renderRestaurants(restaurants = demoRestaurants, notice = "") {
   noticeEl.classList.toggle("hidden", !notice);
 
   $("#restaurantList").innerHTML = restaurants
-    .map((restaurant) => `
-      <button class="restaurant-card ${restaurant.id === state.selectedRestaurantId ? "selected" : ""}" type="button" data-restaurant-id="${restaurant.id}">
+    .map((restaurant) => {
+      const mapsUrl = restaurant.googleMapsUri || googleMapsSearchUrl(restaurant);
+      const directionsUrl = googleMapsDirectionsUrl(restaurant);
+      return `
+      <article class="restaurant-card ${restaurant.id === state.selectedRestaurantId ? "selected" : ""}" data-restaurant-id="${restaurant.id}">
         <div class="restaurant-top">
           <strong>${restaurant.name}</strong>
           <span class="rating">${restaurant.rating ? `★ ${restaurant.rating}` : "餐厅"}</span>
@@ -124,16 +127,37 @@ function renderRestaurants(restaurants = demoRestaurants, notice = "") {
           ${(restaurant.tags || []).map((tag) => `<span class="tag">${tag}</span>`).join("")}
           <span class="tag">${restaurant.hasMenu || restaurant.menuText || restaurant.menu ? "有菜单" : "暂无线上菜单"}</span>
         </div>
-      </button>
-    `)
+        <div class="restaurant-actions">
+          <button class="restaurant-select-button" type="button" data-restaurant-select="${restaurant.id}">选择并看菜单</button>
+          <a href="${mapsUrl}" target="_blank" rel="noreferrer">查看位置</a>
+          <a href="${directionsUrl}" target="_blank" rel="noreferrer">导航</a>
+        </div>
+      </article>
+    `;
+    })
     .join("");
 
-  $$(".restaurant-card").forEach((card) => {
-    card.addEventListener("click", () => {
-      const restaurant = restaurants.find((item) => item.id === card.dataset.restaurantId);
+  $$("[data-restaurant-select]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const restaurant = restaurants.find((item) => item.id === button.dataset.restaurantSelect);
       selectRestaurant(restaurant);
     });
   });
+}
+
+function googleMapsSearchUrl(restaurant = {}) {
+  const query = [restaurant.name, restaurant.address || restaurant.area, "Australia"].filter(Boolean).join(" ");
+  if (restaurant.lat && restaurant.lng) {
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${restaurant.lat},${restaurant.lng}`)}`;
+  }
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+}
+
+function googleMapsDirectionsUrl(restaurant = {}) {
+  const destination = restaurant.lat && restaurant.lng
+    ? `${restaurant.lat},${restaurant.lng}`
+    : [restaurant.name, restaurant.address || restaurant.area, "Australia"].filter(Boolean).join(" ");
+  return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination)}`;
 }
 
 function renderMenuLinks(menuLinks = []) {
@@ -287,13 +311,45 @@ function selectRestaurant(restaurant) {
 function fallbackLocalMenuData(menuText) {
   const dishes = menuText
     .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean)
+    .map(cleanLocalMenuLine)
+    .filter(isUsefulLocalMenuLine)
     .map((line, index) => buildLocalDish(line, index + 1));
   return {
-    summary: "下面是整理后的菜单解释。英文原文会保留；没有写清楚的内容会标为需要确认，不会当成事实。",
+    summary: dishes.length
+      ? "下面只保留较可信的菜品解释。英文原文会保留；没有写清楚的内容会标为需要确认，不会把猜测当事实。"
+      : "没有整理出清晰菜品。请换更清楚的菜单页/照片，或选择餐厅官网菜单。",
     dishes,
   };
+}
+
+function cleanLocalMenuLine(line = "") {
+  return line
+    .replace(/[“”]/g, '"')
+    .replace(/\b(GFO|GF|DF|VG|V)\b/gi, "")
+    .replace(/\s*\|\s*\$?\d+(\.\d{1,2})?.*$/g, "")
+    .replace(/\s+\$?\d+(\.\d{1,2})?\s*$/g, "")
+    .replace(/\s+[a-z]{1,2}\s*\d+\s*$/gi, "")
+    .replace(/\s+(so|eo|no|a)\s*$/gi, "")
+    .replace(/^[~=\-–—\s]+/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function isUsefulLocalMenuLine(line = "") {
+  const letters = (line.match(/[a-z]/gi) || []).length;
+  const digits = (line.match(/\d/g) || []).length;
+  const words = line.match(/[a-z]+/gi) || [];
+  const shortWords = words.filter((word) => word.length <= 2);
+  const foodWords = /\b(panna cotta|tiramisu|cake|tart|pudding|crumble|gelato|ice cream|sorbet|dessert|pistachio|chocolate|vanilla|caramel|berry|berries|lemon|apple|pear|fig|honey|oyster|prawn|shrimp|fish|chips|fresh catch|catch of the day|calamari|salmon|barramundi|seafood|crab|mussel|scallop|steak|beef|lamb|chicken|pork|duck|burger|sandwich|schnitzel|parmigiana|pizza|pasta|linguine|fettuccine|risotto|gnocchi|salad|soup|bread|toast|egg|eggs|omelette|benedict|pancake|waffle|bagel|avocado|mushroom|cheese|bao|bun|dumpling|wonton|noodle|noodles|ramen|gyoza|karaage|teriyaki|don|bibimbap|bulgogi|kimchi|fried chicken|japchae|pad thai|curry|tom yum|papaya salad|sticky rice|mango)\b/i;
+  if (line.length < 5 || line.length > 100) return false;
+  if (letters < 4) return false;
+  if (/^[^a-zA-Z\u4e00-\u9fff]+$/.test(line)) return false;
+  if (/^[a-zA-Z]{1,3}\s?[\-$]?\d/i.test(line)) return false;
+  if (/[=]{1,}|[a-z]\s?=\s?[a-z]/i.test(line)) return false;
+  if (words.length && shortWords.length / words.length > 0.35) return false;
+  if (digits > letters && !/\b(kids|piece|pieces|prawn|oyster|pizza|pasta|burger|steak|fish|chips)\b/i.test(line)) return false;
+  if (/\b(wine|pinot|rose|sangiovese|sauvignon|chardonnay|merlot|shiraz|riesling|prosecco|beer|cocktail)\b/i.test(line)) return false;
+  return foodWords.test(line);
 }
 
 function buildLocalDish(rawLine, index) {
@@ -611,6 +667,28 @@ function describeLocalDish(name) {
       confidence: "高",
     };
   }
+  if (lower.includes("shanghai fried noodles")) {
+    return {
+      name_zh: "上海炒面",
+      description_zh: "上海炒面通常是粗面配肉丝、青菜和酱油风味，口味咸香、比较顶饱。适合想吃熟食主食的人；素食或不吃猪肉要确认配料。",
+      category: "主食",
+      taste: ["咸香", "酱香"],
+      cautions: ["含麸质", "可能含猪肉或海鲜"],
+      tags: ["中餐", "主食", "熟食"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("mango pancake")) {
+    return {
+      name_zh: "芒果班戟",
+      description_zh: "港式甜点，薄饼皮包奶油和芒果，口感软、偏甜。适合饭后分享；不适合不吃奶制品的人。",
+      category: "甜点",
+      taste: ["甜", "奶香", "水果味"],
+      cautions: ["含奶制品", "可能含麸质"],
+      tags: ["甜点", "港式", "含奶"],
+      confidence: "高",
+    };
+  }
   if (lower.includes("tonkotsu ramen") || lower.includes("ramen")) {
     return {
       name_zh: "日式拉面",
@@ -621,6 +699,28 @@ function describeLocalDish(name) {
       tags: ["日餐", "拉面", "主食"],
       assumptions: ["不同店铺汤底和配料不同，具体请现场确认。"],
       confidence: "中",
+    };
+  }
+  if (lower.includes("teriyaki chicken")) {
+    return {
+      name_zh: "照烧鸡肉饭",
+      description_zh: "鸡肉配照烧酱和米饭，通常甜咸口，不太辣。适合不想冒险的人；酱汁可能含大豆。",
+      category: "主食",
+      taste: ["甜咸", "咸香"],
+      cautions: ["可能含大豆", "酱汁可能偏甜"],
+      tags: ["日餐", "鸡肉", "比较安全"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("green tea ice cream")) {
+    return {
+      name_zh: "抹茶冰淇淋",
+      description_zh: "抹茶味冰淇淋，甜中带一点茶味微苦。适合饭后甜点；不适合不吃奶制品的人。",
+      category: "甜点",
+      taste: ["甜", "抹茶味", "奶香"],
+      cautions: ["含奶制品"],
+      tags: ["日餐", "甜点", "含奶"],
+      confidence: "高",
     };
   }
   if (lower.includes("gyoza")) {
@@ -686,6 +786,39 @@ function describeLocalDish(name) {
       taste: ["油炸", "可能甜辣"],
       cautions: ["可能偏辣", "可能含麸质"],
       tags: ["韩餐", "鸡肉", "适合分享"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("seafood pancake")) {
+    return {
+      name_zh: "韩式海鲜煎饼",
+      description_zh: "韩式煎饼里通常有葱、面糊和海鲜，适合分享。海鲜过敏或麸质过敏的人不要点。",
+      category: "前菜/分享",
+      taste: ["咸香", "外脆"],
+      cautions: ["海鲜过敏者避免", "含麸质"],
+      tags: ["韩餐", "海鲜", "适合分享"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("japchae")) {
+    return {
+      name_zh: "韩式炒粉丝",
+      description_zh: "韩式粉丝配蔬菜和肉，通常是甜咸口，不太辣。适合想吃主食但不想太辣的人；可能含芝麻和酱油。",
+      category: "主食/配菜",
+      taste: ["甜咸", "咸香"],
+      cautions: ["可能含芝麻", "可能含大豆"],
+      tags: ["韩餐", "不太辣", "主食"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("eggs benedict")) {
+    return {
+      name_zh: "班尼迪克蛋",
+      description_zh: "早午餐常见菜，通常是面包、火腿/三文鱼、半熟水波蛋和荷兰酱。想吃全熟蛋要要求 fully cooked eggs。",
+      category: "早午餐",
+      taste: ["奶香", "咸香"],
+      cautions: ["可能有半熟蛋", "可能含奶制品", "可能含麸质"],
+      tags: ["早午餐", "蛋类", "需确认熟度"],
       confidence: "高",
     };
   }
@@ -1099,7 +1232,7 @@ async function recognizeMenuTextInBrowser(file) {
 function cleanOcrMenuText(text, label = "") {
   const isDrink = /\b(wine|drink|drinks|cocktail|beer|beverage|bar)\b/i.test(label);
   if (isDrink) return "";
-  const foodWords = /\b(panna cotta|tiramisu|cake|tart|pudding|crumble|gelato|ice cream|sorbet|dessert|pistachio|chocolate|vanilla|caramel|berry|berries|lemon|apple|pear|fig|honey|oyster|prawn|fish|chips|calamari|salmon|barramundi|seafood|crab|mussel|steak|beef|lamb|chicken|pork|duck|burger|sandwich|schnitzel|parmigiana|pizza|pasta|linguine|fettuccine|risotto|gnocchi|salad|soup|bread|toast|egg|omelette|pancake|waffle|bagel|avocado|mushroom|cheese)\b/i;
+  const foodWords = /\b(panna cotta|tiramisu|cake|tart|pudding|crumble|gelato|ice cream|sorbet|dessert|pistachio|chocolate|vanilla|caramel|berry|berries|lemon|apple|pear|fig|honey|oyster|prawn|shrimp|fish|chips|fresh catch|catch of the day|calamari|salmon|barramundi|seafood|crab|mussel|scallop|steak|beef|lamb|chicken|pork|duck|burger|sandwich|schnitzel|parmigiana|pizza|pasta|linguine|fettuccine|risotto|gnocchi|salad|soup|bread|toast|egg|eggs|omelette|benedict|pancake|waffle|bagel|avocado|mushroom|cheese|bao|bun|dumpling|wonton|noodle|ramen|gyoza|karaage|teriyaki|don|bibimbap|bulgogi|kimchi|fried chicken|japchae|pad thai|curry|tom yum|papaya salad|sticky rice|mango)\b/i;
   return text
     .split("\n")
     .map((line) => line
@@ -1467,4 +1600,4 @@ if ("serviceWorker" in navigator) {
 }
 
 renderHistory();
-renderRestaurants(demoRestaurants, "v24 已加载：新增 Chatswood 首批主流代表菜单，并统一显示清晰解释。");
+renderRestaurants(demoRestaurants, "v25 已加载：餐厅卡片已加入查看位置/导航，菜单过滤和主流菜解释已加强。");
