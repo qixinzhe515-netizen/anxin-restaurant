@@ -628,6 +628,10 @@ def known_menu_cache(name="", area="", website=""):
     result["websiteUrl"] = "https://mummsonthemyall.com.au"
     result["source"] = "known_menu_cache"
     result["summary"] = "已先整理官网确认的代表菜，不是完整菜单。包含招牌海鲜、当日鱼、外带炸鱼薯条和甜点；完整菜单仍可打开原文核对。"
+    for dish in result.get("dishes", []):
+        dish["source"] = "官网确认代表菜"
+        dish["confidence"] = "高"
+        dish["recommendationReason"] = "来自该餐厅官网可确认的信息；是否当天售卖仍以餐厅现场为准。"
     result["menuLinks"] = [
         {
             "title": "官网菜单页",
@@ -1074,10 +1078,10 @@ def known_restaurants(area_name=""):
         restaurants = [
             (
                 "cw-dumpling",
-                "Chatswood 点心/小笼包代表菜单",
+                "Chatswood 菜系练习：点心/小笼包",
                 "Chatswood, NSW",
-                "先覆盖 Chatswood 常见中餐点心主流菜，适合不会英文的人先看懂再点。",
-                ["中餐", "点心", "主流菜"],
+                "菜系练习，不是某家餐厅真实菜单。用于先看懂常见菜名。",
+                ["中餐", "点心", "练习菜单"],
                 "",
                 "\n".join([
                     "Xiao long bao",
@@ -1090,10 +1094,10 @@ def known_restaurants(area_name=""):
             ),
             (
                 "cw-thai",
-                "Chatswood 泰餐代表菜单",
+                "Chatswood 菜系练习：泰餐",
                 "Chatswood, NSW",
-                "覆盖泰餐最常见菜，重点解释辣度、花生和海鲜风险。",
-                ["泰餐", "需确认辣度", "适合分享"],
+                "菜系练习，不是某家餐厅真实菜单。重点解释辣度、花生和海鲜风险。",
+                ["泰餐", "需确认辣度", "练习菜单"],
                 "",
                 "\n".join([
                     "Chicken pad thai",
@@ -1106,10 +1110,10 @@ def known_restaurants(area_name=""):
             ),
             (
                 "cw-ramen",
-                "Chatswood 日式拉面代表菜单",
+                "Chatswood 菜系练习：日式拉面",
                 "Chatswood, NSW",
-                "覆盖拉面店常见菜，适合想快速判断汤底、猪肉和油炸小吃的人。",
-                ["日餐", "拉面", "主食"],
+                "菜系练习，不是某家餐厅真实菜单。适合快速判断汤底、猪肉和油炸小吃。",
+                ["日餐", "拉面", "练习菜单"],
                 "",
                 "\n".join([
                     "Tonkotsu ramen",
@@ -1122,10 +1126,10 @@ def known_restaurants(area_name=""):
             ),
             (
                 "cw-korean",
-                "Chatswood 韩餐代表菜单",
+                "Chatswood 菜系练习：韩餐",
                 "Chatswood, NSW",
-                "覆盖韩餐常见主食、汤和分享菜，重点解释辣度。",
-                ["韩餐", "可能偏辣", "适合分享"],
+                "菜系练习，不是某家餐厅真实菜单。覆盖常见主食、汤和分享菜。",
+                ["韩餐", "可能偏辣", "练习菜单"],
                 "",
                 "\n".join([
                     "Beef bulgogi",
@@ -1138,10 +1142,10 @@ def known_restaurants(area_name=""):
             ),
             (
                 "cw-cafe",
-                "Chatswood 咖啡早午餐代表菜单",
+                "Chatswood 菜系练习：咖啡早午餐",
                 "Chatswood, NSW",
-                "覆盖咖啡和早午餐常见菜，适合老人、游客和学生先练习使用。",
-                ["咖啡", "早午餐", "英文压力低"],
+                "菜系练习，不是某家咖啡店真实菜单。适合老人、游客和学生先练习使用。",
+                ["咖啡", "早午餐", "练习菜单"],
                 "",
                 "\n".join([
                     "Flat white",
@@ -1155,7 +1159,7 @@ def known_restaurants(area_name=""):
         ]
         return {
             "source": "known_local",
-            "message": "Chatswood 城市区先覆盖一批主流代表菜单，不是完整餐厅库。每道菜解释会清楚标出过敏、辣度和需确认内容。",
+            "message": "当前没有后端 Google Places key，Chatswood 先显示菜系练习菜单，不冒充真实餐厅菜单。真实餐厅需要接 Google Places/OSM 或人工确认库。",
             "restaurants": [
                 {
                     "id": f"known-{slug}",
@@ -1171,6 +1175,8 @@ def known_restaurants(area_name=""):
                     "websiteUri": website,
                     "hasMenu": True,
                     "menuText": menu_text,
+                    "menuSource": "菜系练习",
+                    "menuVerified": False,
                 }
                 for slug, name, address, note, tags, website, menu_text in restaurants
             ],

@@ -5,6 +5,8 @@ const state = {
   menuDiscoveryId: 0,
   restaurants: [],
   selectedRestaurantId: "",
+  selectedMenuSource: "",
+  selectedMenuVerified: false,
   menuLinks: [],
   restaurantSearchId: 0,
 };
@@ -91,6 +93,8 @@ function formPayload() {
 
 function clearRestaurantSelection() {
   state.selectedRestaurantId = "";
+  state.selectedMenuSource = "";
+  state.selectedMenuVerified = false;
   state.dishes = [];
   state.selectedIds = new Set();
   state.generated = null;
@@ -116,6 +120,7 @@ function renderRestaurants(restaurants = demoRestaurants, notice = "") {
     .map((restaurant) => {
       const mapsUrl = restaurant.googleMapsUri || googleMapsSearchUrl(restaurant);
       const directionsUrl = googleMapsDirectionsUrl(restaurant);
+      const menuLabel = menuStatusLabel(restaurant);
       return `
       <article class="restaurant-card ${restaurant.id === state.selectedRestaurantId ? "selected" : ""}" data-restaurant-id="${restaurant.id}">
         <div class="restaurant-top">
@@ -125,7 +130,7 @@ function renderRestaurants(restaurants = demoRestaurants, notice = "") {
         <p>${restaurant.address || restaurant.area || "附近"} · ${restaurant.note}</p>
         <div class="tag-row">
           ${(restaurant.tags || []).map((tag) => `<span class="tag">${tag}</span>`).join("")}
-          <span class="tag">${restaurant.hasMenu || restaurant.menuText || restaurant.menu ? "有菜单" : "暂无线上菜单"}</span>
+          <span class="tag">${menuLabel}</span>
         </div>
         <div class="restaurant-actions">
           <button class="restaurant-select-button" type="button" data-restaurant-select="${restaurant.id}">选择并看菜单</button>
@@ -143,6 +148,13 @@ function renderRestaurants(restaurants = demoRestaurants, notice = "") {
       selectRestaurant(restaurant);
     });
   });
+}
+
+function menuStatusLabel(restaurant = {}) {
+  if (restaurant.menuVerified) return "真实菜单";
+  if (restaurant.menuSource) return restaurant.menuSource;
+  if (restaurant.hasMenu || restaurant.menuText || restaurant.menu) return "待确认菜单";
+  return "暂无线上菜单";
 }
 
 function googleMapsSearchUrl(restaurant = {}) {
@@ -288,6 +300,8 @@ function selectRestaurant(restaurant) {
   const discoveryId = state.menuDiscoveryId + 1;
   state.menuDiscoveryId = discoveryId;
   state.selectedRestaurantId = restaurant.id;
+  state.selectedMenuSource = restaurant.menuSource || (restaurant.menuVerified ? "真实菜单" : "");
+  state.selectedMenuVerified = Boolean(restaurant.menuVerified);
   $("#restaurantName").value = restaurant.name;
   $("#areaName").value = restaurant.area;
   $("#menuUrl").value = restaurant.websiteUri || "";
@@ -298,8 +312,14 @@ function selectRestaurant(restaurant) {
     card.classList.toggle("selected", card.dataset.restaurantId === restaurant.id);
   });
   if (menu) {
-    toast("已选择餐厅，菜单已准备好");
-    const data = fallbackLocalMenuData(menu);
+    toast(restaurant.menuVerified ? "已选择餐厅，真实菜单已准备好" : "已选择菜单，请注意来源");
+    const data = fallbackLocalMenuData(menu, {
+      source: restaurant.menuSource || (restaurant.menuVerified ? "真实菜单" : "菜系练习"),
+      verified: restaurant.menuVerified,
+      summary: restaurant.menuVerified
+        ? "这是当前餐厅对应的菜单来源。仍建议到店前核对是否售罄或菜单更新。"
+        : "这是菜系练习/代表菜，不是某家餐厅的真实菜单。可以用来理解菜名，但不要直接拿它向餐厅下单。",
+    });
     renderDishes(data);
     setStep(2);
   } else {
@@ -308,16 +328,18 @@ function selectRestaurant(restaurant) {
   }
 }
 
-function fallbackLocalMenuData(menuText) {
+function fallbackLocalMenuData(menuText, options = {}) {
   const dishes = menuText
     .split("\n")
     .map(cleanLocalMenuLine)
     .filter(isUsefulLocalMenuLine)
-    .map((line, index) => buildLocalDish(line, index + 1));
+    .map((line, index) => buildLocalDish(line, index + 1, options));
   return {
-    summary: dishes.length
-      ? "下面只保留较可信的菜品解释。英文原文会保留；没有写清楚的内容会标为需要确认，不会把猜测当事实。"
-      : "没有整理出清晰菜品。请换更清楚的菜单页/照片，或选择餐厅官网菜单。",
+    summary: options.summary || (
+      dishes.length
+        ? "下面只保留较可信的菜品解释。英文原文会保留；没有写清楚的内容会标为需要确认，不会把猜测当事实。"
+        : "没有整理出清晰菜品。请换更清楚的菜单页/照片，或选择餐厅官网菜单。"
+    ),
     dishes,
   };
 }
@@ -352,17 +374,24 @@ function isUsefulLocalMenuLine(line = "") {
   return foodWords.test(line);
 }
 
-function buildLocalDish(rawLine, index) {
+function buildLocalDish(rawLine, index, options = {}) {
   const { name, price } = splitDishPrice(rawLine);
+  const source = options.source || "菜单原文";
+  const described = describeLocalDish(name);
+  const assumptions = [
+    ...(described.assumptions || []),
+    ...(options.verified ? [] : ["这不是实时库存信息，点餐前仍需以餐厅当天菜单为准。"]),
+  ];
   return {
     id: String(index),
     name_en: name,
     original_text: rawLine,
     price: price || "",
-    source: "菜单原文",
-    confidence: "中",
-    assumptions: [],
-    ...describeLocalDish(name),
+    ...described,
+    source,
+    confidence: options.verified ? described.confidence || "高" : described.confidence === "低" ? "低" : "中",
+    assumptions,
+    recommendationReason: options.verified ? "来自该餐厅菜单来源，优先展示可读性较高的菜品。" : "菜系练习项，只用于理解菜名和口味。",
   };
 }
 
@@ -904,13 +933,15 @@ const teaGardensRestaurants = [
 const chatswoodRestaurants = [
   {
     id: "cw-dumpling",
-    name: "Chatswood 点心/小笼包代表菜单",
+    name: "Chatswood 菜系练习：点心/小笼包",
     area: "Chatswood",
     address: "Chatswood, NSW",
     rating: "",
-    note: "先覆盖 Chatswood 常见中餐点心主流菜，适合不会英文的人先看懂再点。",
-    tags: ["中餐", "点心", "主流菜"],
+    note: "菜系练习，不是某家餐厅真实菜单。用于先看懂常见菜名。",
+    tags: ["中餐", "点心", "练习菜单"],
     hasMenu: true,
+    menuSource: "菜系练习",
+    menuVerified: false,
     menuText: [
       "Xiao long bao",
       "Pan fried pork buns",
@@ -922,13 +953,15 @@ const chatswoodRestaurants = [
   },
   {
     id: "cw-thai",
-    name: "Chatswood 泰餐代表菜单",
+    name: "Chatswood 菜系练习：泰餐",
     area: "Chatswood",
     address: "Chatswood, NSW",
     rating: "",
-    note: "覆盖泰餐最常见菜，重点解释辣度、花生和海鲜风险。",
-    tags: ["泰餐", "需确认辣度", "适合分享"],
+    note: "菜系练习，不是某家餐厅真实菜单。重点解释辣度、花生和海鲜风险。",
+    tags: ["泰餐", "需确认辣度", "练习菜单"],
     hasMenu: true,
+    menuSource: "菜系练习",
+    menuVerified: false,
     menuText: [
       "Chicken pad thai",
       "Green curry with beef",
@@ -940,13 +973,15 @@ const chatswoodRestaurants = [
   },
   {
     id: "cw-ramen",
-    name: "Chatswood 日式拉面代表菜单",
+    name: "Chatswood 菜系练习：日式拉面",
     area: "Chatswood",
     address: "Chatswood, NSW",
     rating: "",
-    note: "覆盖拉面店常见菜，适合想快速判断汤底、猪肉和油炸小吃的人。",
-    tags: ["日餐", "拉面", "主食"],
+    note: "菜系练习，不是某家餐厅真实菜单。适合快速判断汤底、猪肉和油炸小吃。",
+    tags: ["日餐", "拉面", "练习菜单"],
     hasMenu: true,
+    menuSource: "菜系练习",
+    menuVerified: false,
     menuText: [
       "Tonkotsu ramen",
       "Miso ramen",
@@ -958,13 +993,15 @@ const chatswoodRestaurants = [
   },
   {
     id: "cw-korean",
-    name: "Chatswood 韩餐代表菜单",
+    name: "Chatswood 菜系练习：韩餐",
     area: "Chatswood",
     address: "Chatswood, NSW",
     rating: "",
-    note: "覆盖韩餐常见主食、汤和分享菜，重点解释辣度。",
-    tags: ["韩餐", "可能偏辣", "适合分享"],
+    note: "菜系练习，不是某家餐厅真实菜单。覆盖常见主食、汤和分享菜。",
+    tags: ["韩餐", "可能偏辣", "练习菜单"],
     hasMenu: true,
+    menuSource: "菜系练习",
+    menuVerified: false,
     menuText: [
       "Beef bulgogi",
       "Bibimbap",
@@ -976,13 +1013,15 @@ const chatswoodRestaurants = [
   },
   {
     id: "cw-cafe",
-    name: "Chatswood 咖啡早午餐代表菜单",
+    name: "Chatswood 菜系练习：咖啡早午餐",
     area: "Chatswood",
     address: "Chatswood, NSW",
     rating: "",
-    note: "覆盖咖啡和早午餐常见菜，适合老人、游客和学生先练习使用。",
-    tags: ["咖啡", "早午餐", "英文压力低"],
+    note: "菜系练习，不是某家咖啡店真实菜单。适合老人、游客和学生先练习使用。",
+    tags: ["咖啡", "早午餐", "练习菜单"],
     hasMenu: true,
+    menuSource: "菜系练习",
+    menuVerified: false,
     menuText: [
       "Flat white",
       "Long black",
@@ -1099,12 +1138,15 @@ function localKnownMenuCache(payload = {}) {
     "Turkish delight panna cotta",
     "Persian fairy floss and pistachio",
   ].join("\n");
-  const analyzed = fallbackLocalMenuData(menuText);
+  const analyzed = fallbackLocalMenuData(menuText, {
+    source: "官网确认代表菜",
+    verified: true,
+    summary: "已整理官网确认过的代表菜，不是完整菜单。包含招牌海鲜、当日鱼、外带炸鱼薯条和甜点；完整菜单仍可打开原文核对。",
+  });
   return {
     ...analyzed,
     menuText,
     websiteUrl: "https://mummsonthemyall.com.au",
-    summary: "已先整理官网确认的代表菜，不是完整菜单。包含招牌海鲜、当日鱼、外带炸鱼薯条和甜点；完整菜单仍可打开原文核对。",
     menuLinks: [
       { title: "官网菜单页", url: "https://mummsonthemyall.com.au", type: "page" },
       { title: "DESSERT", url: "https://mummsonthemyall.com.au/uploads/1/1/5/2/115221607/dessert_april_2026_copy.png", type: "image" },
@@ -1119,7 +1161,7 @@ function localNearbyRestaurants(payload = {}) {
   if (/^(cw|chatswood)$/i.test(area)) {
     return {
       source: "static_known",
-      message: "Chatswood 城市区先覆盖一批主流代表菜单，不是完整餐厅库。每道菜解释会清楚标出过敏、辣度和需确认内容。",
+      message: "当前没有后端 Google Places key，Chatswood 先显示菜系练习菜单，不冒充真实餐厅菜单。真实餐厅需要接 Google Places/OSM 或人工确认库。",
       restaurants: chatswoodRestaurants,
     };
   }
@@ -1138,7 +1180,10 @@ function localNearbyRestaurants(payload = {}) {
 }
 
 function localAnalyzeMenu(payload = {}) {
-  return fallbackLocalMenuData(payload.menuText || "");
+  return fallbackLocalMenuData(payload.menuText || "", {
+    source: "用户输入/照片识别",
+    verified: false,
+  });
 }
 
 function localGenerateCard(payload = {}) {
@@ -1322,6 +1367,7 @@ function renderDishes(data) {
       const meta = [
         dish.category ? `分类：${dish.category}` : "",
         dish.price ? `价格：${dish.price}` : "",
+        dish.source ? `来源：${dish.source}` : "",
         dish.confidence ? `可信度：${dish.confidence}` : "",
       ].filter(Boolean).join(" · ");
       return `
@@ -1335,6 +1381,7 @@ function renderDishes(data) {
             <p class="dish-original">${dish.original_text || dish.name_en}</p>
             ${meta ? `<p class="dish-meta">${meta}</p>` : ""}
             <p class="dish-description">${dish.description_zh || ""}</p>
+            ${dish.recommendationReason ? `<p class="dish-reason">${dish.recommendationReason}</p>` : ""}
             ${taste ? `<div class="tag-row">${taste}</div>` : ""}
             ${cautions ? `<div class="tag-row">${cautions}</div>` : ""}
             ${assumptions}
@@ -1556,6 +1603,10 @@ $("#cardButton").addEventListener("click", async () => {
     toast("请至少选择一道菜");
     return;
   }
+  if (dishes.some((dish) => String(dish.source || "").includes("菜系练习"))) {
+    toast("练习菜单不能生成点餐卡，请选择真实餐厅菜单或拍菜单");
+    return;
+  }
   const button = $("#cardButton");
   button.disabled = true;
   button.textContent = "正在生成...";
@@ -1600,4 +1651,4 @@ if ("serviceWorker" in navigator) {
 }
 
 renderHistory();
-renderRestaurants(demoRestaurants, "v25 已加载：餐厅卡片已加入查看位置/导航，菜单过滤和主流菜解释已加强。");
+renderRestaurants(demoRestaurants, "v26 已加载：菜单必须标明来源；菜系练习不再冒充真实餐厅菜单，也不能生成点餐卡。");

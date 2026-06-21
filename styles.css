@@ -641,6 +641,14 @@ textarea:focus {
   padding-left: 10px;
 }
 
+.dish-reason {
+  border-radius: 14px;
+  background: #f1f6f3;
+  color: #315c50 !important;
+  font-size: 14px !important;
+  padding: 9px 10px;
+}
+
 .tag-row,
 .chip-row {
   display: flex;
