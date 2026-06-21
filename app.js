@@ -578,6 +578,117 @@ function describeLocalDish(name) {
       confidence: "高",
     };
   }
+  if (lower.includes("xiao long bao") || lower.includes("soup dumpling")) {
+    return {
+      name_zh: "小笼包/汤包",
+      description_zh: "小笼包里面有热汤汁，吃的时候先咬小口放汤，避免烫到。通常是猪肉馅；不吃猪肉或有芝麻/麸质过敏需要确认。",
+      category: "点心/主食",
+      taste: ["咸鲜", "有汤汁"],
+      cautions: ["可能含猪肉", "小心烫口", "可能含麸质"],
+      tags: ["中餐", "点心", "热门"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("pan fried pork bun") || lower.includes("pork bun")) {
+    return {
+      name_zh: "生煎包/猪肉煎包",
+      description_zh: "底部煎得香脆，里面通常有猪肉和汤汁。口味咸香，容易烫口；不吃猪肉的人不要点。",
+      category: "点心/主食",
+      taste: ["咸香", "有汤汁"],
+      cautions: ["含猪肉", "小心烫口", "可能含麸质"],
+      tags: ["中餐", "点心"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("wonton noodle")) {
+    return {
+      name_zh: "云吞面",
+      description_zh: "港式常见面食，通常是虾/猪肉云吞配细面和清汤。口味比较清淡；海鲜或猪肉忌口需要确认。",
+      category: "汤面",
+      taste: ["清淡", "鲜味"],
+      cautions: ["可能含虾", "可能含猪肉", "含麸质"],
+      tags: ["中餐", "汤面", "比较安全"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("tonkotsu ramen") || lower.includes("ramen")) {
+    return {
+      name_zh: "日式拉面",
+      description_zh: "日式汤面，Tonkotsu 是猪骨汤，汤底浓郁。通常有面、叉烧、蛋或笋；不吃猪肉或想清淡的人要谨慎。",
+      category: "汤面",
+      taste: ["浓郁", "咸香"],
+      cautions: ["可能含猪肉", "含麸质", "汤底可能较咸"],
+      tags: ["日餐", "拉面", "主食"],
+      assumptions: ["不同店铺汤底和配料不同，具体请现场确认。"],
+      confidence: "中",
+    };
+  }
+  if (lower.includes("gyoza")) {
+    return {
+      name_zh: "日式煎饺",
+      description_zh: "日式煎饺，通常是猪肉或鸡肉馅，底部煎香。适合分享；不吃猪肉或麸质过敏需要确认。",
+      category: "小吃/前菜",
+      taste: ["咸香"],
+      cautions: ["可能含猪肉", "可能含麸质"],
+      tags: ["日餐", "适合分享"],
+      confidence: "中",
+    };
+  }
+  if (lower.includes("karaage")) {
+    return {
+      name_zh: "日式炸鸡",
+      description_zh: "日式炸鸡块，外脆里嫩，口味咸香。通常比较安全，但属于油炸，可能含麸质。",
+      category: "小吃/主菜",
+      taste: ["咸香", "油炸"],
+      cautions: ["可能含麸质", "油炸"],
+      tags: ["日餐", "鸡肉", "比较安全"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("bibimbap")) {
+    return {
+      name_zh: "韩式拌饭",
+      description_zh: "米饭配蔬菜、肉、蛋和韩式辣酱。可以要求 sauce on the side 或 not spicy，适合想吃主食的人。",
+      category: "主食",
+      taste: ["咸香", "可能辣"],
+      cautions: ["可能含蛋", "辣酱可能偏辣", "可能含芝麻"],
+      tags: ["韩餐", "主食"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("bulgogi")) {
+    return {
+      name_zh: "韩式烤/炒牛肉",
+      description_zh: "Bulgogi 是韩式甜咸口牛肉，通常不太辣，适合不想冒险的人。可能含酱油、芝麻或蒜。",
+      category: "主菜",
+      taste: ["甜咸", "肉香"],
+      cautions: ["可能含芝麻", "可能含大豆"],
+      tags: ["韩餐", "牛肉", "比较安全"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("kimchi stew") || lower.includes("kimchi jjigae")) {
+    return {
+      name_zh: "泡菜锅/泡菜汤",
+      description_zh: "韩式泡菜汤，酸辣明显，常有猪肉、豆腐或海鲜。不能吃辣的人谨慎。",
+      category: "汤/主菜",
+      taste: ["酸", "辣"],
+      cautions: ["通常偏辣", "可能含猪肉或海鲜"],
+      tags: ["韩餐", "偏辣"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("korean fried chicken")) {
+    return {
+      name_zh: "韩式炸鸡",
+      description_zh: "韩式炸鸡通常外脆，可能有甜辣酱、蒜香酱或原味。不能吃辣要选 original 或确认 sauce not spicy。",
+      category: "主菜/分享",
+      taste: ["油炸", "可能甜辣"],
+      cautions: ["可能偏辣", "可能含麸质"],
+      tags: ["韩餐", "鸡肉", "适合分享"],
+      confidence: "高",
+    };
+  }
   if (lower.includes("salad")) {
     return {
       name_zh: name,
@@ -654,6 +765,99 @@ const teaGardensRestaurants = [
     note: "咖啡和轻食，适合先从简单菜单开始。",
     tags: ["咖啡/轻食"],
     hasMenu: false,
+  },
+];
+
+const chatswoodRestaurants = [
+  {
+    id: "cw-dumpling",
+    name: "Chatswood 点心/小笼包代表菜单",
+    area: "Chatswood",
+    address: "Chatswood, NSW",
+    rating: "",
+    note: "先覆盖 Chatswood 常见中餐点心主流菜，适合不会英文的人先看懂再点。",
+    tags: ["中餐", "点心", "主流菜"],
+    hasMenu: true,
+    menuText: [
+      "Xiao long bao",
+      "Pan fried pork buns",
+      "Prawn wonton noodle soup",
+      "Shanghai fried noodles",
+      "Salt and pepper calamari",
+      "Mango pancakes",
+    ].join("\n"),
+  },
+  {
+    id: "cw-thai",
+    name: "Chatswood 泰餐代表菜单",
+    area: "Chatswood",
+    address: "Chatswood, NSW",
+    rating: "",
+    note: "覆盖泰餐最常见菜，重点解释辣度、花生和海鲜风险。",
+    tags: ["泰餐", "需确认辣度", "适合分享"],
+    hasMenu: true,
+    menuText: [
+      "Chicken pad thai",
+      "Green curry with beef",
+      "Massaman lamb curry",
+      "Tom yum prawns",
+      "Papaya salad",
+      "Mango sticky rice",
+    ].join("\n"),
+  },
+  {
+    id: "cw-ramen",
+    name: "Chatswood 日式拉面代表菜单",
+    area: "Chatswood",
+    address: "Chatswood, NSW",
+    rating: "",
+    note: "覆盖拉面店常见菜，适合想快速判断汤底、猪肉和油炸小吃的人。",
+    tags: ["日餐", "拉面", "主食"],
+    hasMenu: true,
+    menuText: [
+      "Tonkotsu ramen",
+      "Miso ramen",
+      "Chicken karaage",
+      "Pork gyoza",
+      "Teriyaki chicken don",
+      "Green tea ice cream",
+    ].join("\n"),
+  },
+  {
+    id: "cw-korean",
+    name: "Chatswood 韩餐代表菜单",
+    area: "Chatswood",
+    address: "Chatswood, NSW",
+    rating: "",
+    note: "覆盖韩餐常见主食、汤和分享菜，重点解释辣度。",
+    tags: ["韩餐", "可能偏辣", "适合分享"],
+    hasMenu: true,
+    menuText: [
+      "Beef bulgogi",
+      "Bibimbap",
+      "Kimchi stew",
+      "Korean fried chicken",
+      "Seafood pancake",
+      "Japchae glass noodles",
+    ].join("\n"),
+  },
+  {
+    id: "cw-cafe",
+    name: "Chatswood 咖啡早午餐代表菜单",
+    area: "Chatswood",
+    address: "Chatswood, NSW",
+    rating: "",
+    note: "覆盖咖啡和早午餐常见菜，适合老人、游客和学生先练习使用。",
+    tags: ["咖啡", "早午餐", "英文压力低"],
+    hasMenu: true,
+    menuText: [
+      "Flat white",
+      "Long black",
+      "Avocado toast with poached eggs",
+      "Eggs benedict",
+      "Chicken schnitzel sandwich",
+      "Banana bread",
+    ].join("\n"),
   },
 ];
 
@@ -779,6 +983,13 @@ function localKnownMenuCache(payload = {}) {
 
 function localNearbyRestaurants(payload = {}) {
   const area = (payload.areaName || "").trim();
+  if (/^(cw|chatswood)$/i.test(area)) {
+    return {
+      source: "static_known",
+      message: "Chatswood 城市区先覆盖一批主流代表菜单，不是完整餐厅库。每道菜解释会清楚标出过敏、辣度和需确认内容。",
+      restaurants: chatswoodRestaurants,
+    };
+  }
   if (/tea gardens?/i.test(area)) {
     return {
       source: "static_known",
@@ -1256,4 +1467,4 @@ if ("serviceWorker" in navigator) {
 }
 
 renderHistory();
-renderRestaurants(demoRestaurants, "v23 已加载：菜单先覆盖主流代表菜，并统一显示完整解释字段。");
+renderRestaurants(demoRestaurants, "v24 已加载：新增 Chatswood 首批主流代表菜单，并统一显示清晰解释。");

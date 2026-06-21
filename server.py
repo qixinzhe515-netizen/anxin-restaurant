@@ -119,6 +119,50 @@ def infer_menu_details(lower, item, tags):
         category = "前菜/主菜"
         taste.extend(["咸香"])
         cautions.extend(["海鲜过敏者避免", "可能含麸质"])
+    elif any(word in lower for word in ["xiao long bao", "soup dumpling", "pork bun", "wonton noodle"]):
+        category = "点心/主食"
+        taste.extend(["咸鲜"])
+        cautions.extend(["可能含猪肉", "可能含麸质"])
+        if "wonton" in lower:
+            cautions.append("可能含虾")
+        if "bao" in lower or "dumpling" in lower:
+            cautions.append("小心烫口")
+    elif "ramen" in lower:
+        category = "汤面"
+        taste.extend(["咸香", "浓郁"])
+        cautions.extend(["可能含猪肉", "含麸质", "汤底可能较咸"])
+    elif "gyoza" in lower:
+        category = "小吃/前菜"
+        taste.append("咸香")
+        cautions.extend(["可能含猪肉", "可能含麸质"])
+    elif "karaage" in lower:
+        category = "小吃/主菜"
+        taste.extend(["咸香", "油炸"])
+        cautions.extend(["可能含麸质", "油炸"])
+    elif "bibimbap" in lower:
+        category = "主食"
+        taste.extend(["咸香", "可能辣"])
+        cautions.extend(["可能含蛋", "辣酱可能偏辣", "可能含芝麻"])
+    elif "bulgogi" in lower:
+        category = "主菜"
+        taste.extend(["甜咸", "肉香"])
+        cautions.extend(["可能含芝麻", "可能含大豆"])
+    elif "kimchi stew" in lower or "kimchi jjigae" in lower:
+        category = "汤/主菜"
+        taste.extend(["酸", "辣"])
+        cautions.extend(["通常偏辣", "可能含猪肉或海鲜"])
+    elif "korean fried chicken" in lower:
+        category = "主菜/分享"
+        taste.extend(["油炸", "可能甜辣"])
+        cautions.extend(["可能偏辣", "可能含麸质"])
+    elif "papaya salad" in lower:
+        category = "沙拉/前菜"
+        taste.extend(["酸", "辣", "清爽"])
+        cautions.extend(["可能偏辣", "可能含花生或虾米"])
+    elif "mango sticky rice" in lower:
+        category = "甜点"
+        taste.extend(["甜", "椰奶香"])
+        cautions.append("含椰奶")
     elif any(word in lower for word in ["flat white", "long black", "latte", "coffee", "juice"]):
         category = "饮品"
     elif any(word in lower for word in ["toast", "egg", "omelette", "pancake", "bagel"]):
@@ -162,7 +206,9 @@ FOOD_WORDS = re.compile(
     r"oyster|prawn|fish|chips|fresh catch|catch of the day|calamari|salmon|barramundi|seafood|crab|mussel|"
     r"steak|beef|lamb|chicken|pork|duck|burger|sandwich|schnitzel|parmigiana|"
     r"pizza|pasta|linguine|fettuccine|risotto|gnocchi|salad|soup|bread|toast|"
-    r"egg|omelette|pancake|waffle|bagel|avocado|mushroom|cheese|pistachio"
+    r"egg|omelette|pancake|waffle|bagel|avocado|mushroom|cheese|pistachio|"
+    r"xiao long bao|soup dumpling|dumpling|wonton|noodle|ramen|gyoza|karaage|"
+    r"bibimbap|bulgogi|kimchi|korean fried chicken|japchae|papaya salad|mango sticky rice"
     r")\b",
     re.I,
 )
@@ -607,6 +653,21 @@ def translate_menu_name(lower, original):
         ("fish and chips", "炸鱼薯条"),
         ("oyster", "生蚝"),
         ("calamari", "鱿鱼/炸鱿鱼"),
+        ("xiao long bao", "小笼包/汤包"),
+        ("soup dumpling", "汤包"),
+        ("pan fried pork bun", "生煎包/猪肉煎包"),
+        ("wonton noodle", "云吞面"),
+        ("ramen", "日式拉面"),
+        ("gyoza", "日式煎饺"),
+        ("karaage", "日式炸鸡"),
+        ("bibimbap", "韩式拌饭"),
+        ("bulgogi", "韩式烤/炒牛肉"),
+        ("kimchi stew", "泡菜锅/泡菜汤"),
+        ("korean fried chicken", "韩式炸鸡"),
+        ("seafood pancake", "海鲜煎饼"),
+        ("japchae", "韩式炒粉丝"),
+        ("papaya salad", "青木瓜沙拉"),
+        ("mango sticky rice", "芒果糯米饭"),
         ("burrata", "布拉塔奶酪"),
         ("king prawns", "大虾"),
         ("margherita pizza", "玛格丽特披萨"),
@@ -684,6 +745,42 @@ def describe_menu_item(lower, original):
     elif "calamari" in lower:
         description = "鱿鱼类菜，澳洲餐厅常见为炸鱿鱼或煎鱿鱼，口味咸香，适合分享；海鲜过敏者不要点。"
         tags = ["海鲜", "适合分享", "可能油炸"]
+    elif "xiao long bao" in lower or "soup dumpling" in lower:
+        description = "小笼包/汤包，里面有热汤汁，吃的时候先咬小口放汤，避免烫到。通常是猪肉馅；忌口需要确认。"
+        tags = ["中餐", "点心", "小心烫口"]
+    elif "pan fried pork bun" in lower or "pork bun" in lower:
+        description = "生煎包/猪肉煎包，底部煎香，里面通常有猪肉和汤汁。口味咸香；不吃猪肉的人不要点。"
+        tags = ["中餐", "猪肉", "小心烫口"]
+    elif "wonton noodle" in lower:
+        description = "云吞面，通常是虾/猪肉云吞配细面和清汤。口味相对清淡；海鲜或猪肉忌口需要确认。"
+        tags = ["中餐", "汤面", "比较安全"]
+    elif "ramen" in lower:
+        description = "日式拉面。Tonkotsu 通常是猪骨汤，Miso 是味噌汤底；汤底可能较咸，配料可能有叉烧和蛋。"
+        tags = ["日餐", "拉面", "主食"]
+    elif "gyoza" in lower:
+        description = "日式煎饺，通常是猪肉或鸡肉馅，底部煎香。适合分享；不吃猪肉或麸质过敏需要确认。"
+        tags = ["日餐", "适合分享", "可能含猪肉"]
+    elif "karaage" in lower:
+        description = "日式炸鸡块，外脆里嫩，口味咸香。通常比较安全，但属于油炸，可能含麸质。"
+        tags = ["日餐", "鸡肉", "油炸"]
+    elif "bibimbap" in lower:
+        description = "韩式拌饭，米饭配蔬菜、肉、蛋和韩式辣酱。可以要求 sauce on the side 或 not spicy。"
+        tags = ["韩餐", "主食", "可能辣"]
+    elif "bulgogi" in lower:
+        description = "韩式甜咸口牛肉，通常不太辣，适合不想冒险的人。可能含酱油、芝麻或蒜。"
+        tags = ["韩餐", "牛肉", "比较安全"]
+    elif "kimchi stew" in lower or "kimchi jjigae" in lower:
+        description = "韩式泡菜汤，酸辣明显，常有猪肉、豆腐或海鲜。不能吃辣的人谨慎。"
+        tags = ["韩餐", "偏辣", "汤"]
+    elif "korean fried chicken" in lower:
+        description = "韩式炸鸡，可能有甜辣酱、蒜香酱或原味。不能吃辣要选 original 或确认 sauce not spicy。"
+        tags = ["韩餐", "鸡肉", "适合分享"]
+    elif "papaya salad" in lower:
+        description = "青木瓜沙拉，通常酸辣清爽，可能含鱼露、花生或虾米。不能吃辣或花生过敏需要确认。"
+        tags = ["泰餐", "可能偏辣", "可能含花生"]
+    elif "mango sticky rice" in lower:
+        description = "芒果糯米饭，泰式甜点，椰奶香明显，偏甜。适合饭后分享；不适合不吃椰奶/甜食的人。"
+        tags = ["泰餐", "甜点", "椰奶"]
     elif any(word in lower for word in ["prawn", "prawns", "shrimp"]):
         description = "虾类菜，通常比较容易接受。对海鲜过敏的人不要点；可以要求少蒜或 sauce on the side。"
         tags = ["海鲜", "可能有蒜", "适合分享"]
@@ -906,6 +1003,111 @@ def fallback_restaurants(area_name=""):
 
 def known_restaurants(area_name=""):
     key = re.sub(r"[^a-z0-9]+", "", (area_name or "").lower())
+    if key in {"cw", "chatswood"}:
+        restaurants = [
+            (
+                "cw-dumpling",
+                "Chatswood 点心/小笼包代表菜单",
+                "Chatswood, NSW",
+                "先覆盖 Chatswood 常见中餐点心主流菜，适合不会英文的人先看懂再点。",
+                ["中餐", "点心", "主流菜"],
+                "",
+                "\n".join([
+                    "Xiao long bao",
+                    "Pan fried pork buns",
+                    "Prawn wonton noodle soup",
+                    "Shanghai fried noodles",
+                    "Salt and pepper calamari",
+                    "Mango pancakes",
+                ]),
+            ),
+            (
+                "cw-thai",
+                "Chatswood 泰餐代表菜单",
+                "Chatswood, NSW",
+                "覆盖泰餐最常见菜，重点解释辣度、花生和海鲜风险。",
+                ["泰餐", "需确认辣度", "适合分享"],
+                "",
+                "\n".join([
+                    "Chicken pad thai",
+                    "Green curry with beef",
+                    "Massaman lamb curry",
+                    "Tom yum prawns",
+                    "Papaya salad",
+                    "Mango sticky rice",
+                ]),
+            ),
+            (
+                "cw-ramen",
+                "Chatswood 日式拉面代表菜单",
+                "Chatswood, NSW",
+                "覆盖拉面店常见菜，适合想快速判断汤底、猪肉和油炸小吃的人。",
+                ["日餐", "拉面", "主食"],
+                "",
+                "\n".join([
+                    "Tonkotsu ramen",
+                    "Miso ramen",
+                    "Chicken karaage",
+                    "Pork gyoza",
+                    "Teriyaki chicken don",
+                    "Green tea ice cream",
+                ]),
+            ),
+            (
+                "cw-korean",
+                "Chatswood 韩餐代表菜单",
+                "Chatswood, NSW",
+                "覆盖韩餐常见主食、汤和分享菜，重点解释辣度。",
+                ["韩餐", "可能偏辣", "适合分享"],
+                "",
+                "\n".join([
+                    "Beef bulgogi",
+                    "Bibimbap",
+                    "Kimchi stew",
+                    "Korean fried chicken",
+                    "Seafood pancake",
+                    "Japchae glass noodles",
+                ]),
+            ),
+            (
+                "cw-cafe",
+                "Chatswood 咖啡早午餐代表菜单",
+                "Chatswood, NSW",
+                "覆盖咖啡和早午餐常见菜，适合老人、游客和学生先练习使用。",
+                ["咖啡", "早午餐", "英文压力低"],
+                "",
+                "\n".join([
+                    "Flat white",
+                    "Long black",
+                    "Avocado toast with poached eggs",
+                    "Eggs benedict",
+                    "Chicken schnitzel sandwich",
+                    "Banana bread",
+                ]),
+            ),
+        ]
+        return {
+            "source": "known_local",
+            "message": "Chatswood 城市区先覆盖一批主流代表菜单，不是完整餐厅库。每道菜解释会清楚标出过敏、辣度和需确认内容。",
+            "restaurants": [
+                {
+                    "id": f"known-{slug}",
+                    "name": name,
+                    "area": "Chatswood",
+                    "address": address,
+                    "rating": "",
+                    "userRatingCount": "",
+                    "priceLevel": "",
+                    "note": note,
+                    "tags": tags,
+                    "googleMapsUri": "",
+                    "websiteUri": website,
+                    "hasMenu": True,
+                    "menuText": menu_text,
+                }
+                for slug, name, address, note, tags, website, menu_text in restaurants
+            ],
+        }
     if key not in {"teagarden", "teagardens"}:
         return None
     restaurants = [
