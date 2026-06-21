@@ -87,6 +87,38 @@ def infer_menu_details(lower, item, tags):
         category = "甜点"
         taste.extend(["甜"])
         confidence = "高"
+    elif "seafood platter" in lower:
+        category = "主菜/分享"
+        taste.extend(["鲜味"])
+        cautions.extend(["海鲜过敏者避免", "具体内容需现场确认"])
+        assumptions.append("官网确认这是代表菜，但拼盘具体海鲜组合可能随当天供应变化。")
+        confidence = "高"
+    elif "seafood mornay" in lower:
+        category = "主菜"
+        taste.extend(["奶香", "浓郁", "鲜味"])
+        cautions.extend(["海鲜过敏者避免", "可能含奶制品"])
+        assumptions.append("Mornay 通常含奶油或芝士；具体配方请现场确认。")
+        confidence = "高"
+    elif "fresh catch" in lower:
+        category = "主菜"
+        taste.extend(["鲜味", "相对清淡"])
+        cautions.extend(["鱼类/海鲜过敏者避免", "鱼种和做法需现场确认"])
+        assumptions.append("官网提到 fresh catch of the day，但具体鱼种和价格会随当天变化。")
+        confidence = "高"
+    elif "fish and chips" in lower:
+        category = "主菜/外带"
+        taste.extend(["咸香", "油炸"])
+        cautions.extend(["鱼类过敏者避免", "可能含麸质"])
+        assumptions.append("裹粉可能含麸质，具体请现场确认。")
+        confidence = "高"
+    elif "oyster" in lower:
+        category = "前菜/海鲜"
+        taste.extend(["鲜味", "冷食"])
+        cautions.extend(["海鲜过敏者避免", "可能是生食"])
+    elif "calamari" in lower:
+        category = "前菜/主菜"
+        taste.extend(["咸香"])
+        cautions.extend(["海鲜过敏者避免", "可能含麸质"])
     elif any(word in lower for word in ["flat white", "long black", "latte", "coffee", "juice"]):
         category = "饮品"
     elif any(word in lower for word in ["toast", "egg", "omelette", "pancake", "bagel"]):
@@ -96,7 +128,7 @@ def infer_menu_details(lower, item, tags):
     elif any(word in lower for word in ["pizza", "pasta", "linguine", "fettuccine", "burger", "steak", "lamb", "chicken", "fish", "seafood", "prawn"]):
         category = "主菜"
 
-    if any(word in lower for word in ["panna cotta", "cream", "cheese", "flat white", "latte"]):
+    if re.search(r"\b(panna cotta|cream|cheese|flat white|latte)\b", lower):
         cautions.append("可能含奶制品")
     if any(word in lower for word in ["pistachio", "peanut", "almond", "nut"]):
         cautions.append("含坚果或可能含坚果")
@@ -117,7 +149,7 @@ def infer_menu_details(lower, item, tags):
 
     if not cautions:
         assumptions.append("菜单原文没有写清过敏信息，具体食材请现场确认。")
-    if item == translate_menu_name(lower, item):
+    if confidence != "高" and item == translate_menu_name(lower, item):
         confidence = "中" if category != "未分类" else "低"
 
     return category, list(dict.fromkeys(taste)), list(dict.fromkeys(cautions)), assumptions, confidence
@@ -127,7 +159,7 @@ FOOD_WORDS = re.compile(
     r"\b("
     r"panna cotta|tiramisu|cake|tart|pudding|crumble|gelato|ice cream|sorbet|dessert|"
     r"pistachio|chocolate|vanilla|caramel|berry|berries|lemon|apple|pear|fig|honey|"
-    r"oyster|prawn|fish|chips|calamari|salmon|barramundi|seafood|crab|mussel|"
+    r"oyster|prawn|fish|chips|fresh catch|catch of the day|calamari|salmon|barramundi|seafood|crab|mussel|"
     r"steak|beef|lamb|chicken|pork|duck|burger|sandwich|schnitzel|parmigiana|"
     r"pizza|pasta|linguine|fettuccine|risotto|gnocchi|salad|soup|bread|toast|"
     r"egg|omelette|pancake|waffle|bagel|avocado|mushroom|cheese|pistachio"
@@ -496,6 +528,10 @@ def known_menu_cache(name="", area="", website=""):
         return None
     menu_text = "\n".join(
         [
+            "Mumm's Seafood Platter",
+            "Seafood Mornay",
+            "Fresh catch of the day",
+            "Takeaway fish and chips",
             "Turkish delight panna cotta",
             "Persian fairy floss and pistachio",
         ]
@@ -504,9 +540,7 @@ def known_menu_cache(name="", area="", website=""):
     result["menuText"] = menu_text
     result["websiteUrl"] = "https://mummsonthemyall.com.au"
     result["source"] = "known_menu_cache"
-    result["summary"] = (
-        "已整理出可确认的菜单解释。英文原文会保留；没有写清楚的内容会标为需要确认。"
-    )
+    result["summary"] = "已先整理官网确认的代表菜，不是完整菜单。包含招牌海鲜、当日鱼、外带炸鱼薯条和甜点；完整菜单仍可打开原文核对。"
     result["menuLinks"] = [
         {
             "title": "官网菜单页",
@@ -567,6 +601,12 @@ def translate_menu_name(lower, original):
         ("panna cotta", "意式奶冻"),
         ("persian fairy floss", "波斯棉花糖配开心果"),
         ("pistachio", "开心果甜点"),
+        ("seafood platter", "海鲜拼盘"),
+        ("seafood mornay", "奶油芝士焗海鲜"),
+        ("fresh catch", "当日鲜鱼"),
+        ("fish and chips", "炸鱼薯条"),
+        ("oyster", "生蚝"),
+        ("calamari", "鱿鱼/炸鱿鱼"),
         ("burrata", "布拉塔奶酪"),
         ("king prawns", "大虾"),
         ("margherita pizza", "玛格丽特披萨"),
@@ -626,6 +666,24 @@ def describe_menu_item(lower, original):
     elif "burrata" in lower:
         description = "布拉塔奶酪，外层像马苏里拉，里面很软很奶香，通常配番茄。适合喜欢奶酪的人。"
         tags = ["奶制品", "冷前菜", "口味清爽"]
+    elif "seafood platter" in lower:
+        description = "海鲜拼盘，通常是分享型主菜，可能包含多种海鲜。官网把 Mumm’s Seafood Platter 列为代表菜；具体组合可能随当天供应变化。"
+        tags = ["海鲜", "招牌", "适合分享", "需确认内容"]
+    elif "seafood mornay" in lower:
+        description = "奶油芝士焗海鲜类菜，通常口感浓郁、奶香明显。适合喜欢奶油海鲜的人；海鲜或奶制品过敏者不要点。"
+        tags = ["海鲜", "奶制品", "浓郁"]
+    elif "fresh catch" in lower:
+        description = "当日鲜鱼，鱼种和做法通常根据当天供应变化。点之前建议问 today’s fish 是什么、怎么做。"
+        tags = ["鱼类", "当日供应", "需确认"]
+    elif "fish and chips" in lower:
+        description = "澳洲常见炸鱼薯条，口味直接、份量通常不小。适合第一次尝试本地餐或带小孩的人；注意是油炸。"
+        tags = ["澳洲本地", "鱼类", "比较安全"]
+    elif "oyster" in lower:
+        description = "生蚝或蚝类海鲜，通常是冷食/生食。喜欢海鲜的人会喜欢；孕妇、老人肠胃敏感或海鲜过敏者谨慎。"
+        tags = ["海鲜", "可能生食", "需注意过敏"]
+    elif "calamari" in lower:
+        description = "鱿鱼类菜，澳洲餐厅常见为炸鱿鱼或煎鱿鱼，口味咸香，适合分享；海鲜过敏者不要点。"
+        tags = ["海鲜", "适合分享", "可能油炸"]
     elif any(word in lower for word in ["prawn", "prawns", "shrimp"]):
         description = "虾类菜，通常比较容易接受。对海鲜过敏的人不要点；可以要求少蒜或 sauce on the side。"
         tags = ["海鲜", "可能有蒜", "适合分享"]

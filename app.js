@@ -320,6 +320,77 @@ function splitDishPrice(line) {
 
 function describeLocalDish(name) {
   const lower = name.toLowerCase();
+  if (lower.includes("seafood platter")) {
+    return {
+      name_zh: "海鲜拼盘",
+      description_zh: "海鲜拼盘通常是餐厅的分享型主菜，可能包含鱼、虾、贝类、鱿鱼或其他当日海鲜。适合想一次尝试多种海鲜的人；海鲜过敏者不要点。",
+      category: "主菜/分享",
+      taste: ["鲜味", "适合分享"],
+      cautions: ["海鲜过敏者避免", "具体内容需现场确认"],
+      tags: ["海鲜", "招牌", "适合分享"],
+      assumptions: ["官网确认这是招牌菜，但拼盘具体海鲜组合可能随当日供应变化，请现场确认。"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("seafood mornay")) {
+    return {
+      name_zh: "奶油芝士焗海鲜",
+      description_zh: "Seafood Mornay 通常是海鲜配奶油/芝士白酱的热菜，口感浓郁、奶香明显。适合喜欢奶油海鲜的人；不适合海鲜或奶制品过敏者。",
+      category: "主菜",
+      taste: ["奶香", "浓郁", "鲜味"],
+      cautions: ["海鲜过敏者避免", "含奶制品"],
+      tags: ["海鲜", "奶制品", "浓郁"],
+      assumptions: ["Mornay 通常含奶油或芝士；具体配方请现场确认。"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("fresh catch")) {
+    return {
+      name_zh: "当日鲜鱼",
+      description_zh: "当日鲜鱼通常会根据当天供应变化，做法和鱼种不固定。适合想吃新鲜鱼的人；点之前最好问 today’s fish 是什么、怎么做。",
+      category: "主菜",
+      taste: ["鲜味", "相对清淡"],
+      cautions: ["鱼类/海鲜过敏者避免", "鱼种和做法需现场确认"],
+      tags: ["鱼类", "当日供应", "需确认"],
+      assumptions: ["官网提到 fresh catch of the day，但具体鱼种和价格会随当天变化。"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("fish and chips")) {
+    return {
+      name_zh: "炸鱼薯条",
+      description_zh: "澳洲常见安全菜，炸鱼配薯条，口味直接、份量通常不小。适合第一次尝试本地餐或带小孩的人；注意是油炸。",
+      category: "主菜/外带",
+      taste: ["咸香", "油炸"],
+      cautions: ["鱼类过敏者避免", "可能含麸质"],
+      tags: ["澳洲本地", "鱼类", "比较安全"],
+      assumptions: ["裹粉可能含麸质，具体请现场确认。"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("fresh oysters") || lower.includes("oyster")) {
+    return {
+      name_zh: "生蚝",
+      description_zh: "生蚝通常是冷食或生食海鲜，口感鲜甜带海水味。适合喜欢海鲜的人；孕妇、老人肠胃敏感或海鲜过敏者谨慎。",
+      category: "前菜/海鲜",
+      taste: ["鲜味", "冷食"],
+      cautions: ["海鲜过敏者避免", "可能是生食"],
+      tags: ["海鲜", "生食风险"],
+      confidence: "中",
+    };
+  }
+  if (lower.includes("calamari")) {
+    return {
+      name_zh: "鱿鱼/炸鱿鱼",
+      description_zh: "Calamari 是鱿鱼，澳洲餐厅常见做法是炸鱿鱼圈或煎鱿鱼。口味咸香，适合分享；海鲜过敏者不要点。",
+      category: "前菜/主菜",
+      taste: ["咸香", "可能油炸"],
+      cautions: ["海鲜过敏者避免", "可能含麸质"],
+      tags: ["海鲜", "适合分享"],
+      assumptions: ["具体是炸还是煎，需要看菜单或现场确认。"],
+      confidence: "中",
+    };
+  }
   if (lower.includes("turkish delight panna cotta")) {
     return {
       name_zh: "土耳其软糖风味意式奶冻",
@@ -375,6 +446,40 @@ function describeLocalDish(name) {
       assumptions: ["配料和鸡蛋熟度按澳洲咖啡店常见做法推测，具体请现场确认。"],
     };
   }
+  if (lower.includes("burrata")) {
+    return {
+      name_zh: "布拉塔奶酪配番茄",
+      description_zh: "布拉塔是一种很软、奶香重的意大利奶酪，常配番茄和橄榄油。适合喜欢奶酪的人；不适合不吃奶制品的人。",
+      category: "前菜",
+      taste: ["奶香", "清爽"],
+      cautions: ["含奶制品"],
+      tags: ["奶制品", "前菜", "冷食"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("garlic bread")) {
+    return {
+      name_zh: "蒜香面包",
+      description_zh: "蒜香面包通常作为前菜，味道有明显蒜香，适合分享。一般比较安全，但可能含黄油和麸质。",
+      category: "前菜/配菜",
+      taste: ["蒜香", "咸香"],
+      cautions: ["可能含奶制品", "含麸质"],
+      tags: ["前菜", "适合分享"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("caesar")) {
+    return {
+      name_zh: "凯撒沙拉",
+      description_zh: "凯撒沙拉通常有生菜、芝士、面包丁和凯撒酱，有时会加鸡肉或培根。想吃清淡可以要求酱汁分开放。",
+      category: "沙拉/配菜",
+      taste: ["咸香", "清爽"],
+      cautions: ["可能含奶制品", "可能含培根或鱼露成分"],
+      tags: ["沙拉", "可作配菜"],
+      assumptions: ["不同餐厅凯撒酱成分不同，过敏者需要现场确认。"],
+      confidence: "中",
+    };
+  }
   if (lower.includes("panna cotta")) {
     return {
       name_zh: "意式奶冻",
@@ -393,6 +498,29 @@ function describeLocalDish(name) {
       taste: ["鲜味", "偏清淡"],
       cautions: ["海鲜过敏者避免"],
       tags: ["海鲜", "需注意过敏"],
+    };
+  }
+  if (lower.includes("lamb")) {
+    return {
+      name_zh: "羊肉主菜",
+      description_zh: "羊肉味道通常比鸡肉和鱼更重，慢煮羊肩会比较软烂、份量可能较大。适合喜欢浓郁肉味的人。",
+      category: "主菜",
+      taste: ["肉香", "味道较重"],
+      cautions: ["不喜欢羊味者谨慎"],
+      tags: ["羊肉", "适合分享"],
+      confidence: "中",
+    };
+  }
+  if (lower.includes("steak") || lower.includes("beef burger") || lower.includes("burger")) {
+    return {
+      name_zh: lower.includes("burger") ? "牛肉汉堡" : "牛排/牛肉主菜",
+      description_zh: "牛肉类主菜通常份量较大、口味咸香。汉堡一般配薯条；牛排可要求熟度，比如 medium 或 well done。",
+      category: "主菜",
+      taste: ["咸香", "肉香"],
+      cautions: ["汉堡可能含麸质和奶制品"],
+      tags: ["牛肉", "份量大"],
+      assumptions: ["配菜和酱汁需要看现场菜单确认。"],
+      confidence: "中",
     };
   }
   if (lower.includes("pizza") || lower.includes("pasta") || lower.includes("linguine") || lower.includes("fettuccine")) {
@@ -414,6 +542,40 @@ function describeLocalDish(name) {
       taste: ["咸香"],
       cautions: ["炸物可能偏油"],
       tags: ["鸡肉", "比较安全"],
+    };
+  }
+  if (lower.includes("pad thai")) {
+    return {
+      name_zh: "泰式炒河粉",
+      description_zh: "泰餐常见安全菜，酸甜咸口，通常有蛋、豆芽、花生和肉/虾。花生过敏者不要点或必须确认 no peanuts。",
+      category: "主食",
+      taste: ["酸甜", "咸香"],
+      cautions: ["可能含花生", "可能含蛋或海鲜"],
+      tags: ["泰餐", "主食"],
+      confidence: "高",
+    };
+  }
+  if (lower.includes("green curry") || lower.includes("massaman") || lower.includes("curry")) {
+    return {
+      name_zh: "泰式咖喱",
+      description_zh: "泰式咖喱通常有椰奶和香料。Green curry 往往更辣，Massaman 通常较温和偏浓郁。不能吃辣要提前说明 mild 或 not spicy。",
+      category: "主菜",
+      taste: ["香料味", "可能辣", "椰奶香"],
+      cautions: ["可能偏辣", "可能含坚果或海鲜酱"],
+      tags: ["泰餐", "需确认辣度"],
+      assumptions: ["不同餐厅辣度差异很大，需要现场确认。"],
+      confidence: "中",
+    };
+  }
+  if (lower.includes("tom yum")) {
+    return {
+      name_zh: "冬阴功汤",
+      description_zh: "酸辣泰式汤，常见有虾和香茅味，味道明显。不能吃辣或海鲜过敏的人要谨慎。",
+      category: "汤/主菜",
+      taste: ["酸", "辣", "香料味"],
+      cautions: ["通常偏辣", "可能含海鲜"],
+      tags: ["泰餐", "偏辣", "海鲜"],
+      confidence: "高",
     };
   }
   if (lower.includes("salad")) {
@@ -592,13 +754,20 @@ function staticDemoRestaurantsForArea(areaName = "") {
 function localKnownMenuCache(payload = {}) {
   const key = `${payload.restaurantName || ""} ${payload.areaName || ""} ${payload.websiteUri || ""} ${payload.url || ""}`.toLowerCase();
   if (!key.includes("mumm") && !key.includes("mummsonthemyall")) return null;
-  const menuText = "Turkish delight panna cotta\nPersian fairy floss and pistachio";
+  const menuText = [
+    "Mumm's Seafood Platter",
+    "Seafood Mornay",
+    "Fresh catch of the day",
+    "Takeaway fish and chips",
+    "Turkish delight panna cotta",
+    "Persian fairy floss and pistachio",
+  ].join("\n");
   const analyzed = fallbackLocalMenuData(menuText);
   return {
     ...analyzed,
     menuText,
     websiteUrl: "https://mummsonthemyall.com.au",
-    summary: "已整理出可确认的菜单解释。先看懂菜品，再决定要不要点。",
+    summary: "已先整理官网确认的代表菜，不是完整菜单。包含招牌海鲜、当日鱼、外带炸鱼薯条和甜点；完整菜单仍可打开原文核对。",
     menuLinks: [
       { title: "官网菜单页", url: "https://mummsonthemyall.com.au", type: "page" },
       { title: "DESSERT", url: "https://mummsonthemyall.com.au/uploads/1/1/5/2/115221607/dessert_april_2026_copy.png", type: "image" },
@@ -1087,4 +1256,4 @@ if ("serviceWorker" in navigator) {
 }
 
 renderHistory();
-renderRestaurants(demoRestaurants, "v22 已加载：菜单解释包含原文、分类、注意事项和可信度。");
+renderRestaurants(demoRestaurants, "v23 已加载：菜单先覆盖主流代表菜，并统一显示完整解释字段。");
