@@ -311,6 +311,15 @@ function selectRestaurant(restaurant) {
   $$(".restaurant-card").forEach((card) => {
     card.classList.toggle("selected", card.dataset.restaurantId === restaurant.id);
   });
+  if (restaurant.menuDishes?.length) {
+    toast("已选择餐厅，结构化真实菜单已准备好");
+    renderDishes({
+      summary: "这是已整理的样板菜单：每道菜都固定中文名、解释、口味和忌口提醒。仍建议到店前核对是否售罄或菜单更新。",
+      dishes: enrichStructuredDishes(restaurant.menuDishes, restaurant.menuSource || "真实菜单"),
+    });
+    setStep(2);
+    return;
+  }
   if (menu) {
     toast(restaurant.menuVerified ? "已选择餐厅，真实菜单已准备好" : "已选择菜单，请注意来源");
     const data = fallbackLocalMenuData(menu, {
@@ -326,6 +335,17 @@ function selectRestaurant(restaurant) {
     toast("已选择餐厅，正在自动找菜单");
     discoverRestaurantMenu(restaurant, discoveryId);
   }
+}
+
+function enrichStructuredDishes(dishes = [], source = "真实菜单") {
+  return dishes.map((dish, index) => ({
+    id: String(dish.id || index + 1),
+    confidence: "高",
+    source,
+    recommendationReason: "来自该餐厅对应菜单，适合直接加入点餐卡；当天是否售罄仍以餐厅现场为准。",
+    ...dish,
+    original_text: dish.original_text || dish.name_en,
+  }));
 }
 
 function fallbackLocalMenuData(menuText, options = {}) {
@@ -1483,6 +1503,39 @@ const chatswoodRestaurants = [
     websiteUri: "https://khaopla.com.au/",
     menuSource: "官网 PDF 菜单（Khao Pla）",
     menuVerified: true,
+    menuDishes: [
+      { name_en: "Massaman beef cheek curry", name_zh: "玛莎曼慢炖牛脸肉咖喱", price: "$25", category: "咖喱/主菜", description_zh: "南泰风格咖喱，慢炖牛脸肉配罗望子和棕榈糖。通常浓郁、微甜、香料味明显，辣度比青咖喱温和。", taste: ["浓郁", "微甜", "香料味"], cautions: ["含牛肉", "可能含椰奶", "坚果/过敏需确认"], tags: ["泰餐", "咖喱", "相对稳"] },
+      { name_en: "Gaeng Keaw Wan green curry chicken", name_zh: "泰式青咖喱鸡", price: "$25", category: "咖喱/主菜", description_zh: "鸡腿肉青咖喱，配泰国茄子、野姜、青柠叶、辣椒和罗勒。椰香明显，通常会辣。", taste: ["椰香", "香料味", "偏辣"], cautions: ["含鸡肉", "通常有辣椒", "可能含椰奶"], tags: ["泰餐", "咖喱", "需确认辣度"] },
+      { name_en: "Gaeng Ngor confit duck curry", name_zh: "红咖喱油封鸭", price: "$29", category: "咖喱/主菜", description_zh: "油封鸭咖喱，菜单写有鸭血冻、红毛丹、菠萝、樱桃番茄和青柠叶。口味偏浓郁，带果香和甜酸感。", taste: ["浓郁", "果香", "微甜"], cautions: ["含鸭肉", "含鸭血冻", "辣度需确认"], tags: ["泰餐", "咖喱", "特色"] },
+      { name_en: "Tom Yum banana prawn soup", name_zh: "冬阴功香蕉虾汤", price: "$30", category: "汤/海鲜", description_zh: "酸辣虾汤，配香茅、南姜、青柠叶和香菜。味道鲜、酸、辣都明显，不吃辣的人要提前说明。", taste: ["酸", "辣", "鲜味"], cautions: ["虾/海鲜过敏者避免", "通常偏辣", "有香菜"], tags: ["泰餐", "海鲜", "酸辣"] },
+      { name_en: "Gaeng Pla Phuket curry with Coral trout and betel leaf", name_zh: "普吉珊瑚鳟鱼蒌叶咖喱", price: "$31", category: "咖喱/鱼类", description_zh: "普吉风格鱼咖喱，使用珊瑚鳟鱼和蒌叶。鱼肉鲜味明显，咖喱香料味较重。", taste: ["鲜味", "香料味", "可能偏辣"], cautions: ["鱼类过敏者避免", "辣度需确认"], tags: ["泰餐", "鱼类", "特色"] },
+      { name_en: "Gai Yang char grilled turmeric lemongrass half chicken", name_zh: "姜黄香茅炭烤半鸡", price: "$18", category: "烤鸡/主菜", description_zh: "半只鸡用姜黄和香茅腌制后炭烤。相比咖喱更直接，适合想吃肉但不想太复杂的人。", taste: ["炭烤香", "香茅味", "咸香"], cautions: ["含鸡肉", "酱料辣度需确认"], tags: ["泰餐", "鸡肉", "相对安全"] },
+      { name_en: "Kra Pao minced chicken with chilli and holy basil", name_zh: "泰式打抛辣炒鸡肉碎", price: "$21", category: "炒菜/主菜", description_zh: "鸡肉碎配辣椒和圣罗勒快炒，味道咸香、有罗勒香，通常偏辣。可加皮蛋。", taste: ["咸香", "罗勒香", "偏辣"], cautions: ["含鸡肉", "有辣椒", "加皮蛋需另点"], tags: ["泰餐", "下饭", "需确认辣度"] },
+      { name_en: "Gai Nam Prik Pao chicken with cashew nut and chilli jam", name_zh: "腰果辣椒酱炒鸡", price: "$21", category: "炒菜/主菜", description_zh: "鸡肉配腰果、葱和泰式辣椒酱快炒。通常咸甜带微辣，适合配饭。", taste: ["咸甜", "坚果香", "微辣"], cautions: ["含腰果", "含鸡肉", "坚果过敏者避免"], tags: ["泰餐", "鸡肉", "坚果风险"] },
+      { name_en: "Nua Pad Cha Pru beef with Phuket curry paste and betel leaf", name_zh: "普吉咖喱蒌叶炒牛肉", price: "$24", category: "炒菜/牛肉", description_zh: "牛肉配普吉咖喱酱、秋葵和蒌叶快炒。香料味重，适合能接受泰式香草味的人。", taste: ["香料味", "咸香", "可能偏辣"], cautions: ["含牛肉", "辣度需确认"], tags: ["泰餐", "牛肉", "特色"] },
+      { name_en: "Kana Moo Krob crispy pork belly with Chinese broccoli", name_zh: "芥兰炒脆皮猪肉", price: "$24.5", category: "炒菜/猪肉", description_zh: "脆皮猪肉配芥兰和辣椒快炒。口味咸香、油脂感较重，很适合配饭。", taste: ["咸香", "肉香", "油脂感"], cautions: ["含猪肉", "有辣椒", "可能偏油"], tags: ["泰餐", "猪肉", "下饭"] },
+      { name_en: "Crying Tiger Wagyu striploin", name_zh: "泰式烤和牛牛排", price: "$27", category: "牛排/主菜", description_zh: "伊森风格腌制和牛牛排，通常配泰式蘸酱。肉味明显，蘸酱可能酸辣。", taste: ["肉香", "炭烤香", "蘸酱酸辣"], cautions: ["含牛肉", "蘸酱辣度需确认"], tags: ["泰餐", "牛肉", "适合吃肉"] },
+      { name_en: "Salt and Pepper Calamari with Tom Yum spice salt", name_zh: "冬阴功椒盐炸鱿鱼", price: "$19", category: "前菜/海鲜", description_zh: "炸鱿鱼配冬阴功香料盐，咸香、微辣，适合分享。", taste: ["咸香", "油炸", "微辣"], cautions: ["海鲜过敏者避免", "可能含麸质"], tags: ["海鲜", "适合分享", "前菜"] },
+      { name_en: "Pla Tao Si fish fillets with black beans", name_zh: "豆豉炒鱼片", price: "$24", category: "鱼类/主菜", description_zh: "鱼片配豆豉、葱和韭葱快炒。味道偏咸香，有豆豉发酵香。", taste: ["咸香", "豆豉香", "鲜味"], cautions: ["鱼类过敏者避免", "可能含酱油"], tags: ["鱼类", "下饭"] },
+      { name_en: "Pla Neung Manow steamed Basa fillet with chilli lime dressing", name_zh: "青柠辣汁蒸巴沙鱼", price: "$24", category: "鱼类/主菜", description_zh: "蒸巴沙鱼配白菜、芹菜、香菜和青柠辣汁。比炸物清爽，但酸辣味明显。", taste: ["酸", "辣", "清爽"], cautions: ["鱼类过敏者避免", "有辣椒", "有香菜"], tags: ["鱼类", "相对清爽"] },
+      { name_en: "Yum Nashi Pear salad with crispy soft shell crab", name_zh: "水梨软壳蟹沙拉", price: "$28", category: "沙拉/海鲜", description_zh: "水梨沙拉配炸软壳蟹、香菜、椰丝、虾米、花生、辣椒和青柠汁。酸辣清爽但过敏点多。", taste: ["酸", "辣", "清爽"], cautions: ["蟹/海鲜过敏者避免", "含花生", "可能含虾米"], tags: ["海鲜", "沙拉", "花生风险"] },
+      { name_en: "Hoy Pad Ped baby clam with Sriracha sauce", name_zh: "是拉差辣酱炒小蛤蜊", price: "$28", category: "贝类/主菜", description_zh: "小蛤蜊配自家是拉差辣酱和泰式罗勒快炒，可加煎面。鲜味明显，通常会辣。", taste: ["鲜味", "辣", "罗勒香"], cautions: ["贝类过敏者避免", "通常偏辣"], tags: ["海鲜", "贝类", "下饭"] },
+      { name_en: "Yum Mango green mango salad with crispy whole fish", name_zh: "青芒果炸全鱼沙拉", price: "MP", category: "鱼类/沙拉", description_zh: "青芒果沙拉配当日炸全鱼、香菜、葱、花生和椰丝。酸爽开胃，鱼种和价格会按当天变化。", taste: ["酸", "鲜味", "脆口"], cautions: ["鱼类过敏者避免", "含花生", "价格需现场确认"], tags: ["鱼类", "当日供应", "分享"] },
+      { name_en: "Makua Tord fried red curry battered eggplant", name_zh: "红咖喱炸茄子", price: "$14", category: "蔬菜/前菜", description_zh: "茄子裹红咖喱面糊油炸，配甜辣酱和花生。外脆内软，适合分享。", taste: ["甜辣", "油炸", "软糯"], cautions: ["含花生", "可能含麸质", "油炸"], tags: ["蔬菜", "前菜", "花生风险"] },
+      { name_en: "Salt and Pepper Tofu and Mushroom", name_zh: "冬阴功椒盐豆腐蘑菇", price: "$18", category: "素食/前菜", description_zh: "炸豆腐和三种蘑菇，配冬阴功香料盐。咸香、微辣，适合不想吃肉的人。", taste: ["咸香", "菌菇香", "微辣"], cautions: ["可能含麸质", "可能与海鲜同厨房处理"], tags: ["豆腐", "蘑菇", "素食友好"] },
+      { name_en: "Pad Pak mixed vegetables with tofu", name_zh: "豆腐炒杂菜", price: "$20", category: "素食/主菜", description_zh: "杂菜和豆腐配素蚝油快炒。口味比咖喱清淡，适合想吃蔬菜的人。", taste: ["咸香", "清淡"], cautions: ["酱汁成分需确认"], tags: ["蔬菜", "豆腐", "素食友好"] },
+      { name_en: "Pad Thai chicken noodle with egg peanuts tamarind and dried shrimp", name_zh: "鸡肉泰式炒河粉", price: "$20", category: "米粉/主食", description_zh: "鸡肉炒河粉，配鸡蛋、花生、豆芽、罗望子、虾米和棕榈糖。酸甜咸香，属于泰餐常见安全菜。", taste: ["酸甜", "咸香"], cautions: ["含花生", "含鸡蛋", "可能含虾米"], tags: ["泰餐", "主食", "热门"] },
+      { name_en: "Pad See Eiw flat rice noodle with chicken egg and Chinese broccoli", name_zh: "鸡肉酱油炒河粉", price: "$20", category: "米粉/主食", description_zh: "宽河粉配鸡肉、鸡蛋、黑酱油和芥兰快炒。比 Pad Thai 更咸香，不太酸甜。", taste: ["咸香", "酱香", "锅气"], cautions: ["含鸡蛋", "可能含酱油/麸质"], tags: ["泰餐", "主食", "相对安全"] },
+      { name_en: "Kuy Teaw Kee Mao drunken noodles with chicken chilli and holy basil", name_zh: "鸡肉醉鬼炒河粉", price: "$20", category: "米粉/主食", description_zh: "宽河粉配鸡肉、鸡蛋、辣椒、白菜、竹笋和圣罗勒快炒。香气重，通常比普通炒河粉更辣。", taste: ["咸香", "罗勒香", "偏辣"], cautions: ["含鸡蛋", "有辣椒", "含鸡肉"], tags: ["泰餐", "主食", "需确认辣度"] },
+      { name_en: "Khao Pad fried rice with chicken egg tomato and Chinese broccoli", name_zh: "鸡肉泰式炒饭", price: "$20", category: "米饭/主食", description_zh: "鸡肉、鸡蛋、番茄和芥兰炒饭。口味直接，适合老人、小孩或不想尝试太复杂味道的人。", taste: ["咸香", "锅气"], cautions: ["含鸡蛋", "含鸡肉"], tags: ["泰餐", "主食", "比较安全"] },
+      { name_en: "Khao Pad Man Goong fried rice with banana prawns and shrimp paste", name_zh: "虾膏香蕉虾炒饭", price: "$28", category: "米饭/海鲜", description_zh: "炒饭配香蕉虾和辣虾膏。虾味和鲜味很明显，可能微辣。", taste: ["鲜味", "虾香", "可能微辣"], cautions: ["虾/海鲜过敏者避免", "可能含虾膏"], tags: ["海鲜", "炒饭"] },
+      { name_en: "Goong Ob Woon Sen banana prawns with vermicelli noodles", name_zh: "粉丝焖香蕉虾", price: "$28", category: "粉丝/海鲜", description_zh: "香蕉虾配粉丝和中式芹菜砂锅焖制。鲜味重，粉丝会吸收酱汁。", taste: ["鲜味", "咸香"], cautions: ["虾/海鲜过敏者避免", "有芹菜"], tags: ["海鲜", "粉丝", "适合分享"] },
+      { name_en: "Moo Grob Prik Khing crispy pork belly with red curry paste", name_zh: "红咖喱脆皮猪肉", price: "$25.5", category: "猪肉/主菜", description_zh: "脆皮猪肉配红咖喱酱、豆角和青柠叶快炒。肉香重，通常咸辣下饭。", taste: ["咸香", "肉香", "可能偏辣"], cautions: ["含猪肉", "可能偏油", "辣度需确认"], tags: ["泰餐", "猪肉", "下饭"] },
+      { name_en: "Pla's Pork Ribs with tamarind sauce", name_zh: "泰式罗望子猪肋排", price: "$27", category: "招牌主菜", description_zh: "Khao Pla 招牌猪肋排，二次烹调后配罗望子酱。酸甜咸香、肉味重，适合喜欢肉类的人。", taste: ["酸甜", "肉香", "浓郁"], cautions: ["含猪肉", "酱汁成分需确认"], tags: ["招牌", "猪肉", "推荐"] },
+      { name_en: "Steam Coral Trout with ginger and soy", name_zh: "姜葱豉油蒸珊瑚鳟鱼", price: "$31", category: "鱼类/主菜", description_zh: "珊瑚鳟鱼片配姜和酱油清蒸。比咖喱和炸物更清淡，适合想吃鱼的人。", taste: ["鲜味", "姜香", "清淡"], cautions: ["鱼类过敏者避免", "可能含酱油"], tags: ["鱼类", "相对清淡"] },
+      { name_en: "Kids Meal fried rice or noodles with fried chicken wings", name_zh: "儿童餐：炒饭或面配炸鸡翅", price: "$17", category: "儿童餐", description_zh: "可选番茄炒饭或面，配炸鸡翅、煎蛋、蔬菜和橙汁。适合小孩或想点简单菜的人。", taste: ["咸香", "口味简单"], cautions: ["含鸡肉", "含鸡蛋", "油炸"], tags: ["儿童友好", "简单"] },
+      { name_en: "Black Sticky Rice with Thai milk tea ice cream", name_zh: "黑糯米配泰奶冰淇淋", price: "$11", category: "甜点", description_zh: "温热黑糯米配茉莉西米、菠萝蜜、泰式奶茶冰淇淋和黑甘蔗糖浆。甜、糯、奶香明显。", taste: ["甜", "糯", "奶香"], cautions: ["含奶制品", "偏甜"], tags: ["甜点", "泰式", "适合饭后"] },
+    ],
     menuText: [
       "Massaman beef cheek curry 25",
       "Gaeng Keaw Wan green curry chicken 25",
@@ -2222,4 +2275,4 @@ if ("serviceWorker" in navigator) {
 }
 
 renderHistory();
-renderRestaurants(demoRestaurants, "v30 已加载：Chatswood 改为非中文环境餐厅优先，不再主动推荐中餐。");
+renderRestaurants(demoRestaurants, "v31 已加载：Khao Pla 已改为结构化样板菜单，每道菜固定中文名和解释。");

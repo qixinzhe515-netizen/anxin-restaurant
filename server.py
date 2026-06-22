@@ -1445,6 +1445,60 @@ def fallback_restaurants(area_name=""):
     }
 
 
+def khao_pla_structured_dishes():
+    rows = [
+        ("Massaman beef cheek curry", "玛莎曼慢炖牛脸肉咖喱", "$25", "南泰风格咖喱，慢炖牛脸肉配罗望子和棕榈糖。通常浓郁、微甜、香料味明显，辣度比青咖喱温和。", "咖喱/主菜", ["浓郁", "微甜", "香料味"], ["含牛肉", "可能含椰奶", "坚果/过敏需确认"], ["泰餐", "咖喱", "相对稳"]),
+        ("Gaeng Keaw Wan green curry chicken", "泰式青咖喱鸡", "$25", "鸡腿肉青咖喱，配泰国茄子、野姜、青柠叶、辣椒和罗勒。椰香明显，通常会辣。", "咖喱/主菜", ["椰香", "香料味", "偏辣"], ["含鸡肉", "通常有辣椒", "可能含椰奶"], ["泰餐", "咖喱", "需确认辣度"]),
+        ("Gaeng Ngor confit duck curry", "红咖喱油封鸭", "$29", "油封鸭咖喱，菜单写有鸭血冻、红毛丹、菠萝、樱桃番茄和青柠叶。口味偏浓郁，带果香和甜酸感。", "咖喱/主菜", ["浓郁", "果香", "微甜"], ["含鸭肉", "含鸭血冻", "辣度需确认"], ["泰餐", "咖喱", "特色"]),
+        ("Tom Yum banana prawn soup", "冬阴功香蕉虾汤", "$30", "酸辣虾汤，配香茅、南姜、青柠叶和香菜。味道鲜、酸、辣都明显，不吃辣的人要提前说明。", "汤/海鲜", ["酸", "辣", "鲜味"], ["虾/海鲜过敏者避免", "通常偏辣", "有香菜"], ["泰餐", "海鲜", "酸辣"]),
+        ("Gaeng Pla Phuket curry with Coral trout and betel leaf", "普吉珊瑚鳟鱼蒌叶咖喱", "$31", "普吉风格鱼咖喱，使用珊瑚鳟鱼和蒌叶。鱼肉鲜味明显，咖喱香料味较重。", "咖喱/鱼类", ["鲜味", "香料味", "可能偏辣"], ["鱼类过敏者避免", "辣度需确认"], ["泰餐", "鱼类", "特色"]),
+        ("Gai Yang char grilled turmeric lemongrass half chicken", "姜黄香茅炭烤半鸡", "$18", "半只鸡用姜黄和香茅腌制后炭烤。相比咖喱更直接，适合想吃肉但不想太复杂的人。", "烤鸡/主菜", ["炭烤香", "香茅味", "咸香"], ["含鸡肉", "酱料辣度需确认"], ["泰餐", "鸡肉", "相对安全"]),
+        ("Kra Pao minced chicken with chilli and holy basil", "泰式打抛辣炒鸡肉碎", "$21", "鸡肉碎配辣椒和圣罗勒快炒，味道咸香、有罗勒香，通常偏辣。", "炒菜/主菜", ["咸香", "罗勒香", "偏辣"], ["含鸡肉", "有辣椒"], ["泰餐", "下饭", "需确认辣度"]),
+        ("Gai Nam Prik Pao chicken with cashew nut and chilli jam", "腰果辣椒酱炒鸡", "$21", "鸡肉配腰果、葱和泰式辣椒酱快炒。通常咸甜带微辣，适合配饭。", "炒菜/主菜", ["咸甜", "坚果香", "微辣"], ["含腰果", "含鸡肉", "坚果过敏者避免"], ["泰餐", "鸡肉", "坚果风险"]),
+        ("Nua Pad Cha Pru beef with Phuket curry paste and betel leaf", "普吉咖喱蒌叶炒牛肉", "$24", "牛肉配普吉咖喱酱、秋葵和蒌叶快炒。香料味重，适合能接受泰式香草味的人。", "炒菜/牛肉", ["香料味", "咸香", "可能偏辣"], ["含牛肉", "辣度需确认"], ["泰餐", "牛肉", "特色"]),
+        ("Kana Moo Krob crispy pork belly with Chinese broccoli", "芥兰炒脆皮猪肉", "$24.5", "脆皮猪肉配芥兰和辣椒快炒。口味咸香、油脂感较重，很适合配饭。", "炒菜/猪肉", ["咸香", "肉香", "油脂感"], ["含猪肉", "有辣椒", "可能偏油"], ["泰餐", "猪肉", "下饭"]),
+        ("Crying Tiger Wagyu striploin", "泰式烤和牛牛排", "$27", "伊森风格腌制和牛牛排，通常配泰式蘸酱。肉味明显，蘸酱可能酸辣。", "牛排/主菜", ["肉香", "炭烤香", "蘸酱酸辣"], ["含牛肉", "蘸酱辣度需确认"], ["泰餐", "牛肉", "适合吃肉"]),
+        ("Salt and Pepper Calamari with Tom Yum spice salt", "冬阴功椒盐炸鱿鱼", "$19", "炸鱿鱼配冬阴功香料盐，咸香、微辣，适合分享。", "前菜/海鲜", ["咸香", "油炸", "微辣"], ["海鲜过敏者避免", "可能含麸质"], ["海鲜", "适合分享", "前菜"]),
+        ("Pla Tao Si fish fillets with black beans", "豆豉炒鱼片", "$24", "鱼片配豆豉、葱和韭葱快炒。味道偏咸香，有豆豉发酵香。", "鱼类/主菜", ["咸香", "豆豉香", "鲜味"], ["鱼类过敏者避免", "可能含酱油"], ["鱼类", "下饭"]),
+        ("Pla Neung Manow steamed Basa fillet with chilli lime dressing", "青柠辣汁蒸巴沙鱼", "$24", "蒸巴沙鱼配白菜、芹菜、香菜和青柠辣汁。比炸物清爽，但酸辣味明显。", "鱼类/主菜", ["酸", "辣", "清爽"], ["鱼类过敏者避免", "有辣椒", "有香菜"], ["鱼类", "相对清爽"]),
+        ("Yum Nashi Pear salad with crispy soft shell crab", "水梨软壳蟹沙拉", "$28", "水梨沙拉配炸软壳蟹、香菜、椰丝、虾米、花生、辣椒和青柠汁。酸辣清爽但过敏点多。", "沙拉/海鲜", ["酸", "辣", "清爽"], ["蟹/海鲜过敏者避免", "含花生", "可能含虾米"], ["海鲜", "沙拉", "花生风险"]),
+        ("Hoy Pad Ped baby clam with Sriracha sauce", "是拉差辣酱炒小蛤蜊", "$28", "小蛤蜊配自家是拉差辣酱和泰式罗勒快炒，可加煎面。鲜味明显，通常会辣。", "贝类/主菜", ["鲜味", "辣", "罗勒香"], ["贝类过敏者避免", "通常偏辣"], ["海鲜", "贝类", "下饭"]),
+        ("Yum Mango green mango salad with crispy whole fish", "青芒果炸全鱼沙拉", "MP", "青芒果沙拉配当日炸全鱼、香菜、葱、花生和椰丝。酸爽开胃，鱼种和价格会按当天变化。", "鱼类/沙拉", ["酸", "鲜味", "脆口"], ["鱼类过敏者避免", "含花生", "价格需现场确认"], ["鱼类", "当日供应", "分享"]),
+        ("Makua Tord fried red curry battered eggplant", "红咖喱炸茄子", "$14", "茄子裹红咖喱面糊油炸，配甜辣酱和花生。外脆内软，适合分享。", "蔬菜/前菜", ["甜辣", "油炸", "软糯"], ["含花生", "可能含麸质", "油炸"], ["蔬菜", "前菜", "花生风险"]),
+        ("Salt and Pepper Tofu and Mushroom", "冬阴功椒盐豆腐蘑菇", "$18", "炸豆腐和三种蘑菇，配冬阴功香料盐。咸香、微辣，适合不想吃肉的人。", "素食/前菜", ["咸香", "菌菇香", "微辣"], ["可能含麸质", "可能与海鲜同厨房处理"], ["豆腐", "蘑菇", "素食友好"]),
+        ("Pad Pak mixed vegetables with tofu", "豆腐炒杂菜", "$20", "杂菜和豆腐配素蚝油快炒。口味比咖喱清淡，适合想吃蔬菜的人。", "素食/主菜", ["咸香", "清淡"], ["酱汁成分需确认"], ["蔬菜", "豆腐", "素食友好"]),
+        ("Pad Thai chicken noodle with egg peanuts tamarind and dried shrimp", "鸡肉泰式炒河粉", "$20", "鸡肉炒河粉，配鸡蛋、花生、豆芽、罗望子、虾米和棕榈糖。酸甜咸香，属于泰餐常见安全菜。", "米粉/主食", ["酸甜", "咸香"], ["含花生", "含鸡蛋", "可能含虾米"], ["泰餐", "主食", "热门"]),
+        ("Pad See Eiw flat rice noodle with chicken egg and Chinese broccoli", "鸡肉酱油炒河粉", "$20", "宽河粉配鸡肉、鸡蛋、黑酱油和芥兰快炒。比 Pad Thai 更咸香，不太酸甜。", "米粉/主食", ["咸香", "酱香", "锅气"], ["含鸡蛋", "可能含酱油/麸质"], ["泰餐", "主食", "相对安全"]),
+        ("Kuy Teaw Kee Mao drunken noodles with chicken chilli and holy basil", "鸡肉醉鬼炒河粉", "$20", "宽河粉配鸡肉、鸡蛋、辣椒、白菜、竹笋和圣罗勒快炒。香气重，通常比普通炒河粉更辣。", "米粉/主食", ["咸香", "罗勒香", "偏辣"], ["含鸡蛋", "有辣椒", "含鸡肉"], ["泰餐", "主食", "需确认辣度"]),
+        ("Khao Pad fried rice with chicken egg tomato and Chinese broccoli", "鸡肉泰式炒饭", "$20", "鸡肉、鸡蛋、番茄和芥兰炒饭。口味直接，适合老人、小孩或不想尝试太复杂味道的人。", "米饭/主食", ["咸香", "锅气"], ["含鸡蛋", "含鸡肉"], ["泰餐", "主食", "比较安全"]),
+        ("Khao Pad Man Goong fried rice with banana prawns and shrimp paste", "虾膏香蕉虾炒饭", "$28", "炒饭配香蕉虾和辣虾膏。虾味和鲜味很明显，可能微辣。", "米饭/海鲜", ["鲜味", "虾香", "可能微辣"], ["虾/海鲜过敏者避免", "可能含虾膏"], ["海鲜", "炒饭"]),
+        ("Goong Ob Woon Sen banana prawns with vermicelli noodles", "粉丝焖香蕉虾", "$28", "香蕉虾配粉丝和中式芹菜砂锅焖制。鲜味重，粉丝会吸收酱汁。", "粉丝/海鲜", ["鲜味", "咸香"], ["虾/海鲜过敏者避免", "有芹菜"], ["海鲜", "粉丝", "适合分享"]),
+        ("Moo Grob Prik Khing crispy pork belly with red curry paste", "红咖喱脆皮猪肉", "$25.5", "脆皮猪肉配红咖喱酱、豆角和青柠叶快炒。肉香重，通常咸辣下饭。", "猪肉/主菜", ["咸香", "肉香", "可能偏辣"], ["含猪肉", "可能偏油", "辣度需确认"], ["泰餐", "猪肉", "下饭"]),
+        ("Pla's Pork Ribs with tamarind sauce", "泰式罗望子猪肋排", "$27", "Khao Pla 招牌猪肋排，二次烹调后配罗望子酱。酸甜咸香、肉味重，适合喜欢肉类的人。", "招牌主菜", ["酸甜", "肉香", "浓郁"], ["含猪肉", "酱汁成分需确认"], ["招牌", "猪肉", "推荐"]),
+        ("Steam Coral Trout with ginger and soy", "姜葱豉油蒸珊瑚鳟鱼", "$31", "珊瑚鳟鱼片配姜和酱油清蒸。比咖喱和炸物更清淡，适合想吃鱼的人。", "鱼类/主菜", ["鲜味", "姜香", "清淡"], ["鱼类过敏者避免", "可能含酱油"], ["鱼类", "相对清淡"]),
+        ("Kids Meal fried rice or noodles with fried chicken wings", "儿童餐：炒饭或面配炸鸡翅", "$17", "可选番茄炒饭或面，配炸鸡翅、煎蛋、蔬菜和橙汁。适合小孩或想点简单菜的人。", "儿童餐", ["咸香", "口味简单"], ["含鸡肉", "含鸡蛋", "油炸"], ["儿童友好", "简单"]),
+        ("Black Sticky Rice with Thai milk tea ice cream", "黑糯米配泰奶冰淇淋", "$11", "温热黑糯米配茉莉西米、菠萝蜜、泰式奶茶冰淇淋和黑甘蔗糖浆。甜、糯、奶香明显。", "甜点", ["甜", "糯", "奶香"], ["含奶制品", "偏甜"], ["甜点", "泰式", "适合饭后"]),
+    ]
+    return [
+        {
+            "id": str(index),
+            "name_en": name_en,
+            "name_zh": name_zh,
+            "original_text": name_en,
+            "price": price,
+            "description_zh": description,
+            "category": category,
+            "taste": taste,
+            "cautions": cautions,
+            "tags": tags,
+            "source": "官网 PDF 菜单（Khao Pla）",
+            "confidence": "高",
+            "recommendationReason": "来自该餐厅对应菜单，适合直接加入点餐卡；当天是否售罄仍以餐厅现场为准。",
+        }
+        for index, (name_en, name_zh, price, description, category, taste, cautions, tags) in enumerate(rows, start=1)
+    ]
+
+
 def known_restaurants(area_name=""):
     key = re.sub(r"[^a-z0-9]+", "", (area_name or "").lower())
     if key in {"cw", "chatswood"}:
@@ -1591,6 +1645,7 @@ def known_restaurants(area_name=""):
                     "menuText": menu_text,
                     "menuSource": menu_source,
                     "menuVerified": menu_verified,
+                    "menuDishes": khao_pla_structured_dishes() if slug == "cw-khao-pla" else [],
                 }
                 for slug, name, address, note, tags, website, menu_text, menu_source, menu_verified in restaurants
             ],
