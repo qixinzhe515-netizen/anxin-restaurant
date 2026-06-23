@@ -1883,86 +1883,6 @@ const chatswoodRestaurants = [
     ],
     menuText: ["Gelato", "Sorbetti", "Cocco Pandan", "Lychee Lampone", "Coffee", "Pistachio Gelato", "Dark Chocolate Gelato", "Hazelnut Gelato", "Lemon Sorbet", "Affogato"].join("\n"),
   },
-  {
-    id: "cw-thai",
-    name: "Chatswood 菜系练习：泰餐",
-    area: "Chatswood",
-    address: "Chatswood, NSW",
-    rating: "",
-    note: "菜系练习，不是某家餐厅真实菜单。重点解释辣度、花生和海鲜风险。",
-    tags: ["泰餐", "需确认辣度", "练习菜单"],
-    hasMenu: true,
-    menuSource: "菜系练习",
-    menuVerified: false,
-    menuText: [
-      "Chicken pad thai",
-      "Green curry with beef",
-      "Massaman lamb curry",
-      "Tom yum prawns",
-      "Papaya salad",
-      "Mango sticky rice",
-    ].join("\n"),
-  },
-  {
-    id: "cw-ramen",
-    name: "Chatswood 菜系练习：日式拉面",
-    area: "Chatswood",
-    address: "Chatswood, NSW",
-    rating: "",
-    note: "菜系练习，不是某家餐厅真实菜单。适合快速判断汤底、猪肉和油炸小吃。",
-    tags: ["日餐", "拉面", "练习菜单"],
-    hasMenu: true,
-    menuSource: "菜系练习",
-    menuVerified: false,
-    menuText: [
-      "Tonkotsu ramen",
-      "Miso ramen",
-      "Chicken karaage",
-      "Pork gyoza",
-      "Teriyaki chicken don",
-      "Green tea ice cream",
-    ].join("\n"),
-  },
-  {
-    id: "cw-korean",
-    name: "Chatswood 菜系练习：韩餐",
-    area: "Chatswood",
-    address: "Chatswood, NSW",
-    rating: "",
-    note: "菜系练习，不是某家餐厅真实菜单。覆盖常见主食、汤和分享菜。",
-    tags: ["韩餐", "可能偏辣", "练习菜单"],
-    hasMenu: true,
-    menuSource: "菜系练习",
-    menuVerified: false,
-    menuText: [
-      "Beef bulgogi",
-      "Bibimbap",
-      "Kimchi stew",
-      "Korean fried chicken",
-      "Seafood pancake",
-      "Japchae glass noodles",
-    ].join("\n"),
-  },
-  {
-    id: "cw-cafe",
-    name: "Chatswood 菜系练习：咖啡早午餐",
-    area: "Chatswood",
-    address: "Chatswood, NSW",
-    rating: "",
-    note: "菜系练习，不是某家咖啡店真实菜单。适合老人、游客和学生先练习使用。",
-    tags: ["咖啡", "早午餐", "练习菜单"],
-    hasMenu: true,
-    menuSource: "菜系练习",
-    menuVerified: false,
-    menuText: [
-      "Flat white",
-      "Long black",
-      "Avocado toast with poached eggs",
-      "Eggs benedict",
-      "Chicken schnitzel sandwich",
-      "Banana bread",
-    ].join("\n"),
-  },
 ];
 
 const areaDemoMenus = {
@@ -2093,7 +2013,7 @@ function localNearbyRestaurants(payload = {}) {
   if (/^(cw|chatswood)$/i.test(area)) {
     return {
       source: "static_known",
-      message: "Chatswood 优先显示非中文环境餐厅：真实菜单在前，练习菜单只用于兜底，不推荐中餐。",
+      message: "Chatswood 只显示本地好评、非中文环境、菜单可核验的真实餐厅。",
       restaurants: chatswoodRestaurants,
     };
   }
@@ -2575,4 +2495,4 @@ if ("serviceWorker" in navigator) {
 }
 
 renderHistory();
-renderRestaurants(demoRestaurants, "v38 已加载：已删除联系模块，只保留点餐卡。");
+renderRestaurants(demoRestaurants, "v39 已加载：已删除 Chatswood 练习餐厅，只保留真实餐厅。");
