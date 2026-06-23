@@ -1794,8 +1794,13 @@ const chatswoodRestaurants = [
       { name_en: "Bacon Egg Roll", name_zh: "培根鸡蛋卷/汉堡", price: "", category: "早餐/简餐", description_zh: "培根和鸡蛋夹在面包里，点餐最简单，适合赶时间。", taste: ["咸香", "蛋香"], cautions: ["含猪肉", "含鸡蛋"], tags: ["简单", "早餐"] },
       { name_en: "Croissant", name_zh: "牛角包", price: "", category: "烘焙/轻食", description_zh: "法式酥皮面包，可配咖啡。适合只想吃一点的人。", taste: ["黄油香", "酥脆"], cautions: ["含奶制品", "含麸质"], tags: ["轻食", "咖啡搭配"] },
       { name_en: "Flat White", name_zh: "澳式奶咖 Flat White", price: "", category: "咖啡/饮品", description_zh: "澳洲常见奶咖，奶泡比 cappuccino 更细腻，咖啡味和奶香平衡。", taste: ["咖啡香", "奶香"], cautions: ["含奶制品，可问植物奶"], tags: ["咖啡", "澳洲常见"] },
+      { name_en: "Smashed Avocado", name_zh: "牛油果吐司", price: "", category: "早午餐/吐司", description_zh: "牛油果压成泥放在吐司上，澳洲 cafe 很常见。口味清爽，适合不想吃肉的人。", taste: ["清爽", "牛油果香"], cautions: ["含麸质", "配料需确认"], tags: ["素食友好", "早午餐"] },
+      { name_en: "Pancakes", name_zh: "松饼/煎饼", price: "", category: "甜口早午餐", description_zh: "偏甜的早午餐，通常配水果、糖浆或奶油。适合小孩或想吃甜的人。", taste: ["甜", "松软"], cautions: ["含鸡蛋", "含奶制品", "含麸质"], tags: ["儿童友好", "甜口"] },
+      { name_en: "Chicken Schnitzel Sandwich", name_zh: "炸鸡排三明治", price: "", category: "三明治/鸡肉", description_zh: "炸鸡排夹面包，份量比普通吐司更大，适合作为午餐。", taste: ["酥脆", "咸香"], cautions: ["含鸡肉", "油炸", "含麸质"], tags: ["午餐", "简单"] },
+      { name_en: "Salmon Bagel", name_zh: "烟熏三文鱼贝果", price: "", category: "贝果/鱼类", description_zh: "贝果夹烟熏三文鱼和奶油芝士类配料，适合喜欢清爽咸香口味的人。", taste: ["烟熏香", "咸香", "奶香"], cautions: ["鱼类过敏者避免", "含奶制品", "含麸质"], tags: ["鱼类", "早午餐"] },
+      { name_en: "Iced Latte", name_zh: "冰拿铁", price: "", category: "咖啡/饮品", description_zh: "冰咖啡加牛奶，夏天常点。咖啡味比 flat white 更淡一些。", taste: ["咖啡香", "奶香", "冰凉"], cautions: ["含咖啡因", "含奶制品，可问植物奶"], tags: ["咖啡", "冷饮"] },
     ],
-    menuText: ["Eggs Benedict", "Big Breakfast", "Bacon Egg Roll", "Croissant", "Flat White"].join("\n"),
+    menuText: ["Eggs Benedict", "Big Breakfast", "Bacon Egg Roll", "Croissant", "Flat White", "Smashed Avocado", "Pancakes", "Chicken Schnitzel Sandwich", "Salmon Bagel", "Iced Latte"].join("\n"),
   },
   {
     id: "cw-chimichuri",
@@ -1817,8 +1822,13 @@ const chatswoodRestaurants = [
       { name_en: "Big Khahuna", name_zh: "Big Khahuna 大份早午餐", price: "$28", category: "早午餐/主食", description_zh: "大份量 brunch 菜，适合当正餐，不适合只想轻食的人。", taste: ["丰富", "咸香"], cautions: ["配料需现场确认"], tags: ["份量大", "主食"] },
       { name_en: "Seafood Tom Yum Linguine", name_zh: "冬阴功海鲜扁意面", price: "", category: "意面/海鲜", description_zh: "海鲜意面加冬阴功酸辣风味，味道比普通意面更重。", taste: ["酸辣", "海鲜味"], cautions: ["海鲜过敏者避免", "可能偏辣"], tags: ["特色", "海鲜"] },
       { name_en: "Matcha Green Tea Waffle", name_zh: "抹茶华夫饼", price: "", category: "甜品/早午餐", description_zh: "抹茶味华夫饼，偏甜，适合饭后或下午茶。", taste: ["甜", "抹茶香"], cautions: ["含麸质", "可能含奶制品"], tags: ["甜品", "下午茶"] },
+      { name_en: "Smashed Avocado", name_zh: "牛油果吐司", price: "", category: "早午餐/吐司", description_zh: "牛油果吐司是 cafe 常见安全菜，适合不想吃肉或想点清爽早餐的人。", taste: ["清爽", "牛油果香"], cautions: ["含麸质", "配料需确认"], tags: ["素食友好", "简单"] },
+      { name_en: "French Toast", name_zh: "法式吐司", price: "", category: "甜口早午餐", description_zh: "吐司裹蛋奶煎制，通常偏甜、口感柔软，适合下午茶。", taste: ["甜", "蛋奶香", "柔软"], cautions: ["含鸡蛋", "含奶制品", "含麸质"], tags: ["甜口", "下午茶"] },
+      { name_en: "Soft Shell Crab Burger", name_zh: "软壳蟹汉堡", price: "", category: "汉堡/海鲜", description_zh: "炸软壳蟹夹汉堡，海鲜味和酥脆口感明显。", taste: ["酥脆", "海鲜味"], cautions: ["蟹类过敏者避免", "油炸", "含麸质"], tags: ["海鲜", "特色"] },
+      { name_en: "Smoked Salmon Toast", name_zh: "烟熏三文鱼吐司", price: "", category: "早午餐/鱼类", description_zh: "烟熏三文鱼配吐司类底，咸香清爽，适合不想吃油炸的人。", taste: ["烟熏香", "咸香"], cautions: ["鱼类过敏者避免", "含麸质"], tags: ["鱼类", "清爽"] },
+      { name_en: "Cold Brew Coffee", name_zh: "冷萃咖啡", price: "", category: "咖啡/饮品", description_zh: "冷泡咖啡，酸苦感比普通冰咖啡更柔和，适合喜欢咖啡味的人。", taste: ["咖啡香", "冰凉"], cautions: ["含咖啡因"], tags: ["咖啡", "冷饮"] },
     ],
-    menuText: ["Chimichuri Egg 20", "Black Benedict 25", "Big Khahuna 28", "Seafood Tom Yum Linguine", "Matcha Green Tea Waffle"].join("\n"),
+    menuText: ["Chimichuri Egg 20", "Black Benedict 25", "Big Khahuna 28", "Seafood Tom Yum Linguine", "Matcha Green Tea Waffle", "Smashed Avocado", "French Toast", "Soft Shell Crab Burger", "Smoked Salmon Toast", "Cold Brew Coffee"].join("\n"),
   },
   {
     id: "cw-ooshman",
@@ -1840,8 +1850,13 @@ const chatswoodRestaurants = [
       { name_en: "Wrap", name_zh: "黎巴嫩卷饼", price: "", category: "卷饼/主食", description_zh: "肉类或素菜卷进饼里，吃起来方便，适合边走边吃或打包。", taste: ["咸香", "酱汁味"], cautions: ["酱汁和肉类需选择"], tags: ["打包", "简单"] },
       { name_en: "Garlic Chicken Pizza", name_zh: "蒜香鸡肉披萨", price: "", category: "披萨/鸡肉", description_zh: "鸡肉和蒜香酱的薄饼/披萨，味道直接，适合不想冒险的人。", taste: ["蒜香", "鸡肉香"], cautions: ["含鸡肉", "含麸质"], tags: ["鸡肉", "相对安全"] },
       { name_en: "Chips", name_zh: "薯条", price: "", category: "配菜", description_zh: "炸薯条，适合小孩或配卷饼一起点。", taste: ["咸香", "酥脆"], cautions: ["油炸"], tags: ["小孩友好", "配菜"] },
+      { name_en: "Zaatar Manoush", name_zh: "百里香芝麻薄饼", price: "", category: "薄饼/素食", description_zh: "黎巴嫩香料 zaatar 薄饼，味道像香草、芝麻和橄榄油。适合想吃素食轻食的人。", taste: ["香草味", "芝麻香", "咸香"], cautions: ["含麸质", "芝麻过敏者避免"], tags: ["素食友好", "经典"] },
+      { name_en: "Cheese Manoush", name_zh: "芝士黎巴嫩薄饼", price: "", category: "薄饼/芝士", description_zh: "芝士薄饼，口味简单，适合小孩或不想吃肉的人。", taste: ["芝士香", "咸香"], cautions: ["含奶制品", "含麸质"], tags: ["儿童友好", "简单"] },
+      { name_en: "Sujuk Pizza", name_zh: "辣香肠黎巴嫩披萨", price: "", category: "披萨/肉类", description_zh: "sujuk 是中东风味辣香肠，味道比普通肉馅更重。", taste: ["肉香", "香料味", "可能微辣"], cautions: ["含肉类", "辣度需确认", "含麸质"], tags: ["重口味", "快餐"] },
+      { name_en: "Falafel Wrap", name_zh: "鹰嘴豆丸卷饼", price: "", category: "卷饼/素食", description_zh: "炸鹰嘴豆丸配蔬菜和酱料卷起来，适合不吃肉的人。", taste: ["豆香", "酱汁味", "咸香"], cautions: ["油炸", "芝麻酱/过敏需确认"], tags: ["素食友好", "打包"] },
+      { name_en: "Chicken Tawouk Wrap", name_zh: "中东烤鸡卷饼", price: "", category: "卷饼/鸡肉", description_zh: "烤鸡肉卷饼，通常配蒜酱和蔬菜。比牛羊肉更温和。", taste: ["鸡肉香", "蒜香", "咸香"], cautions: ["含鸡肉", "蒜味明显"], tags: ["鸡肉", "相对安全"] },
     ],
-    menuText: ["Lahem w Jibne", "Manoush", "Wrap", "Garlic Chicken Pizza", "Chips"].join("\n"),
+    menuText: ["Lahem w Jibne", "Manoush", "Wrap", "Garlic Chicken Pizza", "Chips", "Zaatar Manoush", "Cheese Manoush", "Sujuk Pizza", "Falafel Wrap", "Chicken Tawouk Wrap"].join("\n"),
   },
   {
     id: "cw-gondola",
@@ -1863,8 +1878,13 @@ const chatswoodRestaurants = [
       { name_en: "Cocco Pandan", name_zh: "椰子班兰口味 gelato", price: "", category: "甜品/特色口味", description_zh: "椰子和班兰香，带东南亚甜品风味。适合喜欢椰香的人。", taste: ["椰香", "班兰香", "甜"], cautions: ["可能含奶制品"], tags: ["特色", "椰香"] },
       { name_en: "Lychee Lampone", name_zh: "荔枝覆盆子口味", price: "", category: "甜品/水果", description_zh: "荔枝和覆盆子组合，通常果香明显、甜酸清爽。", taste: ["荔枝香", "莓果酸甜"], cautions: ["水果过敏需确认"], tags: ["水果", "清爽"] },
       { name_en: "Coffee", name_zh: "咖啡", price: "", category: "饮品", description_zh: "可搭配 gelato 的咖啡，适合下午茶。", taste: ["咖啡香"], cautions: ["含咖啡因"], tags: ["饮品", "下午茶"] },
+      { name_en: "Pistachio Gelato", name_zh: "开心果意式冰淇淋", price: "", category: "甜品/坚果", description_zh: "开心果口味通常坚果香明显、甜度适中，是 gelato 店常见热门口味。", taste: ["坚果香", "奶香", "甜"], cautions: ["含坚果", "可能含奶制品"], tags: ["热门", "坚果"] },
+      { name_en: "Dark Chocolate Gelato", name_zh: "黑巧克力意式冰淇淋", price: "", category: "甜品/巧克力", description_zh: "巧克力味更浓，甜度通常比普通巧克力口味低一点。", taste: ["巧克力香", "微苦", "甜"], cautions: ["可能含奶制品"], tags: ["经典", "巧克力"] },
+      { name_en: "Hazelnut Gelato", name_zh: "榛子意式冰淇淋", price: "", category: "甜品/坚果", description_zh: "榛子味香浓，适合喜欢 Nutella 风味的人。", taste: ["榛子香", "奶香", "甜"], cautions: ["含坚果", "可能含奶制品"], tags: ["坚果", "经典"] },
+      { name_en: "Lemon Sorbet", name_zh: "柠檬雪葩", price: "", category: "甜品/水果", description_zh: "柠檬味雪葩，酸甜清爽，适合饭后解腻。", taste: ["酸", "甜", "清爽"], cautions: ["酸味明显"], tags: ["清爽", "可能无奶"] },
+      { name_en: "Affogato", name_zh: "咖啡浇冰淇淋 Affogato", price: "", category: "甜品/咖啡", description_zh: "热 espresso 淋在冰淇淋上，咖啡苦味和冰淇淋甜味混合。", taste: ["咖啡香", "甜", "微苦"], cautions: ["含咖啡因", "含奶制品"], tags: ["饭后", "咖啡"] },
     ],
-    menuText: ["Gelato", "Sorbetti", "Cocco Pandan", "Lychee Lampone", "Coffee"].join("\n"),
+    menuText: ["Gelato", "Sorbetti", "Cocco Pandan", "Lychee Lampone", "Coffee", "Pistachio Gelato", "Dark Chocolate Gelato", "Hazelnut Gelato", "Lemon Sorbet", "Affogato"].join("\n"),
   },
   {
     id: "cw-thai",
@@ -2566,4 +2586,4 @@ if ("serviceWorker" in navigator) {
 }
 
 renderHistory();
-renderRestaurants(demoRestaurants, "v36 已加载：Kazuma、Bistro Kai、Manpuku 菜品解释已加深。");
+renderRestaurants(demoRestaurants, "v37 已加载：Chatswood 10 家真实餐厅均至少 10 道菜品解释。");
