@@ -119,8 +119,14 @@ function renderRestaurants(restaurants = demoRestaurants, notice = "") {
   noticeEl.textContent = notice;
   noticeEl.classList.toggle("hidden", !notice);
 
-  $("#restaurantList").innerHTML = restaurants
-    .map((restaurant) => {
+  $("#restaurantList").innerHTML = groupByDisplay(restaurants, restaurantDisplayGroup, restaurantGroupOrder)
+    .map(({ group, items }) => `
+      <section class="list-section">
+        <div class="list-section-heading">
+          <h3>${group}</h3>
+          <span>${items.length} 家</span>
+        </div>
+        ${items.map((restaurant) => {
       const mapsUrl = restaurant.googleMapsUri || googleMapsSearchUrl(restaurant);
       const directionsUrl = googleMapsDirectionsUrl(restaurant);
       const menuLabel = menuStatusLabel(restaurant);
@@ -144,7 +150,9 @@ function renderRestaurants(restaurants = demoRestaurants, notice = "") {
         </div>
       </article>
     `;
-    })
+    }).join("")}
+      </section>
+    `)
     .join("");
 
   $$("[data-restaurant-select]").forEach((button) => {
@@ -153,6 +161,36 @@ function renderRestaurants(restaurants = demoRestaurants, notice = "") {
       selectRestaurant(restaurant);
     });
   });
+}
+
+function groupByDisplay(items, getGroup, preferredOrder = []) {
+  const groups = new Map();
+  items.forEach((item) => {
+    const group = getGroup(item);
+    if (!groups.has(group)) groups.set(group, []);
+    groups.get(group).push(item);
+  });
+  return [...groups.entries()]
+    .sort(([a], [b]) => {
+      const ai = preferredOrder.indexOf(a);
+      const bi = preferredOrder.indexOf(b);
+      if (ai !== -1 || bi !== -1) return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+      return a.localeCompare(b, "zh-Hans");
+    })
+    .map(([group, groupItems]) => ({ group, items: groupItems }));
+}
+
+const restaurantGroupOrder = ["泰餐/东南亚", "日餐/韩餐", "西式/融合", "咖啡早午餐", "快餐/轻食", "甜品/饮品", "其他餐厅"];
+
+function restaurantDisplayGroup(restaurant = {}) {
+  const text = `${restaurant.name || ""} ${restaurant.nameNote || ""} ${(restaurant.tags || []).join(" ")} ${restaurant.note || ""}`.toLowerCase();
+  if (/gelato|冰淇淋|甜品|dessert|咖啡甜品/.test(text)) return "甜品/饮品";
+  if (/cafe|咖啡|早午餐|brunch|breakfast/.test(text)) return "咖啡早午餐";
+  if (/ooshman|黎巴嫩|快餐|卷饼|薄饼|打包/.test(text)) return "快餐/轻食";
+  if (/bistro|西式|融合|牛排|意面/.test(text)) return "西式/融合";
+  if (/日餐|日本|拉面|寿司|刺身|韩餐|韩式|korean|japanese|ramen/.test(text)) return "日餐/韩餐";
+  if (/泰餐|马来西亚|东南亚|thai|mamak|khao pla|咖喱|roti|沙爹/.test(text)) return "泰餐/东南亚";
+  return "其他餐厅";
 }
 
 function menuStatusLabel(restaurant = {}) {
@@ -2227,38 +2265,16 @@ function renderDishes(data) {
   summary.textContent = data.summary || "";
   summary.classList.toggle("hidden", !data.summary);
 
-  $("#dishList").innerHTML = state.dishes
-    .map((dish) => {
-      const tags = (dish.tags || []).map((tag) => `<span class="tag">${tag}</span>`).join("");
-      const cautions = (dish.cautions || []).map((item) => `<span class="risk-tag">${item}</span>`).join("");
-      const taste = (dish.taste || []).map((item) => `<span class="taste-tag">${item}</span>`).join("");
-      const assumptions = (dish.assumptions || []).map((item) => `<p class="dish-note">需确认：${item}</p>`).join("");
-      const meta = [
-        dish.category ? `分类：${dish.category}` : "",
-        dish.price ? `价格：${dish.price}` : "",
-        dish.source ? `来源：${dish.source}` : "",
-        dish.confidence ? `可信度：${dish.confidence}` : "",
-      ].filter(Boolean).join(" · ");
-      return `
-        <label class="dish-card">
-          <input type="checkbox" value="${dish.id}" />
-          <div>
-            <div class="dish-title-row">
-              <h3>${dish.name_zh || dish.name_en}</h3>
-              ${dish.price ? `<span class="price-pill">${dish.price}</span>` : ""}
-            </div>
-            <p class="dish-original">${dish.original_text || dish.name_en}</p>
-            ${meta ? `<p class="dish-meta">${meta}</p>` : ""}
-            <p class="dish-description">${dish.description_zh || ""}</p>
-            ${dish.recommendationReason ? `<p class="dish-reason">${dish.recommendationReason}</p>` : ""}
-            ${taste ? `<div class="tag-row">${taste}</div>` : ""}
-            ${cautions ? `<div class="tag-row">${cautions}</div>` : ""}
-            ${assumptions}
-            <div class="tag-row">${tags}</div>
-          </div>
-        </label>
-      `;
-    })
+  $("#dishList").innerHTML = groupByDisplay(state.dishes, dishDisplayGroup, dishGroupOrder)
+    .map(({ group, items }) => `
+      <section class="list-section">
+        <div class="list-section-heading">
+          <h3>${group}</h3>
+          <span>${items.length} 道</span>
+        </div>
+        ${items.map(renderDishCard).join("")}
+      </section>
+    `)
     .join("");
 
   $$("#dishList input").forEach((input) => {
@@ -2267,6 +2283,53 @@ function renderDishes(data) {
       else state.selectedIds.delete(input.value);
     });
   });
+}
+
+const dishGroupOrder = ["前菜/小吃", "主菜", "主食/面饭", "甜品", "饮品", "配菜/酱汁", "其他"];
+
+function dishDisplayGroup(dish = {}) {
+  const category = String(dish.category || "");
+  const tags = (dish.tags || []).join(" ");
+  const text = `${category} ${dish.name_zh || ""} ${dish.name_en || ""} ${tags}`.toLowerCase();
+  if (/饮品|咖啡|coffee|latte|drink|juice|wine|beer/.test(text)) return "饮品";
+  if (/甜|甜点|甜品|冰淇淋|雪葩|gelato|sorbet|cake|tiramisu|panna cotta|dessert|waffle|pancake|toast.*sweet|affogato/.test(text)) return "甜品";
+  if (/配菜|酱汁|薯条|chips|gravy|salad box|side|seasonal vegetables/.test(text)) return "配菜/酱汁";
+  if (/前菜|小吃|分享|海鲜小吃|点心|烘焙|轻食|starter|snack|entree|karaage|gyoza|tofu|croquette|calamari/.test(text)) return "前菜/小吃";
+  if (/主菜|咖喱|牛肉|鸡肉|猪肉|鱼类|海鲜|贝类|牛排|烤鸡|汉堡|披萨|bistro|steak|burger|pork|beef|chicken|fish|seafood|oyster|ribs/.test(text)) return "主菜";
+  if (/主食|米粉|米饭|炒饭|拉面|汤面|意面|盖饭|碗饭|卷饼|薄饼|roti|ramen|pasta|rice|noodle|donburi|wrap|manoush|breakfast|早午餐|早餐|三明治|吐司|贝果/.test(text)) return "主食/面饭";
+  return "其他";
+}
+
+function renderDishCard(dish) {
+  const tags = (dish.tags || []).map((tag) => `<span class="tag">${tag}</span>`).join("");
+  const cautions = (dish.cautions || []).map((item) => `<span class="risk-tag">${item}</span>`).join("");
+  const taste = (dish.taste || []).map((item) => `<span class="taste-tag">${item}</span>`).join("");
+  const assumptions = (dish.assumptions || []).map((item) => `<p class="dish-note">需确认：${item}</p>`).join("");
+  const meta = [
+    dish.category ? `分类：${dish.category}` : "",
+    dish.price ? `价格：${dish.price}` : "",
+    dish.source ? `来源：${dish.source}` : "",
+    dish.confidence ? `可信度：${dish.confidence}` : "",
+  ].filter(Boolean).join(" · ");
+  return `
+    <label class="dish-card">
+      <input type="checkbox" value="${dish.id}" />
+      <div>
+        <div class="dish-title-row">
+          <h3>${dish.name_zh || dish.name_en}</h3>
+          ${dish.price ? `<span class="price-pill">${dish.price}</span>` : ""}
+        </div>
+        <p class="dish-original">${dish.original_text || dish.name_en}</p>
+        ${meta ? `<p class="dish-meta">${meta}</p>` : ""}
+        <p class="dish-description">${dish.description_zh || ""}</p>
+        ${dish.recommendationReason ? `<p class="dish-reason">${dish.recommendationReason}</p>` : ""}
+        ${taste ? `<div class="tag-row">${taste}</div>` : ""}
+        ${cautions ? `<div class="tag-row">${cautions}</div>` : ""}
+        ${assumptions}
+        <div class="tag-row">${tags}</div>
+      </div>
+    </label>
+  `;
 }
 
 function selectedRestrictions() {
@@ -2520,4 +2583,4 @@ if ("serviceWorker" in navigator) {
 }
 
 renderHistory();
-renderRestaurants(demoRestaurants, "v41 已加载：餐厅卡已增加中文备注和菜系说明。");
+renderRestaurants(demoRestaurants, "v42 已加载：餐厅和菜单已按类型分区显示。");

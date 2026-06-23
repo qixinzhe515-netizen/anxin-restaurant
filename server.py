@@ -2457,6 +2457,9 @@ def nearby_restaurants(payload):
     area_name = payload.get("areaName", "").strip()
     lat = payload.get("latitude")
     lng = payload.get("longitude")
+    known = known_restaurants(area_name)
+    if known:
+        return known
     field_mask = ",".join(
         [
             "places.id",

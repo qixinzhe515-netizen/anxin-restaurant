@@ -460,6 +460,34 @@ textarea:focus {
   margin: 8px 0 16px;
 }
 
+.list-section {
+  display: grid;
+  gap: 10px;
+}
+
+.list-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 4px 0;
+}
+
+.list-section-heading h3 {
+  margin: 0;
+  color: #343430;
+  font-size: 16px;
+  font-weight: 760;
+  line-height: 1.2;
+}
+
+.list-section-heading span {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 680;
+  white-space: nowrap;
+}
+
 .restaurant-card,
 .dish-card {
   border: 1px solid var(--line);
