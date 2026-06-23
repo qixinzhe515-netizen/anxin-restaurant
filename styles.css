@@ -506,6 +506,12 @@ textarea:focus {
   line-height: 1.42;
 }
 
+.restaurant-card .restaurant-curation {
+  color: #496058;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
 .restaurant-actions {
   display: grid;
   grid-template-columns: 1.3fr 0.85fr 0.85fr;

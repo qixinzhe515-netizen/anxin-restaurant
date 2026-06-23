@@ -69,7 +69,14 @@ For known restaurants, the app can use a local trusted menu cache before attempt
 
 ## Current Menu Data Status
 
-- v33 adds the third structured real Chatswood restaurant: Sunday Seoul, using the official website and official PDF menu.
+- v34 adds visible local-review curation reasons to real restaurant cards.
 - Chatswood real-menu sample set currently prioritizes non-Chinese-environment restaurants: Khao Pla, Mamak, and Sunday Seoul.
 - Each real restaurant must keep its own source, address, menu text, and structured dish cards. Do not mix dishes between restaurants.
 - Practice cuisine cards are fallback only and must not be presented as real restaurant menus.
+
+## Restaurant Selection Rules
+
+- Real recommendations must be locally well-reviewed, not just easy to scrape.
+- A restaurant needs a verifiable menu source before structured dishes are shown as real dishes.
+- Non-Chinese-environment restaurants are prioritized because the product solves English menu and ordering anxiety.
+- Older famous restaurants with mixed scores can stay only when clearly labelled as local staples; higher-rated restaurants should replace them when menu data is available.

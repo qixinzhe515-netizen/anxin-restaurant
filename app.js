@@ -128,6 +128,7 @@ function renderRestaurants(restaurants = demoRestaurants, notice = "") {
           <span class="rating">${restaurant.rating ? `★ ${restaurant.rating}` : "餐厅"}</span>
         </div>
         <p>${restaurant.address || restaurant.area || "附近"} · ${restaurant.note}</p>
+        ${restaurant.curationReason ? `<p class="restaurant-curation">${restaurant.curationReason}</p>` : ""}
         <div class="tag-row">
           ${(restaurant.tags || []).map((tag) => `<span class="tag">${tag}</span>`).join("")}
           <span class="tag">${menuLabel}</span>
@@ -1496,9 +1497,11 @@ const chatswoodRestaurants = [
     name: "Khao Pla Chatswood",
     area: "Chatswood",
     address: "Shop 7/370-374 Victoria Avenue, Chatswood NSW 2067",
-    rating: "",
-    note: "官网 PDF 菜单已整理，泰餐选择多，适合先看懂辣度、花生、海鲜和招牌菜。",
-    tags: ["泰餐", "官网菜单", "真实菜单"],
+    rating: "4.6",
+    userRatingCount: "2000+",
+    note: "本地评价强，官网 PDF 菜单已整理，泰餐选择多，适合先看懂辣度、花生、海鲜和招牌菜。",
+    curationReason: "入选原因：本地订单平台约 4.6 分、2000+ 评分；Tripadvisor 也长期排在 Chatswood 前列。",
+    tags: ["泰餐", "本地好评", "官网菜单", "真实菜单"],
     hasMenu: true,
     websiteUri: "https://khaopla.com.au/",
     menuSource: "官网 PDF 菜单（Khao Pla）",
@@ -1579,10 +1582,12 @@ const chatswoodRestaurants = [
     id: "cw-mamak",
     name: "Mamak Chatswood",
     area: "Chatswood",
-    address: "Chatswood, NSW",
-    rating: "",
-    note: "马来西亚餐，官网菜单和 Chatswood 点餐页可核验；适合练习 roti、咖喱、炒面和椰浆饭。",
-    tags: ["马来西亚餐", "官网菜单", "真实菜单"],
+    address: "P9 & P10/1-5 Railway Street, Chatswood NSW 2067",
+    rating: "4.1",
+    userRatingCount: "400+",
+    note: "本地老牌马来西亚餐，官网菜单和 Chatswood 点餐页可核验；适合练习 roti、咖喱、炒面和椰浆饭。",
+    curationReason: "入选原因：评价量大、Tripadvisor 约 4.1 分且曾列 Chatswood 前排；不是最高分餐厅，后续可被更高评分餐厅替换。",
+    tags: ["马来西亚餐", "本地老牌", "官网菜单", "真实菜单"],
     hasMenu: true,
     websiteUri: "https://mamak.com.au/mamakmenu",
     menuSource: "Mamak 官网菜单 + Chatswood 点餐页",
@@ -1645,9 +1650,11 @@ const chatswoodRestaurants = [
     name: "Sunday Seoul",
     area: "Chatswood",
     address: "Shop 2, 7 Help Street, Chatswood NSW 2067",
-    rating: "",
-    note: "韩式 casual bar & dining，官网和官网 PDF 菜单可核验；适合看懂韩式汤锅、煎饼、炸鸡和分享菜。",
-    tags: ["韩餐", "官网菜单", "真实菜单"],
+    rating: "4.6",
+    userRatingCount: "440+",
+    note: "本地评价强的韩式 casual bar & dining，官网和官网 PDF 菜单可核验；适合看懂韩式汤锅、煎饼、炸鸡和分享菜。",
+    curationReason: "入选原因：本地外卖平台约 4.6 分、440+ 评分；第三方页面也显示 Google 约 4.5 分。",
+    tags: ["韩餐", "本地好评", "官网菜单", "真实菜单"],
     hasMenu: true,
     websiteUri: "https://sundayseoul.com.au/",
     menuSource: "Sunday Seoul 官网菜单 PDF",
@@ -2383,4 +2390,4 @@ if ("serviceWorker" in navigator) {
 }
 
 renderHistory();
-renderRestaurants(demoRestaurants, "v33 已加载：Chatswood 第三家真实菜单 Sunday Seoul 已结构化。");
+renderRestaurants(demoRestaurants, "v34 已加载：真实餐厅增加本地好评入选原因。");
