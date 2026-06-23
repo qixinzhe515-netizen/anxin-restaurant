@@ -2,7 +2,7 @@
 
 Mobile-first prototype for Chinese-speaking people in Australia who want to visit local restaurants without relying on live English conversation.
 
-The product is intentionally restaurant-only for the first market test: find a restaurant, understand the menu, choose dishes, generate a booking message, and show a staff-facing order card.
+The product is intentionally restaurant-only for the first market test: find a restaurant, understand the menu, choose dishes, and show a staff-facing order card.
 
 ## Run
 
@@ -69,7 +69,7 @@ For known restaurants, the app can use a local trusted menu cache before attempt
 
 ## Current Menu Data Status
 
-- v37 deepens dish coverage for Cafe Markus, Chimichuri, Ooshman, and Gelateria Gondola.
+- v38 removes the contact/booking-message workflow and keeps the app focused on menu understanding and staff-facing order cards.
 - Chatswood real-menu sample set currently prioritizes non-Chinese-environment restaurants: Khao Pla, Mamak, Sunday Seoul, Kazuma, Bistro Kai, Manpuku, Cafe Markus, Chimichuri, Ooshman, and Gelateria Gondola.
 - All 10 Chatswood real restaurants now have at least 10 structured dish explanations. Khao Pla, Mamak, and Sunday Seoul still have the deepest coverage and should be the pattern for expanding the others.
 - Each real restaurant must keep its own source, address, menu text, and structured dish cards. Do not mix dishes between restaurants.

@@ -10,7 +10,7 @@
     <title>餐厅安心点餐</title>
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="apple-touch-icon" href="./icon.svg" />
-    <link rel="stylesheet" href="./styles.css?v=37" />
+    <link rel="stylesheet" href="./styles.css?v=38" />
   </head>
   <body>
     <main class="app-shell">
@@ -18,7 +18,7 @@
         <div class="brand-mark">点</div>
         <div>
           <strong>餐厅安心点餐</strong>
-          <span>Restaurant Order Card · v37</span>
+          <span>Restaurant Order Card · v38</span>
         </div>
       </nav>
 
@@ -89,17 +89,6 @@
           <input id="restaurantName" type="text" placeholder="从上面选择，或输入餐厅名" />
         </label>
 
-        <div class="grid two">
-          <label class="field">
-            <span>人数</span>
-            <input id="partySize" type="number" min="1" value="2" />
-          </label>
-          <label class="field">
-            <span>时间</span>
-            <input id="bookingTime" type="text" placeholder="例如: 今天 6:30pm" />
-          </label>
-        </div>
-
         <label class="field menu-field">
           <span>菜单</span>
           <textarea id="menuText" rows="10" placeholder="系统找到的菜单会出现在这里。没有线上菜单时，可以直接拍菜单识别。"></textarea>
@@ -152,16 +141,8 @@
       <section class="panel" data-step="3">
         <div class="panel-heading">
           <h2>可以直接使用</h2>
-          <p>预约信息可以复制发送。到店后把点餐卡给服务员看。</p>
+          <p>到店后把点餐卡给服务员看；听不懂时再出示兜底卡。</p>
         </div>
-
-        <article class="result-card">
-          <div class="result-title">
-            <h3>预约短信 / 邮件</h3>
-            <button class="icon-button" data-copy="bookingMessage" type="button" aria-label="复制预约信息">复制</button>
-          </div>
-          <pre id="bookingMessage"></pre>
-        </article>
 
         <article class="show-card">
           <p class="show-label">Show this to staff</p>

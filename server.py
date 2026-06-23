@@ -1279,9 +1279,6 @@ def describe_menu_item(lower, original):
 
 
 def fallback_card(payload):
-    restaurant = payload.get("restaurantName") or "your restaurant"
-    party = payload.get("partySize") or "2"
-    time = payload.get("bookingTime") or "tonight"
     dishes = payload.get("dishes", [])
     restrictions = payload.get("restrictions", [])
     special = payload.get("specialNotes") or ""
@@ -1294,10 +1291,6 @@ def fallback_card(payload):
                 requests.append(item)
     request_text = ", ".join(requests)
     return {
-        "bookingMessage": (
-            f"Hi {restaurant}, I would like to book a table for {party} people at {time}. "
-            "Could you please confirm if a table is available? Thank you."
-        ),
         "orderCard": (
             "We would like to order:\n"
             f"{dish_lines}\n\n"
@@ -2282,7 +2275,7 @@ def http_json(url, timeout=20):
         url,
         headers={
             "Accept": "application/json",
-            "User-Agent": "AnxinRestaurantMVP/0.1 local-test contact@example.com",
+            "User-Agent": "AnxinRestaurantMVP/0.1 local-test",
         },
     )
     with urllib.request.urlopen(req, timeout=timeout) as response:
@@ -2600,8 +2593,6 @@ def analyze_menu(payload):
         {
             "task": "Analyze this restaurant menu for a Chinese-speaking user in Australia.",
             "restaurantName": payload.get("restaurantName", ""),
-            "partySize": payload.get("partySize", ""),
-            "bookingTime": payload.get("bookingTime", ""),
             "specialNotes": payload.get("specialNotes", ""),
             "menuText": payload.get("menuText", ""),
             "required_json_shape": {
@@ -2696,21 +2687,18 @@ def analyze_menu_photo(payload):
 def generate_card(payload):
     fallback = fallback_card(payload)
     system = (
-        "You create practical English booking messages and order cards for Chinese-speaking people in Australia. "
+        "You create practical English order cards for Chinese-speaking people in Australia. "
         "The user may not understand spoken English replies, so the output must reduce live conversation. "
         "Return only valid JSON."
     )
     user = json.dumps(
         {
-            "task": "Generate an English booking message, a staff-facing order card, and a fallback card.",
+            "task": "Generate a staff-facing order card and a fallback card. Do not generate booking messages or contact messages.",
             "restaurantName": payload.get("restaurantName", ""),
-            "partySize": payload.get("partySize", ""),
-            "bookingTime": payload.get("bookingTime", ""),
             "specialNotes": payload.get("specialNotes", ""),
             "restrictions": payload.get("restrictions", []),
             "selectedDishes": payload.get("dishes", []),
             "required_json_shape": {
-                "bookingMessage": "short polite English SMS/email",
                 "orderCard": "large clear English text for restaurant staff",
                 "fallbackCard": "English text asking staff to point/write because user's English is limited",
             },
@@ -2718,7 +2706,7 @@ def generate_card(payload):
         ensure_ascii=False,
     )
     data = call_openai_json(system, user, fallback)
-    if not isinstance(data, dict) or not all(key in data for key in ["bookingMessage", "orderCard", "fallbackCard"]):
+    if not isinstance(data, dict) or not all(key in data for key in ["orderCard", "fallbackCard"]):
         return fallback
     return data
 

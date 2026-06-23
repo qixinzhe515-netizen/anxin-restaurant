@@ -84,8 +84,6 @@ function setStep(step) {
 function formPayload() {
   return {
     restaurantName: $("#restaurantName").value.trim(),
-    partySize: $("#partySize").value.trim(),
-    bookingTime: $("#bookingTime").value.trim(),
     menuText: $("#menuText").value.trim(),
     specialNotes: $("#specialNotes").value.trim(),
   };
@@ -104,7 +102,6 @@ function clearRestaurantSelection() {
   $("#summaryBox").textContent = "";
   $("#summaryBox").classList.add("hidden");
   $("#dishList").innerHTML = "";
-  $("#bookingMessage").textContent = "";
   $("#orderCard").textContent = "";
   $("#fallbackCard").textContent = "";
   renderMenuLinks([]);
@@ -2122,15 +2119,11 @@ function localAnalyzeMenu(payload = {}) {
 }
 
 function localGenerateCard(payload = {}) {
-  const restaurant = payload.restaurantName || "your restaurant";
-  const party = payload.partySize || "2";
-  const time = payload.bookingTime || "tonight";
   const dishes = payload.dishes || [];
   const restrictions = [...(payload.restrictions || []), payload.specialNotes || ""].filter(Boolean);
   const dishLines = dishes.map((dish) => `- ${dish.name_en || dish.name_zh}`).join("\n");
   const requestText = restrictions.join(", ") || "None";
   return {
-    bookingMessage: `Hi ${restaurant}, I would like to book a table for ${party} people at ${time}. Could you please confirm if a table is available? Thank you.`,
     orderCard: `We would like to order:\n${dishLines}\n\nSpecial requests: ${requestText}\n\nIf anything is unavailable, please point to the menu or write it down for us.`,
     fallbackCard: "Sorry, my English is limited.\nCould you please speak slowly, point to the menu, or write it down?\nThank you for your help.",
   };
@@ -2345,7 +2338,6 @@ function selectedDishes() {
 
 function renderGenerated(data) {
   state.generated = data;
-  $("#bookingMessage").textContent = data.bookingMessage || "";
   $("#orderCard").textContent = data.orderCard || "";
   $("#fallbackCard").textContent = data.fallbackCard || "";
   setStep(3);
@@ -2357,7 +2349,6 @@ function saveHistory() {
   const entry = {
     id: Date.now(),
     restaurant: $("#restaurantName").value.trim() || "未命名餐厅",
-    time: $("#bookingTime").value.trim(),
     dishes: selectedDishes().map((dish) => dish.name_en).join(", "),
     createdAt: new Date().toLocaleString("zh-CN"),
   };
@@ -2372,7 +2363,7 @@ function renderHistory() {
     ? history.map((item) => `
       <div class="history-item">
         <strong>${item.restaurant}</strong>
-        <span>${item.createdAt}${item.time ? ` · ${item.time}` : ""}</span>
+        <span>${item.createdAt}</span>
       </div>
     `).join("")
     : `<div class="history-item"><span>还没有记录。</span></div>`;
@@ -2381,8 +2372,6 @@ function renderHistory() {
 $("#sampleButton").addEventListener("click", () => {
   renderRestaurants(demoRestaurants, "这是示例餐厅。接入 Google Places key 后会显示真实附近餐厅。");
   selectRestaurant(demoRestaurants[0]);
-  $("#partySize").value = "3";
-  $("#bookingTime").value = "今晚 6:30pm";
   $("#specialNotes").value = "少辣，不要香菜，有一位老人";
 });
 
@@ -2586,4 +2575,4 @@ if ("serviceWorker" in navigator) {
 }
 
 renderHistory();
-renderRestaurants(demoRestaurants, "v37 已加载：Chatswood 10 家真实餐厅均至少 10 道菜品解释。");
+renderRestaurants(demoRestaurants, "v38 已加载：已删除联系模块，只保留点餐卡。");
