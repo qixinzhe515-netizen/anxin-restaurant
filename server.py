@@ -1582,6 +1582,104 @@ def sunday_seoul_structured_dishes():
     ]
 
 
+def simple_structured_dishes(rows, source):
+    return [
+        {
+            "id": str(index),
+            "name_en": name_en,
+            "name_zh": name_zh,
+            "original_text": name_en,
+            "price": price,
+            "description_zh": description,
+            "category": category,
+            "taste": taste,
+            "cautions": cautions,
+            "tags": tags,
+            "source": source,
+            "confidence": "中高",
+            "recommendationReason": "来自该餐厅公开菜单/官网/订餐页信息整理；当天是否售罄仍以餐厅现场为准。",
+        }
+        for index, (name_en, name_zh, price, description, category, taste, cautions, tags) in enumerate(rows, start=1)
+    ]
+
+
+def kazuma_structured_dishes():
+    rows = [
+        ("Fresh Sashimi", "新鲜刺身", "", "生鱼片，重点是鱼的新鲜度和切片口感。适合能接受生食的人。", "刺身/海鲜", ["鲜味", "清爽"], ["生食", "鱼类过敏者避免"], ["日餐", "海鲜", "生食"]),
+        ("Sushi Platter", "寿司拼盘", "", "多款寿司组合，适合第一次去时分享，也方便看懂不同鱼类和配料。", "寿司/分享", ["鲜味", "米醋香"], ["可能含生鱼", "酱油含麸质"], ["寿司", "适合分享"]),
+        ("Teishoku Lunch Tray", "日式定食套餐", "", "日式套餐，一般包含主菜、米饭和小菜。适合老人或不想研究菜单的人。", "定食/午餐", ["咸香", "均衡"], ["配菜每日可能变化"], ["午餐", "相对安全"]),
+        ("Donburi Rice Bowl", "日式盖饭", "", "主菜盖在米饭上，点餐简单，适合快速吃正餐。", "米饭/主食", ["咸香", "酱汁味"], ["具体肉类需确认"], ["主食", "简单"]),
+        ("Kurobuta Pork Donkatsu", "黑豚炸猪排", "", "黑豚猪肉炸猪排，外层酥脆、肉味更浓。适合想吃稳妥肉类主菜的人。", "猪肉/炸物", ["酥脆", "肉香"], ["含猪肉", "油炸", "可能含麸质"], ["招牌", "猪肉", "炸物"]),
+    ]
+    return simple_structured_dishes(rows, "Kazuma 官网 + OpenTable/Chatswood Chase 菜单信息")
+
+
+def bistro_kai_structured_dishes():
+    rows = [
+        ("Mussel Pasta", "青口贝番茄海鲜意面", "", "青口贝、贝类高汤、番茄和香草做的意面。海鲜味明显，适合喜欢贝类的人。", "意面/海鲜", ["鲜味", "番茄味", "香草味"], ["贝类过敏者避免", "含麸质"], ["海鲜", "意面"]),
+        ("Chicken Maryland", "香草酱鸡腿排", "", "鸡腿排配 chimichurri 和酸奶。比牛排更温和，酱汁带草本香。", "鸡肉/主菜", ["鸡肉香", "草本香", "微酸"], ["含鸡肉", "含奶制品"], ["鸡肉", "相对安全"]),
+        ("Wagyu Chuck Tail Flap", "和牛牛排配第戎酱汁", "", "MBS 6-7 和牛部位，配土耳其辣椒、第戎芥末和肉汁。肉味重，适合吃牛排。", "牛肉/主菜", ["肉香", "浓郁", "微辣"], ["含牛肉", "芥末味"], ["牛肉", "主菜"]),
+        ("Pork Tomahawk", "叉烧风味猪战斧", "", "500g 猪战斧，配叉烧风味和柠檬。份量大，适合两人以上分享。", "猪肉/分享", ["肉香", "甜咸", "柠檬清爽"], ["含猪肉", "份量大"], ["分享菜", "猪肉"]),
+        ("Koshihikari Risotto", "越光米蘑菇橄榄烩饭", "", "用越光米做的烩饭，配腌橄榄和蘑菇。适合不想吃肉的人。", "素食/主菜", ["菌菇香", "咸香", "浓郁"], ["可能含奶制品"], ["素食友好", "米饭"]),
+    ]
+    return simple_structured_dishes(rows, "Bistro Kai 官网 dinner menu")
+
+
+def manpuku_structured_dishes():
+    rows = [
+        ("Long Name Ramen", "招牌 Long Name 拉面", "$26", "Manpuku 招牌拉面，外卖平台显示点赞很高。适合第一次去不知道点什么的人。", "拉面/招牌", ["浓郁", "咸香", "豚骨感"], ["可能含猪肉", "含麸质"], ["招牌", "拉面"]),
+        ("Manpuku Red Ramen", "Manpuku 红汤辣拉面", "$29", "红汤辣味拉面，适合能接受辣味和浓汤的人。", "拉面/辣味", ["辣", "浓郁"], ["可能偏辣", "可能含猪肉"], ["辣味", "热门"]),
+        ("Tonkotsu Shoyu Ramen", "豚骨酱油拉面", "$24.50", "经典豚骨酱油汤底，咸香浓郁，比辣拉面更稳。", "拉面/豚骨", ["豚骨香", "酱油咸香"], ["含猪肉", "含麸质"], ["经典", "相对安全"]),
+        ("Gyokai Black Ramen", "鱼介黑蒜油拉面", "$28", "鱼介风味加黑蒜油，味道比普通豚骨更重，适合喜欢浓香的人。", "拉面/鱼介", ["鱼介鲜味", "蒜香", "浓郁"], ["鱼类/海鲜成分需确认"], ["特色", "浓汤"]),
+        ("Karaage Chicken", "日式炸鸡块", "$14.50", "日式炸鸡，外脆里嫩，适合配拉面分享。", "小吃/鸡肉", ["酥脆", "咸香"], ["含鸡肉", "油炸"], ["小吃", "适合分享"]),
+    ]
+    return simple_structured_dishes(rows, "Manpuku 官网 + OpenTable/Uber Eats 菜单信息")
+
+
+def cafe_markus_structured_dishes():
+    rows = [
+        ("Eggs Benedict", "班尼迪克蛋", "", "水波蛋配荷兰酱，常见澳洲早午餐。口感 creamy，适合不想吃重口的人。", "早午餐/鸡蛋", ["蛋香", "奶油感"], ["含鸡蛋", "含奶制品"], ["早午餐", "经典"]),
+        ("Big Breakfast", "澳式大早餐", "", "通常包含鸡蛋、培根/香肠、吐司和配菜。份量大，适合早午餐当正餐。", "早午餐/拼盘", ["咸香", "丰富"], ["可能含猪肉", "含麸质"], ["份量大", "简单"]),
+        ("Bacon Egg Roll", "培根鸡蛋卷/汉堡", "", "培根和鸡蛋夹在面包里，点餐最简单，适合赶时间。", "早餐/简餐", ["咸香", "蛋香"], ["含猪肉", "含鸡蛋"], ["简单", "早餐"]),
+        ("Croissant", "牛角包", "", "法式酥皮面包，可配咖啡。适合只想吃一点的人。", "烘焙/轻食", ["黄油香", "酥脆"], ["含奶制品", "含麸质"], ["轻食", "咖啡搭配"]),
+        ("Flat White", "澳式奶咖 Flat White", "", "澳洲常见奶咖，奶泡比 cappuccino 更细腻，咖啡味和奶香平衡。", "咖啡/饮品", ["咖啡香", "奶香"], ["含奶制品，可问植物奶"], ["咖啡", "澳洲常见"]),
+    ]
+    return simple_structured_dishes(rows, "Cafe Markus 公开菜单/点评信息")
+
+
+def chimichuri_structured_dishes():
+    rows = [
+        ("Chimichuri Egg", "Chimichuri 招牌蛋", "$20", "店名同款鸡蛋早午餐，通常是比较安全的 brunch 选择。", "早午餐/鸡蛋", ["蛋香", "咸香"], ["含鸡蛋"], ["招牌", "早午餐"]),
+        ("Black Benedict", "黑色班尼迪克蛋", "$25", "创意版班尼迪克蛋，适合想尝试特色摆盘的人。", "早午餐/鸡蛋", ["蛋香", "浓郁"], ["含鸡蛋", "含奶制品"], ["特色", "早午餐"]),
+        ("Big Khahuna", "Big Khahuna 大份早午餐", "$28", "大份量 brunch 菜，适合当正餐，不适合只想轻食的人。", "早午餐/主食", ["丰富", "咸香"], ["配料需现场确认"], ["份量大", "主食"]),
+        ("Seafood Tom Yum Linguine", "冬阴功海鲜扁意面", "", "海鲜意面加冬阴功酸辣风味，味道比普通意面更重。", "意面/海鲜", ["酸辣", "海鲜味"], ["海鲜过敏者避免", "可能偏辣"], ["特色", "海鲜"]),
+        ("Matcha Green Tea Waffle", "抹茶华夫饼", "", "抹茶味华夫饼，偏甜，适合饭后或下午茶。", "甜品/早午餐", ["甜", "抹茶香"], ["含麸质", "可能含奶制品"], ["甜品", "下午茶"]),
+    ]
+    return simple_structured_dishes(rows, "Chimichuri 公开菜单页 + 社媒菜单信息")
+
+
+def ooshman_structured_dishes():
+    rows = [
+        ("Lahem w Jibne", "牛羊肉芝士黎巴嫩披萨", "", "黎巴嫩风格肉馅加芝士薄饼，味道咸香，适合打包。", "披萨/肉类", ["肉香", "芝士香"], ["含肉类", "含奶制品", "含麸质"], ["招牌", "快餐"]),
+        ("Manoush", "黎巴嫩薄饼 Manoush", "", "黎巴嫩薄饼，可做芝士、肉或香料口味。适合想点简单主食。", "薄饼/主食", ["面香", "咸香"], ["含麸质", "具体馅料需确认"], ["主食", "简单"]),
+        ("Wrap", "黎巴嫩卷饼", "", "肉类或素菜卷进饼里，吃起来方便，适合边走边吃或打包。", "卷饼/主食", ["咸香", "酱汁味"], ["酱汁和肉类需选择"], ["打包", "简单"]),
+        ("Garlic Chicken Pizza", "蒜香鸡肉披萨", "", "鸡肉和蒜香酱的薄饼/披萨，味道直接，适合不想冒险的人。", "披萨/鸡肉", ["蒜香", "鸡肉香"], ["含鸡肉", "含麸质"], ["鸡肉", "相对安全"]),
+        ("Chips", "薯条", "", "炸薯条，适合小孩或配卷饼一起点。", "配菜", ["咸香", "酥脆"], ["油炸"], ["小孩友好", "配菜"]),
+    ]
+    return simple_structured_dishes(rows, "Ooshman 官网分店页 + 公开菜单信息")
+
+
+def gondola_structured_dishes():
+    rows = [
+        ("Gelato", "意式冰淇淋 Gelato", "", "意式冰淇淋，口感比普通冰淇淋更绵密。可以直接指口味点。", "甜品/冰淇淋", ["甜", "奶香", "绵密"], ["多数口味含奶制品"], ["招牌", "甜品"]),
+        ("Sorbetti", "水果雪葩 Sorbetti", "", "水果型冰品，通常没有奶，口感清爽，适合不想吃奶制品的人。", "甜品/水果", ["水果香", "清爽", "甜酸"], ["过敏需确认具体水果"], ["清爽", "可能无奶"]),
+        ("Cocco Pandan", "椰子班兰口味 gelato", "", "椰子和班兰香，带东南亚甜品风味。适合喜欢椰香的人。", "甜品/特色口味", ["椰香", "班兰香", "甜"], ["可能含奶制品"], ["特色", "椰香"]),
+        ("Lychee Lampone", "荔枝覆盆子口味", "", "荔枝和覆盆子组合，通常果香明显、甜酸清爽。", "甜品/水果", ["荔枝香", "莓果酸甜"], ["水果过敏需确认"], ["水果", "清爽"]),
+        ("Coffee", "咖啡", "", "可搭配 gelato 的咖啡，适合下午茶。", "饮品", ["咖啡香"], ["含咖啡因"], ["饮品", "下午茶"]),
+    ]
+    return simple_structured_dishes(rows, "Gelateria Gondola 官网 + Tripadvisor/Broadsheet")
+
+
 def known_restaurants(area_name=""):
     key = re.sub(r"[^a-z0-9]+", "", (area_name or "").lower())
     if key in {"cw", "chatswood"}:
@@ -1665,6 +1763,104 @@ def known_restaurants(area_name=""):
                 "4.6",
                 "440+",
                 "入选原因：本地外卖平台约 4.6 分、440+ 评分；第三方页面也显示 Google 约 4.5 分。",
+            ),
+            (
+                "cw-kazuma",
+                "Kazuma Chatswood",
+                "Shop 2-001A, 345 Victoria Avenue, Chatswood NSW 2067",
+                "新开的日餐，OpenTable 评价好，官网确认有刺身、寿司、Teishoku 定食、Donburi 和黑豚猪排。",
+                ["日餐", "本地好评", "官网菜单", "真实菜单"],
+                "https://www.kazuma.com.au/",
+                "\n".join([dish["name_en"] for dish in kazuma_structured_dishes()]),
+                "Kazuma 官网 + OpenTable/Chatswood Chase 菜单信息",
+                True,
+                "4.7",
+                "19+",
+                "入选原因：OpenTable 约 4.7 分；官网和 Chatswood Chase 页面确认菜单方向和地址。",
+            ),
+            (
+                "cw-bistro-kai",
+                "Bistro Kai",
+                "316 Victoria Avenue, Chatswood NSW 2067",
+                "现代 bistro，OpenTable 评价好，官网晚餐菜单可核验，适合想吃西式/日式融合餐的人。",
+                ["Bistro", "本地好评", "官网菜单", "真实菜单"],
+                "https://www.kaiandmore.com.au/dinner-menu",
+                "\n".join([dish["name_en"] for dish in bistro_kai_structured_dishes()]),
+                "Bistro Kai 官网 dinner menu",
+                True,
+                "4.6",
+                "130+",
+                "入选原因：OpenTable 约 4.6 分、132 人评价；官网菜单列出晚餐主菜和分享菜。",
+            ),
+            (
+                "cw-manpuku",
+                "Manpuku Chatswood",
+                "226 Victoria Avenue, Chatswood NSW 2067",
+                "拉面店，本地评价稳定，官方站点确认 Chatswood 分店，外卖菜单有高点赞招牌拉面。",
+                ["日式拉面", "本地好评", "菜单可核验", "真实菜单"],
+                "https://www.ramenmanpuku.com/",
+                "\n".join([dish["name_en"] for dish in manpuku_structured_dishes()]),
+                "Manpuku 官网 + OpenTable/Uber Eats 菜单信息",
+                True,
+                "4.4",
+                "90+",
+                "入选原因：Tripadvisor 约 4.4 分；Uber Eats 显示多款拉面有 96%+ 点赞。",
+            ),
+            (
+                "cw-cafe-markus",
+                "Cafe Markus",
+                "Shop 16/9 Spring Street, Chatswood NSW 2067",
+                "本地高分咖啡早午餐，适合老人、游客和刚来的学生先从简单英文菜单开始。",
+                ["咖啡", "本地好评", "早午餐", "菜单可核验"],
+                "https://www.tripadvisor.com/Restaurant_Review-g261607-d10353560-Reviews-Cafe_Markus-Chatswood_Willoughby_Greater_Sydney_New_South_Wales.html",
+                "\n".join([dish["name_en"] for dish in cafe_markus_structured_dishes()]),
+                "Cafe Markus 公开菜单/点评信息",
+                True,
+                "4.8",
+                "570+",
+                "入选原因：Fantuan 约 4.8 分、571 条评价；Tripadvisor 也列在 Chatswood 前排。",
+            ),
+            (
+                "cw-chimichuri",
+                "Chimichuri",
+                "1/6 Help Street, Chatswood NSW 2067",
+                "Chatswood 本地热门 cafe，菜单有创意，适合想尝试澳式早午餐但怕看不懂菜名的人。",
+                ["咖啡", "本地好评", "早午餐", "菜单可核验"],
+                "https://chimichuri-chatswood.hey-restaurants.com/menu",
+                "\n".join([dish["name_en"] for dish in chimichuri_structured_dishes()]),
+                "Chimichuri 公开菜单页 + 社媒菜单信息",
+                True,
+                "4.5",
+                "50+",
+                "入选原因：Tripadvisor 约 4.5 分；公开菜单页和社媒可核验多款 brunch 菜。",
+            ),
+            (
+                "cw-ooshman",
+                "Ooshman Chatswood",
+                "Chatswood, NSW",
+                "黎巴嫩披萨/卷饼快餐，本地评价好，适合想吃简单、便宜、可打包的用户。",
+                ["黎巴嫩", "本地好评", "快餐", "菜单可核验"],
+                "https://ooshman.au/locations/chatswood/",
+                "\n".join([dish["name_en"] for dish in ooshman_structured_dishes()]),
+                "Ooshman 官网分店页 + 公开菜单信息",
+                True,
+                "4.6",
+                "340+",
+                "入选原因：EatClub 约 4.6 分、345 人评价；官网 Chatswood 分店页面有本地评价。",
+            ),
+            (
+                "cw-gondola",
+                "Gelateria Gondola",
+                "2/77 Archer Street, Chatswood NSW 2067",
+                "本地高分意式 gelato，适合饭后、老人小孩和游客，不需要复杂英文交流。",
+                ["甜品", "本地好评", "官网菜单", "真实菜单"],
+                "https://gelateriagondola.com.au/",
+                "\n".join([dish["name_en"] for dish in gondola_structured_dishes()]),
+                "Gelateria Gondola 官网 + Tripadvisor/Broadsheet",
+                True,
+                "4.7",
+                "90+",
+                "入选原因：Tripadvisor 约 4.7 分、96 条评价；Broadsheet 和官网都强调手工意式 gelato。",
             ),
             (
                 "cw-thai",
@@ -1776,6 +1972,13 @@ def known_restaurants(area_name=""):
                         khao_pla_structured_dishes() if slug == "cw-khao-pla"
                         else mamak_structured_dishes() if slug == "cw-mamak"
                         else sunday_seoul_structured_dishes() if slug == "cw-sunday-seoul"
+                        else kazuma_structured_dishes() if slug == "cw-kazuma"
+                        else bistro_kai_structured_dishes() if slug == "cw-bistro-kai"
+                        else manpuku_structured_dishes() if slug == "cw-manpuku"
+                        else cafe_markus_structured_dishes() if slug == "cw-cafe-markus"
+                        else chimichuri_structured_dishes() if slug == "cw-chimichuri"
+                        else ooshman_structured_dishes() if slug == "cw-ooshman"
+                        else gondola_structured_dishes() if slug == "cw-gondola"
                         else []
                     ),
                 }
