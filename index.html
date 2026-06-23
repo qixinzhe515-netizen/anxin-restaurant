@@ -10,7 +10,7 @@
     <title>餐厅安心点餐</title>
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="apple-touch-icon" href="./icon.svg" />
-    <link rel="stylesheet" href="./styles.css?v=46" />
+    <link rel="stylesheet" href="./styles.css?v=47" />
   </head>
   <body>
     <main class="app-shell">
@@ -32,6 +32,13 @@
               </label>
               <button class="secondary-button small" id="nearbyButton" type="button">推荐</button>
             </div>
+            <div class="area-shortcuts" aria-label="常用区域">
+              <button type="button" data-area="Chatswood">Chatswood</button>
+              <button type="button" data-area="Hurstville">Hurstville</button>
+              <button type="button" data-area="Sydney CBD">Sydney CBD</button>
+              <button type="button" data-area="Parramatta">Parramatta</button>
+              <button type="button" data-area="Tea Gardens">Tea Gardens</button>
+            </div>
             <button class="ghost-button tight" id="locationButton" type="button">使用我当前位置</button>
           </section>
 
@@ -44,14 +51,6 @@
               <input id="menuPhoto" type="file" accept="image/*" capture="environment" />
             </label>
           </section>
-        </div>
-
-        <div class="area-shortcuts" aria-label="常用区域">
-          <button type="button" data-area="Chatswood">Chatswood</button>
-          <button type="button" data-area="Hurstville">Hurstville</button>
-          <button type="button" data-area="Sydney CBD">Sydney CBD</button>
-          <button type="button" data-area="Parramatta">Parramatta</button>
-          <button type="button" data-area="Tea Gardens">Tea Gardens</button>
         </div>
 
         <button class="ghost-button" id="sampleButton" type="button">查看示例流程</button>
@@ -184,6 +183,6 @@
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-    <script src="./app.js?v=46" type="module"></script>
+    <script src="./app.js?v=47" type="module"></script>
   </body>
 </html>

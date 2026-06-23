@@ -11,6 +11,7 @@ const state = {
   restaurantSearchId: 0,
   dishPages: [],
   dishPageIndex: 0,
+  currentStep: 1,
   maxStepReached: 1,
 };
 
@@ -82,6 +83,7 @@ function toast(message) {
 }
 
 function setStep(step) {
+  state.currentStep = step;
   state.maxStepReached = Math.max(state.maxStepReached, step);
   $$("[data-step]").forEach((panel) => panel.classList.toggle("active", panel.dataset.step === String(step)));
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -2631,7 +2633,7 @@ $("#locationButton").addEventListener("click", () => {
   if (!window.isSecureContext) {
     renderRestaurants(
       demoRestaurants,
-      "手机浏览器需要 HTTPS 才能使用真实定位。现在是本地测试地址，请先输入区域或点下面的常用区域。"
+      "手机浏览器需要 HTTPS 才能使用真实定位。现在是本地测试地址，请先输入区域，或点输入框下面的常用区域。"
     );
     toast("本地测试地址不能使用手机定位");
     return;
@@ -2732,6 +2734,35 @@ $$("[data-back]").forEach((button) => {
   button.addEventListener("click", () => setStep(Number(button.dataset.back)));
 });
 
+let touchStartX = 0;
+let touchStartY = 0;
+let touchStartTarget = null;
+
+document.addEventListener("touchstart", (event) => {
+  const touch = event.touches?.[0];
+  if (!touch) return;
+  touchStartX = touch.clientX;
+  touchStartY = touch.clientY;
+  touchStartTarget = event.target;
+}, { passive: true });
+
+document.addEventListener("touchend", (event) => {
+  if (!touchStartTarget || touchStartTarget.closest("input, textarea, button, a, label, [contenteditable='true']")) {
+    touchStartTarget = null;
+    return;
+  }
+  const touch = event.changedTouches?.[0];
+  if (!touch) return;
+  const dx = touch.clientX - touchStartX;
+  const dy = touch.clientY - touchStartY;
+  const isLeftSwipe = dx < -70 && Math.abs(dy) < 60 && Math.abs(dx) > Math.abs(dy) * 1.4;
+  if (isLeftSwipe && state.currentStep > 1) {
+    setStep(state.currentStep - 1);
+    toast("已返回上一页");
+  }
+  touchStartTarget = null;
+}, { passive: true });
+
 $$("[data-copy]").forEach((button) => {
   button.addEventListener("click", async () => {
     const target = document.getElementById(button.dataset.copy);
@@ -2755,4 +2786,4 @@ if ("serviceWorker" in navigator) {
 
 renderHistory();
 setStep(1);
-renderRestaurants(demoRestaurants, "v46 已加载：已移除顶部横幅和数字步骤条。");
+renderRestaurants(demoRestaurants, "v47 已加载：常用区域已移到输入框下方，并支持左滑返回上一页。");

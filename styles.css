@@ -237,7 +237,7 @@ textarea:focus {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin: 0 0 14px;
+  margin: 10px 0 0;
 }
 
 .area-shortcuts button {
