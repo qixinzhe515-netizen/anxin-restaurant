@@ -1641,6 +1641,49 @@ const chatswoodRestaurants = [
     ].join("\n"),
   },
   {
+    id: "cw-sunday-seoul",
+    name: "Sunday Seoul",
+    area: "Chatswood",
+    address: "Shop 2, 7 Help Street, Chatswood NSW 2067",
+    rating: "",
+    note: "韩式 casual bar & dining，官网和官网 PDF 菜单可核验；适合看懂韩式汤锅、煎饼、炸鸡和分享菜。",
+    tags: ["韩餐", "官网菜单", "真实菜单"],
+    hasMenu: true,
+    websiteUri: "https://sundayseoul.com.au/",
+    menuSource: "Sunday Seoul 官网菜单 PDF",
+    menuVerified: true,
+    menuDishes: [
+      { name_en: "Spicy Tomato Mussel Stew", name_zh: "辣番茄鲜青口鱿鱼汤", price: "$36", category: "汤锅/海鲜", description_zh: "鲜青口和鱿鱼煮在辣番茄汤底里。酸辣、海鲜味明显，吃完汤可加意面。", taste: ["酸辣", "番茄味", "海鲜鲜味"], cautions: ["含青口/鱿鱼", "通常偏辣", "可加意面 $7"], tags: ["招牌汤锅", "海鲜", "适合分享"] },
+      { name_en: "Clam & Prawn Stew", name_zh: "蛤蜊鲜虾汤锅", price: "$33", category: "汤锅/海鲜", description_zh: "蛤蜊和虾煮成的清鲜汤锅，比辣番茄汤更直接，适合喜欢海鲜汤的人。", taste: ["鲜味", "清爽", "海鲜味"], cautions: ["含蛤蜊/虾", "可加意面 $7"], tags: ["海鲜", "汤锅", "适合分享"] },
+      { name_en: "Homemade Hamburg Steak", name_zh: "自制芝士汉堡排饭", price: "$29", category: "肉类/主食", description_zh: "自制汉堡肉排，配芝士、烤蔬菜和米饭。口味比较稳，适合不想吃太辣的人。", taste: ["肉香", "芝士香", "咸香"], cautions: ["含牛/肉类成分需确认", "含奶制品"], tags: ["主食", "相对安全", "不偏辣"] },
+      { name_en: "Minari Pancake w dried shrimp", name_zh: "水芹干虾韩式煎饼", price: "$26", category: "煎饼/分享", description_zh: "水芹菜和干虾做的韩式煎饼，外脆内软，有草本香和虾的鲜味。", taste: ["香脆", "水芹香", "虾鲜味"], cautions: ["含虾", "可能含麸质/鸡蛋"], tags: ["煎饼", "适合分享", "海鲜风险"] },
+      { name_en: "Rose Tteokbokki", name_zh: "玫瑰酱韩式炒年糕", price: "$28", category: "年糕/分享", description_zh: "鱼饼、培根、香肠、年糕和粉丝做成的玫瑰酱年糕。奶香和辣味会比传统年糕更柔和。", taste: ["奶香", "微辣", "软糯"], cautions: ["含鱼饼", "含培根/香肠", "可能含奶制品"], tags: ["年糕", "适合分享", "热门"] },
+      { name_en: "Squid Pancake", name_zh: "鱿鱼葱煎饼", price: "$26", category: "煎饼/海鲜", description_zh: "鱿鱼和葱做的韩式煎饼，口感香脆，有鱿鱼的嚼劲。", taste: ["香脆", "葱香", "海鲜味"], cautions: ["含鱿鱼", "可能含麸质/鸡蛋"], tags: ["煎饼", "海鲜", "适合分享"] },
+      { name_en: "Wagyu Chili Mapo Tofu", name_zh: "和牛辣麻婆豆腐", price: "$28", category: "豆腐/牛肉", description_zh: "辣味麻婆豆腐，上面有切片和牛。适合想吃下饭菜的人，但通常会辣。", taste: ["辣", "豆腐嫩", "牛肉香"], cautions: ["含牛肉", "通常偏辣", "有香菜需确认"], tags: ["下饭", "豆腐", "辣味"] },
+      { name_en: "Pad Thai w Sweet&spicy chicken", name_zh: "甜辣炸鸡泰式炒河粉", price: "$28", category: "面食/鸡肉", description_zh: "泰式炒河粉配韩式甜辣炸鸡，味道偏甜辣，份量感强。", taste: ["甜辣", "酸甜", "油炸香"], cautions: ["含鸡肉", "可能含花生/鸡蛋", "油炸"], tags: ["主食", "融合菜", "热门"] },
+      { name_en: "Deep Fried Whole Chicken", name_zh: "韩式整只炸鸡", price: "$36", category: "炸鸡/分享", description_zh: "整只炸鸡配腌萝卜。适合几个人分享，口味比汤锅更容易接受。", taste: ["酥脆", "咸香", "油炸"], cautions: ["含鸡肉", "可能含麸质", "油炸"], tags: ["炸鸡", "适合分享", "相对安全"] },
+      { name_en: "Deep Fried Boneless Chicken", name_zh: "韩式无骨炸鸡", price: "Half $22 / Whole $40", category: "炸鸡/分享", description_zh: "无骨炸鸡，可选原味、甜辣、酱油蒜香或墨西哥辣椒味。适合怕骨头麻烦的人。", taste: ["酥脆", "可选酱味", "可能辣"], cautions: ["含鸡肉", "可能含麸质", "辣味口味需确认"], tags: ["炸鸡", "无骨", "适合分享"] },
+      { name_en: "Boneless Chicken Flavour Upgrade", name_zh: "无骨炸鸡口味升级", price: "Half $23 / Whole $42", category: "炸鸡/口味", description_zh: "无骨炸鸡加味版本，可选甜辣、酱油蒜香或墨西哥辣椒等口味。", taste: ["甜辣", "蒜香", "可选辣"], cautions: ["含鸡肉", "酱汁可能偏甜或偏辣"], tags: ["炸鸡", "可选口味"] },
+      { name_en: "Gochujang Jjigae", name_zh: "韩式辣酱午餐肉牛肉乌冬锅", price: "$38", category: "汤锅/肉类", description_zh: "韩式辣酱汤，里面有午餐肉、牛肉片和乌冬面。味道重、辣度高，适合能吃辣的人。", taste: ["辣", "浓郁", "咸香"], cautions: ["含牛肉/午餐肉", "通常偏辣", "可加面 $5 或饭 $3"], tags: ["汤锅", "重口味", "下饭"] },
+      { name_en: "Skewered Oden w cooked live mussel", name_zh: "鱼饼串青口汤锅", price: "$38", category: "汤锅/鱼饼", description_zh: "鱼饼串汤配煮青口，汤味鲜，适合想喝热汤和分享的人。", taste: ["鲜味", "鱼饼香", "热汤"], cautions: ["含鱼饼", "含青口", "可加面 $5 或饭 $3"], tags: ["汤锅", "适合分享", "海鲜风险"] },
+    ],
+    menuText: [
+      "Spicy Tomato Mussel Stew 36",
+      "Clam & Prawn Stew 33",
+      "Homemade Hamburg Steak 29",
+      "Minari Pancake w dried shrimp 26",
+      "Rose Tteokbokki 28",
+      "Squid Pancake 26",
+      "Wagyu Chili Mapo Tofu 28",
+      "Pad Thai w Sweet&spicy chicken 28",
+      "Deep Fried Whole Chicken 36",
+      "Deep Fried Boneless Chicken Half 22 Whole 40",
+      "Deep Fried Boneless Chicken flavours Original Crispy Sweet&spicy Soy garlic Jalapeno Half 23 Whole 42",
+      "Gochujang Jjigae 38 Noodle +5 Rice +3",
+      "Skewered Oden w cooked live mussel 38 Noodle +5 Rice +3",
+    ].join("\n"),
+  },
+  {
     id: "cw-thai",
     name: "Chatswood 菜系练习：泰餐",
     area: "Chatswood",
@@ -2340,4 +2383,4 @@ if ("serviceWorker" in navigator) {
 }
 
 renderHistory();
-renderRestaurants(demoRestaurants, "v32 已加载：Chatswood 第二家真实菜单 Mamak 已结构化。");
+renderRestaurants(demoRestaurants, "v33 已加载：Chatswood 第三家真实菜单 Sunday Seoul 已结构化。");

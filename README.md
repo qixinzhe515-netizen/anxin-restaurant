@@ -66,3 +66,10 @@ Without this key, restaurant search first uses OpenStreetMap/Overpass as a no-ke
 Menu photo recognition first uses `OPENAI_API_KEY` vision. If the OpenAI project has no available quota, the browser tries no-key OCR through Tesseract.js, then sends the extracted text through the existing menu explanation flow.
 
 For known restaurants, the app can use a local trusted menu cache before attempting OCR. This prevents low-confidence OCR fragments from appearing as dish cards.
+
+## Current Menu Data Status
+
+- v33 adds the third structured real Chatswood restaurant: Sunday Seoul, using the official website and official PDF menu.
+- Chatswood real-menu sample set currently prioritizes non-Chinese-environment restaurants: Khao Pla, Mamak, and Sunday Seoul.
+- Each real restaurant must keep its own source, address, menu text, and structured dish cards. Do not mix dishes between restaurants.
+- Practice cuisine cards are fallback only and must not be presented as real restaurant menus.

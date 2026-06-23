@@ -1546,6 +1546,42 @@ def mamak_structured_dishes():
     ]
 
 
+def sunday_seoul_structured_dishes():
+    rows = [
+        ("Spicy Tomato Mussel Stew", "辣番茄鲜青口鱿鱼汤", "$36", "鲜青口和鱿鱼煮在辣番茄汤底里。酸辣、海鲜味明显，吃完汤可加意面。", "汤锅/海鲜", ["酸辣", "番茄味", "海鲜鲜味"], ["含青口/鱿鱼", "通常偏辣", "可加意面 $7"], ["招牌汤锅", "海鲜", "适合分享"]),
+        ("Clam & Prawn Stew", "蛤蜊鲜虾汤锅", "$33", "蛤蜊和虾煮成的清鲜汤锅，比辣番茄汤更直接，适合喜欢海鲜汤的人。", "汤锅/海鲜", ["鲜味", "清爽", "海鲜味"], ["含蛤蜊/虾", "可加意面 $7"], ["海鲜", "汤锅", "适合分享"]),
+        ("Homemade Hamburg Steak", "自制芝士汉堡排饭", "$29", "自制汉堡肉排，配芝士、烤蔬菜和米饭。口味比较稳，适合不想吃太辣的人。", "肉类/主食", ["肉香", "芝士香", "咸香"], ["含牛/肉类成分需确认", "含奶制品"], ["主食", "相对安全", "不偏辣"]),
+        ("Minari Pancake w dried shrimp", "水芹干虾韩式煎饼", "$26", "水芹菜和干虾做的韩式煎饼，外脆内软，有草本香和虾的鲜味。", "煎饼/分享", ["香脆", "水芹香", "虾鲜味"], ["含虾", "可能含麸质/鸡蛋"], ["煎饼", "适合分享", "海鲜风险"]),
+        ("Rose Tteokbokki", "玫瑰酱韩式炒年糕", "$28", "鱼饼、培根、香肠、年糕和粉丝做成的玫瑰酱年糕。奶香和辣味会比传统年糕更柔和。", "年糕/分享", ["奶香", "微辣", "软糯"], ["含鱼饼", "含培根/香肠", "可能含奶制品"], ["年糕", "适合分享", "热门"]),
+        ("Squid Pancake", "鱿鱼葱煎饼", "$26", "鱿鱼和葱做的韩式煎饼，口感香脆，有鱿鱼的嚼劲。", "煎饼/海鲜", ["香脆", "葱香", "海鲜味"], ["含鱿鱼", "可能含麸质/鸡蛋"], ["煎饼", "海鲜", "适合分享"]),
+        ("Wagyu Chili Mapo Tofu", "和牛辣麻婆豆腐", "$28", "辣味麻婆豆腐，上面有切片和牛。适合想吃下饭菜的人，但通常会辣。", "豆腐/牛肉", ["辣", "豆腐嫩", "牛肉香"], ["含牛肉", "通常偏辣", "有香菜需确认"], ["下饭", "豆腐", "辣味"]),
+        ("Pad Thai w Sweet&spicy chicken", "甜辣炸鸡泰式炒河粉", "$28", "泰式炒河粉配韩式甜辣炸鸡，味道偏甜辣，份量感强。", "面食/鸡肉", ["甜辣", "酸甜", "油炸香"], ["含鸡肉", "可能含花生/鸡蛋", "油炸"], ["主食", "融合菜", "热门"]),
+        ("Deep Fried Whole Chicken", "韩式整只炸鸡", "$36", "整只炸鸡配腌萝卜。适合几个人分享，口味比汤锅更容易接受。", "炸鸡/分享", ["酥脆", "咸香", "油炸"], ["含鸡肉", "可能含麸质", "油炸"], ["炸鸡", "适合分享", "相对安全"]),
+        ("Deep Fried Boneless Chicken", "韩式无骨炸鸡", "Half $22 / Whole $40", "无骨炸鸡，可选原味、甜辣、酱油蒜香或墨西哥辣椒味。适合怕骨头麻烦的人。", "炸鸡/分享", ["酥脆", "可选酱味", "可能辣"], ["含鸡肉", "可能含麸质", "辣味口味需确认"], ["炸鸡", "无骨", "适合分享"]),
+        ("Boneless Chicken Flavour Upgrade", "无骨炸鸡口味升级", "Half $23 / Whole $42", "无骨炸鸡加味版本，可选甜辣、酱油蒜香或墨西哥辣椒等口味。", "炸鸡/口味", ["甜辣", "蒜香", "可选辣"], ["含鸡肉", "酱汁可能偏甜或偏辣"], ["炸鸡", "可选口味"]),
+        ("Gochujang Jjigae", "韩式辣酱午餐肉牛肉乌冬锅", "$38", "韩式辣酱汤，里面有午餐肉、牛肉片和乌冬面。味道重、辣度高，适合能吃辣的人。", "汤锅/肉类", ["辣", "浓郁", "咸香"], ["含牛肉/午餐肉", "通常偏辣", "可加面 $5 或饭 $3"], ["汤锅", "重口味", "下饭"]),
+        ("Skewered Oden w cooked live mussel", "鱼饼串青口汤锅", "$38", "鱼饼串汤配煮青口，汤味鲜，适合想喝热汤和分享的人。", "汤锅/鱼饼", ["鲜味", "鱼饼香", "热汤"], ["含鱼饼", "含青口", "可加面 $5 或饭 $3"], ["汤锅", "适合分享", "海鲜风险"]),
+    ]
+    return [
+        {
+            "id": str(index),
+            "name_en": name_en,
+            "name_zh": name_zh,
+            "original_text": name_en,
+            "price": price,
+            "description_zh": description,
+            "category": category,
+            "taste": taste,
+            "cautions": cautions,
+            "tags": tags,
+            "source": "Sunday Seoul 官网菜单 PDF",
+            "confidence": "高",
+            "recommendationReason": "来自 Sunday Seoul 官网 PDF 菜单；当天是否售罄仍以餐厅现场为准。",
+        }
+        for index, (name_en, name_zh, price, description, category, taste, cautions, tags) in enumerate(rows, start=1)
+    ]
+
+
 def known_restaurants(area_name=""):
     key = re.sub(r"[^a-z0-9]+", "", (area_name or "").lower())
     if key in {"cw", "chatswood"}:
@@ -1608,6 +1644,17 @@ def known_restaurants(area_name=""):
                 "https://mamak.com.au/mamakmenu",
                 "\n".join([dish["name_en"] for dish in mamak_structured_dishes()]),
                 "Mamak 官网菜单 + Chatswood 点餐页",
+                True,
+            ),
+            (
+                "cw-sunday-seoul",
+                "Sunday Seoul",
+                "Shop 2, 7 Help Street, Chatswood NSW 2067",
+                "韩式 casual bar & dining，官网和官网 PDF 菜单可核验；适合看懂韩式汤锅、煎饼、炸鸡和分享菜。",
+                ["韩餐", "官网菜单", "真实菜单"],
+                "https://sundayseoul.com.au/",
+                "\n".join([dish["name_en"] for dish in sunday_seoul_structured_dishes()]),
+                "Sunday Seoul 官网菜单 PDF",
                 True,
             ),
             (
@@ -1706,6 +1753,7 @@ def known_restaurants(area_name=""):
                     "menuDishes": (
                         khao_pla_structured_dishes() if slug == "cw-khao-pla"
                         else mamak_structured_dishes() if slug == "cw-mamak"
+                        else sunday_seoul_structured_dishes() if slug == "cw-sunday-seoul"
                         else []
                     ),
                 }
