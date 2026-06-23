@@ -84,8 +84,6 @@ function toast(message) {
 function setStep(step) {
   state.maxStepReached = Math.max(state.maxStepReached, step);
   $$("[data-step]").forEach((panel) => panel.classList.toggle("active", panel.dataset.step === String(step)));
-  $$("[data-step-dot]").forEach((dot) => dot.classList.toggle("active", Number(dot.dataset.stepDot) <= step));
-  $$("[data-step-dot]").forEach((dot) => dot.classList.toggle("available", Number(dot.dataset.stepDot) <= state.maxStepReached));
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -2734,13 +2732,6 @@ $$("[data-back]").forEach((button) => {
   button.addEventListener("click", () => setStep(Number(button.dataset.back)));
 });
 
-$$("[data-step-dot]").forEach((dot) => {
-  dot.addEventListener("click", () => {
-    const targetStep = Number(dot.dataset.stepDot);
-    if (targetStep <= state.maxStepReached) setStep(targetStep);
-  });
-});
-
 $$("[data-copy]").forEach((button) => {
   button.addEventListener("click", async () => {
     const target = document.getElementById(button.dataset.copy);
@@ -2764,4 +2755,4 @@ if ("serviceWorker" in navigator) {
 
 renderHistory();
 setStep(1);
-renderRestaurants(demoRestaurants, "v45 已加载：流程已拆成入口、区域餐厅、选菜、联系餐厅四页。");
+renderRestaurants(demoRestaurants, "v46 已加载：已移除顶部横幅和数字步骤条。");
