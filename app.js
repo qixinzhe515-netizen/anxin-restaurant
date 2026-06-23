@@ -1710,8 +1710,13 @@ const chatswoodRestaurants = [
       { name_en: "Teishoku Lunch Tray", name_zh: "日式定食套餐", price: "", category: "定食/午餐", description_zh: "日式套餐，一般包含主菜、米饭和小菜。适合老人或不想研究菜单的人。", taste: ["咸香", "均衡"], cautions: ["配菜每日可能变化"], tags: ["午餐", "相对安全"] },
       { name_en: "Donburi Rice Bowl", name_zh: "日式盖饭", price: "", category: "米饭/主食", description_zh: "主菜盖在米饭上，点餐简单，适合快速吃正餐。", taste: ["咸香", "酱汁味"], cautions: ["具体肉类需确认"], tags: ["主食", "简单"] },
       { name_en: "Kurobuta Pork Donkatsu", name_zh: "黑豚炸猪排", price: "", category: "猪肉/炸物", description_zh: "黑豚猪肉炸猪排，外层酥脆、肉味更浓。适合想吃稳妥肉类主菜的人。", taste: ["酥脆", "肉香"], cautions: ["含猪肉", "油炸", "可能含麸质"], tags: ["招牌", "猪肉", "炸物"] },
+      { name_en: "Wagyu Beef Steak with Bone Marrow", name_zh: "和牛牛排配牛骨髓", price: "$56", category: "牛肉/主菜", description_zh: "和牛牛排配骨髓，肉味和油脂香会比较重。适合想吃高级肉类主菜的人。", taste: ["肉香", "油脂香", "浓郁"], cautions: ["含牛肉", "价格较高"], tags: ["牛肉", "推荐分享"] },
+      { name_en: "Beef Sukiyaki", name_zh: "牛肉寿喜烧", price: "$26", category: "锅物/牛肉", description_zh: "日式甜咸酱汁煮牛肉和配菜，通常口味温和，适合不想吃生食的人。", taste: ["甜咸", "牛肉香", "温和"], cautions: ["含牛肉", "可能含鸡蛋"], tags: ["热菜", "相对安全"] },
+      { name_en: "12pc Sushi Platter with Scallop", name_zh: "12 件扇贝寿司拼盘", price: "$56", category: "寿司/分享", description_zh: "12 件寿司拼盘，包含扇贝元素。适合两人分享或想一次试多款寿司。", taste: ["鲜味", "米醋香", "贝类鲜味"], cautions: ["可能含生食", "贝类过敏者避免"], tags: ["寿司", "分享"] },
+      { name_en: "12pc Sashimi Platter", name_zh: "12 件刺身拼盘", price: "", category: "刺身/分享", description_zh: "多种生鱼片拼盘，重点是新鲜度。适合能接受生食的人，不适合孕妇或怕生食的人。", taste: ["鲜味", "清爽"], cautions: ["生食", "鱼类过敏者避免"], tags: ["刺身", "分享"] },
+      { name_en: "Matcha Cheesecake", name_zh: "抹茶芝士蛋糕", price: "", category: "甜点", description_zh: "抹茶味芝士蛋糕，通常奶香浓、微苦微甜，适合饭后分享。", taste: ["抹茶香", "奶香", "甜"], cautions: ["含奶制品", "可能含麸质"], tags: ["甜点", "饭后"] },
     ],
-    menuText: ["Fresh Sashimi", "Sushi Platter", "Teishoku Lunch Tray", "Donburi Rice Bowl", "Kurobuta Pork Donkatsu"].join("\n"),
+    menuText: ["Fresh Sashimi", "Sushi Platter", "Teishoku Lunch Tray", "Donburi Rice Bowl", "Kurobuta Pork Donkatsu", "Wagyu Beef Steak with Bone Marrow 56", "Beef Sukiyaki 26", "12pc Sushi Platter with Scallop 56", "12pc Sashimi Platter", "Matcha Cheesecake"].join("\n"),
   },
   {
     id: "cw-bistro-kai",
@@ -1733,8 +1738,13 @@ const chatswoodRestaurants = [
       { name_en: "Wagyu Chuck Tail Flap", name_zh: "和牛牛排配第戎酱汁", price: "", category: "牛肉/主菜", description_zh: "MBS 6-7 和牛部位，配土耳其辣椒、第戎芥末和肉汁。肉味重，适合吃牛排。", taste: ["肉香", "浓郁", "微辣"], cautions: ["含牛肉", "芥末味"], tags: ["牛肉", "主菜"] },
       { name_en: "Pork Tomahawk", name_zh: "叉烧风味猪战斧", price: "", category: "猪肉/分享", description_zh: "500g 猪战斧，配叉烧风味和柠檬。份量大，适合两人以上分享。", taste: ["肉香", "甜咸", "柠檬清爽"], cautions: ["含猪肉", "份量大"], tags: ["分享菜", "猪肉"] },
       { name_en: "Koshihikari Risotto", name_zh: "越光米蘑菇橄榄烩饭", price: "", category: "素食/主菜", description_zh: "用越光米做的烩饭，配腌橄榄和蘑菇。适合不想吃肉的人。", taste: ["菌菇香", "咸香", "浓郁"], cautions: ["可能含奶制品"], tags: ["素食友好", "米饭"] },
+      { name_en: "Carbonara", name_zh: "培根蛋黄芝士意面 Carbonara", price: "", category: "意面/猪肉", description_zh: "经典 carbonara 风格，官网写有 Pecorino Romano 和 guanciale。奶酪香和咸香明显。", taste: ["芝士香", "咸香", "浓郁"], cautions: ["含猪肉", "含奶制品", "含麸质"], tags: ["意面", "经典"] },
+      { name_en: "Short Ribs", name_zh: "慢煮牛小排", price: "", category: "牛肉/分享", description_zh: "500g 牛小排，配苦菊/菊苣和肉汁。份量大，适合两人分享。", taste: ["肉香", "浓郁"], cautions: ["含牛肉", "份量大"], tags: ["分享菜", "牛肉"] },
+      { name_en: "Westholme Wagyu T-bone", name_zh: "Westholme 和牛 T 骨牛排", price: "", category: "牛排/分享", description_zh: "600g MBS 6-7 和牛 T 骨，配肉汁和柠檬。价格和份量都偏高，适合分享。", taste: ["肉香", "油脂香", "浓郁"], cautions: ["含牛肉", "价格较高", "份量大"], tags: ["牛排", "分享"] },
+      { name_en: "Sydney Rock Oysters", name_zh: "悉尼岩蚝", price: "", category: "海鲜/生蚝", description_zh: "生蚝，味道鲜甜带海水感。适合喜欢生食海鲜的人。", taste: ["鲜味", "海水味", "清爽"], cautions: ["生食", "贝类过敏者避免"], tags: ["海鲜", "生食"] },
+      { name_en: "Tiramisu", name_zh: "提拉米苏", price: "", category: "甜点", description_zh: "咖啡和奶酪风味甜点，口感柔软，适合饭后分享。", taste: ["咖啡香", "奶香", "甜"], cautions: ["含奶制品", "含咖啡因"], tags: ["甜点", "饭后"] },
     ],
-    menuText: ["Mussel Pasta", "Chicken Maryland", "Wagyu Chuck Tail Flap", "Pork Tomahawk", "Koshihikari Risotto"].join("\n"),
+    menuText: ["Mussel Pasta", "Chicken Maryland", "Wagyu Chuck Tail Flap", "Pork Tomahawk", "Koshihikari Risotto", "Carbonara", "Short Ribs", "Westholme Wagyu T-bone", "Sydney Rock Oysters", "Tiramisu"].join("\n"),
   },
   {
     id: "cw-manpuku",
@@ -1756,8 +1766,13 @@ const chatswoodRestaurants = [
       { name_en: "Tonkotsu Shoyu Ramen", name_zh: "豚骨酱油拉面", price: "$24.50", category: "拉面/豚骨", description_zh: "经典豚骨酱油汤底，咸香浓郁，比辣拉面更稳。", taste: ["豚骨香", "酱油咸香"], cautions: ["含猪肉", "含麸质"], tags: ["经典", "相对安全"] },
       { name_en: "Gyokai Black Ramen", name_zh: "鱼介黑蒜油拉面", price: "$28", category: "拉面/鱼介", description_zh: "鱼介风味加黑蒜油，味道比普通豚骨更重，适合喜欢浓香的人。", taste: ["鱼介鲜味", "蒜香", "浓郁"], cautions: ["鱼类/海鲜成分需确认"], tags: ["特色", "浓汤"] },
       { name_en: "Karaage Chicken", name_zh: "日式炸鸡块", price: "$14.50", category: "小吃/鸡肉", description_zh: "日式炸鸡，外脆里嫩，适合配拉面分享。", taste: ["酥脆", "咸香"], cautions: ["含鸡肉", "油炸"], tags: ["小吃", "适合分享"] },
+      { name_en: "Pork Gyoza", name_zh: "猪肉煎饺", price: "$6.50", category: "小吃/猪肉", description_zh: "日式煎饺，外皮煎香，里面是猪肉馅。适合配拉面。", taste: ["咸香", "煎香"], cautions: ["含猪肉", "含麸质"], tags: ["小吃", "适合分享"] },
+      { name_en: "Octopus Karaage", name_zh: "炸章鱼块", price: "$8", category: "小吃/海鲜", description_zh: "章鱼裹粉油炸，有嚼劲，适合喜欢海鲜小吃的人。", taste: ["酥脆", "海鲜味"], cautions: ["海鲜过敏者避免", "油炸"], tags: ["海鲜", "小吃"] },
+      { name_en: "Agedashi Tofu", name_zh: "日式炸豆腐", price: "$7", category: "豆腐/小吃", description_zh: "炸豆腐浸在日式酱汁里，外软内嫩，适合不想吃肉的人。", taste: ["豆香", "酱汁咸香"], cautions: ["可能含酱油/麸质"], tags: ["豆腐", "素食友好"] },
+      { name_en: "Unagi Donburi", name_zh: "鳗鱼盖饭", price: "$31", category: "米饭/鱼类", description_zh: "烤鳗鱼配照烧酱盖在米饭上，甜咸鲜香，适合作为正餐。", taste: ["甜咸", "鱼香", "酱香"], cautions: ["鱼类过敏者避免"], tags: ["盖饭", "鱼类"] },
+      { name_en: "Pumpkin Croquette", name_zh: "南瓜可乐饼", price: "$11.50", category: "小吃/素食", description_zh: "南瓜泥裹粉油炸，口感软糯微甜，适合不吃肉的人。", taste: ["微甜", "酥脆", "软糯"], cautions: ["油炸", "可能含麸质"], tags: ["素食友好", "小吃"] },
     ],
-    menuText: ["Long Name Ramen 26", "Manpuku Red Ramen 29", "Tonkotsu Shoyu Ramen 24.50", "Gyokai Black Ramen 28", "Karaage Chicken 14.50"].join("\n"),
+    menuText: ["Long Name Ramen 26", "Manpuku Red Ramen 29", "Tonkotsu Shoyu Ramen 24.50", "Gyokai Black Ramen 28", "Karaage Chicken 14.50", "Pork Gyoza 6.50", "Octopus Karaage 8", "Agedashi Tofu 7", "Unagi Donburi 31", "Pumpkin Croquette 11.50"].join("\n"),
   },
   {
     id: "cw-cafe-markus",
@@ -2551,4 +2566,4 @@ if ("serviceWorker" in navigator) {
 }
 
 renderHistory();
-renderRestaurants(demoRestaurants, "v35 已加载：Chatswood 已扩展到 10 家本地好评/菜单可核验餐厅。");
+renderRestaurants(demoRestaurants, "v36 已加载：Kazuma、Bistro Kai、Manpuku 菜品解释已加深。");

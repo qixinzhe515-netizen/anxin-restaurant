@@ -69,9 +69,9 @@ For known restaurants, the app can use a local trusted menu cache before attempt
 
 ## Current Menu Data Status
 
-- v35 expands Chatswood to 10 locally curated restaurants.
+- v36 deepens dish coverage for Kazuma, Bistro Kai, and Manpuku.
 - Chatswood real-menu sample set currently prioritizes non-Chinese-environment restaurants: Khao Pla, Mamak, Sunday Seoul, Kazuma, Bistro Kai, Manpuku, Cafe Markus, Chimichuri, Ooshman, and Gelateria Gondola.
-- Khao Pla, Mamak, and Sunday Seoul have deeper structured dish coverage. The seven newly added restaurants start with core representative dishes and should be expanded one by one.
+- Khao Pla, Mamak, Sunday Seoul, Kazuma, Bistro Kai, and Manpuku now have deeper structured dish coverage. Cafe Markus, Chimichuri, Ooshman, and Gelateria Gondola still start with core representative dishes and should be expanded one by one.
 - Each real restaurant must keep its own source, address, menu text, and structured dish cards. Do not mix dishes between restaurants.
 - Practice cuisine cards are fallback only and must not be presented as real restaurant menus.
 
