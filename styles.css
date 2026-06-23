@@ -616,6 +616,103 @@ textarea:focus {
   margin-top: 16px;
 }
 
+.dish-page-shell {
+  display: grid;
+  gap: 12px;
+}
+
+.dish-page-top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+  border-radius: 20px;
+  background: #f6f6f3;
+  padding: 14px;
+}
+
+.dish-page-top p,
+.dish-page-top h3 {
+  margin: 0;
+}
+
+.dish-page-top p {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 680;
+}
+
+.dish-page-top h3 {
+  margin-top: 4px;
+  font-size: 22px;
+  line-height: 1.18;
+}
+
+.dish-page-top span {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 760;
+  padding: 7px 10px;
+}
+
+.dish-page-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 2px 0 4px;
+  scrollbar-width: none;
+}
+
+.dish-page-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.dish-page-tabs button {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  border-radius: 999px;
+  background: #efefe8;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 760;
+  padding: 8px 12px;
+}
+
+.dish-page-tabs button.active {
+  background: var(--text);
+  color: white;
+}
+
+.dish-page-tabs span {
+  opacity: 0.7;
+}
+
+.dish-page-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.dish-page-actions button {
+  min-height: 48px;
+  border-radius: 16px;
+  background: #eeeeea;
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 760;
+}
+
+.dish-page-actions button:disabled {
+  cursor: default;
+  opacity: 0.42;
+}
+
 .dish-card {
   display: grid;
   grid-template-columns: auto 1fr;

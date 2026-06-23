@@ -9,6 +9,8 @@ const state = {
   selectedMenuVerified: false,
   menuLinks: [],
   restaurantSearchId: 0,
+  dishPages: [],
+  dishPageIndex: 0,
 };
 
 const sampleMenu = `Burrata with heirloom tomatoes and basil oil
@@ -100,6 +102,8 @@ function clearRestaurantSelection() {
   state.selectedMenuVerified = false;
   state.dishes = [];
   state.selectedIds = new Set();
+  state.dishPages = [];
+  state.dishPageIndex = 0;
   state.generated = null;
   $("#restaurantName").value = "";
   $("#menuText").value = "";
@@ -2366,23 +2370,68 @@ async function analyzeImageDataUrl(imageDataUrl, label = "菜单照片", options
 function renderDishes(data) {
   state.dishes = data.dishes || [];
   state.selectedIds = new Set();
+  state.dishPages = groupByDisplay(state.dishes, dishDisplayGroup, dishGroupOrder);
+  state.dishPageIndex = 0;
   const summary = $("#summaryBox");
   summary.textContent = data.summary || "";
   summary.classList.toggle("hidden", !data.summary);
+  renderDishPage();
+}
 
-  $("#dishList").innerHTML = groupByDisplay(state.dishes, dishDisplayGroup, dishGroupOrder)
-    .map(({ group, items }) => `
-      <section class="list-section">
-        <div class="list-section-heading">
-          <h3>${group}</h3>
-          <span>${items.length} 道</span>
+function renderDishPage() {
+  const list = $("#dishList");
+  if (!state.dishPages.length) {
+    list.innerHTML = `<div class="soft-box">没有可显示的菜品。</div>`;
+    return;
+  }
+  state.dishPageIndex = Math.max(0, Math.min(state.dishPageIndex, state.dishPages.length - 1));
+  const page = state.dishPages[state.dishPageIndex];
+  list.innerHTML = `
+    <div class="dish-page-shell">
+      <div class="dish-page-top">
+        <div>
+          <p>菜单第 ${state.dishPageIndex + 1} / ${state.dishPages.length} 页</p>
+          <h3>${page.group}</h3>
         </div>
-        ${items.map(renderDishCard).join("")}
+        <span>${page.items.length} 道</span>
+      </div>
+      <div class="dish-page-tabs" aria-label="菜单分页">
+        ${state.dishPages.map((item, index) => `
+          <button type="button" class="${index === state.dishPageIndex ? "active" : ""}" data-dish-page="${index}">
+            ${item.group}
+            <span>${item.items.length}</span>
+          </button>
+        `).join("")}
+      </div>
+      <section class="list-section">
+        ${page.items.map(renderDishCard).join("")}
       </section>
-    `)
-    .join("");
+      <div class="dish-page-actions">
+        <button type="button" data-dish-prev ${state.dishPageIndex === 0 ? "disabled" : ""}>上一页</button>
+        <button type="button" data-dish-next ${state.dishPageIndex === state.dishPages.length - 1 ? "disabled" : ""}>下一页</button>
+      </div>
+    </div>
+  `;
+
+  $$("[data-dish-page]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.dishPageIndex = Number(button.dataset.dishPage);
+      renderDishPage();
+    });
+  });
+  const prev = $("[data-dish-prev]");
+  const next = $("[data-dish-next]");
+  if (prev) prev.addEventListener("click", () => {
+    state.dishPageIndex -= 1;
+    renderDishPage();
+  });
+  if (next) next.addEventListener("click", () => {
+    state.dishPageIndex += 1;
+    renderDishPage();
+  });
 
   $$("#dishList input").forEach((input) => {
+    input.checked = state.selectedIds.has(input.value);
     input.addEventListener("change", () => {
       if (input.checked) state.selectedIds.add(input.value);
       else state.selectedIds.delete(input.value);
@@ -2688,4 +2737,4 @@ if ("serviceWorker" in navigator) {
 }
 
 renderHistory();
-renderRestaurants(demoRestaurants, "v43 已加载：已扩充 Chatswood 多家餐厅菜单。");
+renderRestaurants(demoRestaurants, "v44 已加载：菜单已改成分区分页查看。");
