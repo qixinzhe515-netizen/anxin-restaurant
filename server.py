@@ -1770,6 +1770,7 @@ def known_restaurants(area_name=""):
                 "4.6",
                 "2000+",
                 "入选原因：本地订单平台约 4.6 分、2000+ 评分；Tripadvisor 也长期排在 Chatswood 前列。",
+                "中文备注：Khao Pla，泰式餐厅。主打泰式咖喱、炒河粉、海鲜和招牌猪肋排。",
             ),
             (
                 "cw-mamak",
@@ -1784,6 +1785,7 @@ def known_restaurants(area_name=""):
                 "4.1",
                 "400+",
                 "入选原因：评价量大、Tripadvisor 约 4.1 分且曾列 Chatswood 前排；不是最高分餐厅，后续可被更高评分餐厅替换。",
+                "中文备注：Mamak，马来西亚餐。主打 roti 印度煎饼、咖喱、沙爹、椰浆饭和炒面。",
             ),
             (
                 "cw-sunday-seoul",
@@ -1798,6 +1800,7 @@ def known_restaurants(area_name=""):
                 "4.6",
                 "440+",
                 "入选原因：本地外卖平台约 4.6 分、440+ 评分；第三方页面也显示 Google 约 4.5 分。",
+                "中文备注：Sunday Seoul，韩式小酒馆/餐厅。主打韩式汤锅、煎饼、炸鸡和分享菜。",
             ),
             (
                 "cw-kazuma",
@@ -1812,6 +1815,7 @@ def known_restaurants(area_name=""):
                 "4.7",
                 "19+",
                 "入选原因：OpenTable 约 4.7 分；官网和 Chatswood Chase 页面确认菜单方向和地址。",
+                "中文备注：Kazuma，现代日餐。主打刺身、寿司、定食、盖饭和黑豚炸猪排。",
             ),
             (
                 "cw-bistro-kai",
@@ -1826,6 +1830,7 @@ def known_restaurants(area_name=""):
                 "4.6",
                 "130+",
                 "入选原因：OpenTable 约 4.6 分、132 人评价；官网菜单列出晚餐主菜和分享菜。",
+                "中文备注：Bistro Kai，现代西式/日式融合餐。主打意面、牛排、猪战斧、海鲜和甜点。",
             ),
             (
                 "cw-manpuku",
@@ -1840,6 +1845,7 @@ def known_restaurants(area_name=""):
                 "4.4",
                 "90+",
                 "入选原因：Tripadvisor 约 4.4 分；Uber Eats 显示多款拉面有 96%+ 点赞。",
+                "中文备注：Manpuku，日式拉面店。主打豚骨拉面、辣拉面、日式小吃和盖饭。",
             ),
             (
                 "cw-cafe-markus",
@@ -1854,6 +1860,7 @@ def known_restaurants(area_name=""):
                 "4.8",
                 "570+",
                 "入选原因：Fantuan 约 4.8 分、571 条评价；Tripadvisor 也列在 Chatswood 前排。",
+                "中文备注：Cafe Markus，咖啡早午餐。主打澳式早餐、吐司、三明治、贝果和咖啡。",
             ),
             (
                 "cw-chimichuri",
@@ -1868,6 +1875,7 @@ def known_restaurants(area_name=""):
                 "4.5",
                 "50+",
                 "入选原因：Tripadvisor 约 4.5 分；公开菜单页和社媒可核验多款 brunch 菜。",
+                "中文备注：Chimichuri，创意咖啡早午餐。主打班尼迪克蛋、特色吐司、海鲜意面和甜品。",
             ),
             (
                 "cw-ooshman",
@@ -1882,6 +1890,7 @@ def known_restaurants(area_name=""):
                 "4.6",
                 "340+",
                 "入选原因：EatClub 约 4.6 分、345 人评价；官网 Chatswood 分店页面有本地评价。",
+                "中文备注：Ooshman，黎巴嫩快餐。主打黎巴嫩薄饼、披萨、卷饼、烤鸡和素食鹰嘴豆丸。",
             ),
             (
                 "cw-gondola",
@@ -1896,6 +1905,7 @@ def known_restaurants(area_name=""):
                 "4.7",
                 "90+",
                 "入选原因：Tripadvisor 约 4.7 分、96 条评价；Broadsheet 和官网都强调手工意式 gelato。",
+                "中文备注：Gelateria Gondola，意式冰淇淋/甜品。主打 gelato、雪葩、开心果、巧克力和咖啡甜品。",
             ),
         ]
         return {
@@ -1905,6 +1915,7 @@ def known_restaurants(area_name=""):
                 {
                     "id": f"known-{slug}",
                     "name": name,
+                    "nameNote": name_note,
                     "area": "Chatswood",
                     "address": address,
                     "rating": rating,
@@ -1946,6 +1957,7 @@ def known_restaurants(area_name=""):
                     rating,
                     user_rating_count,
                     curation_reason,
+                    name_note,
                 ) in restaurants
             ],
         }

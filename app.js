@@ -25,6 +25,7 @@ const demoRestaurants = [
   {
     id: "bistro",
     name: "Harbour Local Bistro",
+    nameNote: "中文备注：本地西式小餐馆，适合鱼虾、披萨、牛羊肉和甜点。",
     area: "Sydney CBD",
     rating: "4.6",
     note: "适合第一次尝试本地西餐，菜单不复杂，有鱼、虾、披萨和甜点。",
@@ -34,6 +35,7 @@ const demoRestaurants = [
   {
     id: "cafe",
     name: "Northside Garden Cafe",
+    nameNote: "中文备注：澳式咖啡早午餐，适合早餐、咖啡、吐司和轻食。",
     area: "Chatswood",
     rating: "4.5",
     note: "适合早午餐和咖啡，点餐卡很有用，现场不用解释太多。",
@@ -50,6 +52,7 @@ Kids pancakes`,
   {
     id: "italian",
     name: "Little Laneway Italian",
+    nameNote: "中文备注：意大利餐，适合披萨、意面、蒜蓉面包和家庭聚餐。",
     area: "Hurstville",
     rating: "4.4",
     note: "适合家庭聚餐，披萨和意面选择多，容易提前选好。",
@@ -127,6 +130,7 @@ function renderRestaurants(restaurants = demoRestaurants, notice = "") {
           <strong>${restaurant.name}</strong>
           <span class="rating">${restaurant.rating ? `★ ${restaurant.rating}` : "餐厅"}</span>
         </div>
+        ${restaurant.nameNote ? `<p class="restaurant-name-note">${restaurant.nameNote}</p>` : ""}
         <p>${restaurant.address || restaurant.area || "附近"} · ${restaurant.note}</p>
         ${restaurant.curationReason ? `<p class="restaurant-curation">${restaurant.curationReason}</p>` : ""}
         <div class="tag-row">
@@ -1495,6 +1499,7 @@ const chatswoodRestaurants = [
   {
     id: "cw-khao-pla",
     name: "Khao Pla Chatswood",
+    nameNote: "中文备注：Khao Pla，泰式餐厅。主打泰式咖喱、炒河粉、海鲜和招牌猪肋排。",
     area: "Chatswood",
     address: "Shop 7/370-374 Victoria Avenue, Chatswood NSW 2067",
     rating: "4.6",
@@ -1581,6 +1586,7 @@ const chatswoodRestaurants = [
   {
     id: "cw-mamak",
     name: "Mamak Chatswood",
+    nameNote: "中文备注：Mamak，马来西亚餐。主打 roti 印度煎饼、咖喱、沙爹、椰浆饭和炒面。",
     area: "Chatswood",
     address: "P9 & P10/1-5 Railway Street, Chatswood NSW 2067",
     rating: "4.1",
@@ -1648,6 +1654,7 @@ const chatswoodRestaurants = [
   {
     id: "cw-sunday-seoul",
     name: "Sunday Seoul",
+    nameNote: "中文备注：Sunday Seoul，韩式小酒馆/餐厅。主打韩式汤锅、煎饼、炸鸡和分享菜。",
     area: "Chatswood",
     address: "Shop 2, 7 Help Street, Chatswood NSW 2067",
     rating: "4.6",
@@ -1693,6 +1700,7 @@ const chatswoodRestaurants = [
   {
     id: "cw-kazuma",
     name: "Kazuma Chatswood",
+    nameNote: "中文备注：Kazuma，现代日餐。主打刺身、寿司、定食、盖饭和黑豚炸猪排。",
     area: "Chatswood",
     address: "Shop 2-001A, 345 Victoria Avenue, Chatswood NSW 2067",
     rating: "4.7",
@@ -1721,6 +1729,7 @@ const chatswoodRestaurants = [
   {
     id: "cw-bistro-kai",
     name: "Bistro Kai",
+    nameNote: "中文备注：Bistro Kai，现代西式/日式融合餐。主打意面、牛排、猪战斧、海鲜和甜点。",
     area: "Chatswood",
     address: "316 Victoria Avenue, Chatswood NSW 2067",
     rating: "4.6",
@@ -1749,6 +1758,7 @@ const chatswoodRestaurants = [
   {
     id: "cw-manpuku",
     name: "Manpuku Chatswood",
+    nameNote: "中文备注：Manpuku，日式拉面店。主打豚骨拉面、辣拉面、日式小吃和盖饭。",
     area: "Chatswood",
     address: "226 Victoria Avenue, Chatswood NSW 2067",
     rating: "4.4",
@@ -1777,6 +1787,7 @@ const chatswoodRestaurants = [
   {
     id: "cw-cafe-markus",
     name: "Cafe Markus",
+    nameNote: "中文备注：Cafe Markus，咖啡早午餐。主打澳式早餐、吐司、三明治、贝果和咖啡。",
     area: "Chatswood",
     address: "Shop 16/9 Spring Street, Chatswood NSW 2067",
     rating: "4.8",
@@ -1805,6 +1816,7 @@ const chatswoodRestaurants = [
   {
     id: "cw-chimichuri",
     name: "Chimichuri",
+    nameNote: "中文备注：Chimichuri，创意咖啡早午餐。主打班尼迪克蛋、特色吐司、海鲜意面和甜品。",
     area: "Chatswood",
     address: "1/6 Help Street, Chatswood NSW 2067",
     rating: "4.5",
@@ -1833,6 +1845,7 @@ const chatswoodRestaurants = [
   {
     id: "cw-ooshman",
     name: "Ooshman Chatswood",
+    nameNote: "中文备注：Ooshman，黎巴嫩快餐。主打黎巴嫩薄饼、披萨、卷饼、烤鸡和素食鹰嘴豆丸。",
     area: "Chatswood",
     address: "Chatswood, NSW",
     rating: "4.6",
@@ -1861,6 +1874,7 @@ const chatswoodRestaurants = [
   {
     id: "cw-gondola",
     name: "Gelateria Gondola",
+    nameNote: "中文备注：Gelateria Gondola，意式冰淇淋/甜品。主打 gelato、雪葩、开心果、巧克力和咖啡甜品。",
     area: "Chatswood",
     address: "2/77 Archer Street, Chatswood NSW 2067",
     rating: "4.7",
@@ -2506,4 +2520,4 @@ if ("serviceWorker" in navigator) {
 }
 
 renderHistory();
-renderRestaurants(demoRestaurants, "v40 已加载：已恢复联系/预约餐厅模块，练习餐厅仍已删除。");
+renderRestaurants(demoRestaurants, "v41 已加载：餐厅卡已增加中文备注和菜系说明。");

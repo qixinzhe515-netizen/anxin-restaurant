@@ -506,6 +506,14 @@ textarea:focus {
   line-height: 1.42;
 }
 
+.restaurant-card .restaurant-name-note {
+  margin: -2px 0 8px;
+  color: #26332f;
+  font-size: 15px;
+  font-weight: 650;
+  line-height: 1.42;
+}
+
 .restaurant-card .restaurant-curation {
   color: #496058;
   font-size: 14px;
