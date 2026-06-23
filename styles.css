@@ -160,6 +160,10 @@ h1 {
   font-weight: 760;
 }
 
+.step-dot.available {
+  cursor: pointer;
+}
+
 .step-dot.active {
   background: var(--text);
   color: white;
@@ -612,6 +616,10 @@ textarea:focus {
   display: none;
 }
 
+.app-hidden-field {
+  display: none;
+}
+
 .dish-list {
   margin-top: 16px;
 }
@@ -839,6 +847,29 @@ textarea:focus {
 .result-card {
   border: 1px solid var(--line);
   background: var(--surface-warm);
+}
+
+.contact-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.contact-actions.hidden {
+  display: none;
+}
+
+.contact-actions a {
+  display: grid;
+  min-height: 46px;
+  place-items: center;
+  border-radius: 15px;
+  background: #eeeeea;
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 760;
+  text-decoration: none;
 }
 
 .show-card {

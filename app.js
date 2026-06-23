@@ -11,6 +11,7 @@ const state = {
   restaurantSearchId: 0,
   dishPages: [],
   dishPageIndex: 0,
+  maxStepReached: 1,
 };
 
 const sampleMenu = `Burrata with heirloom tomatoes and basil oil
@@ -81,8 +82,10 @@ function toast(message) {
 }
 
 function setStep(step) {
+  state.maxStepReached = Math.max(state.maxStepReached, step);
   $$("[data-step]").forEach((panel) => panel.classList.toggle("active", panel.dataset.step === String(step)));
   $$("[data-step-dot]").forEach((dot) => dot.classList.toggle("active", Number(dot.dataset.stepDot) <= step));
+  $$("[data-step-dot]").forEach((dot) => dot.classList.toggle("available", Number(dot.dataset.stepDot) <= state.maxStepReached));
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -275,7 +278,7 @@ async function autoAnalyzeFoodMenus(menuLinks, button) {
       summary: `已自动整理 ${menuNames.join("、")}。这里只显示识别可信的菜品，乱码和不确定项目已隐藏；PDF 主菜单仍可返回打开查看。`,
       dishes: merged,
     });
-    setStep(2);
+    setStep(3);
     toast("食物菜单已整理好");
     return true;
   } finally {
@@ -310,7 +313,7 @@ async function handleMenuData(data, successToast = "菜单已准备好") {
   }
   $("#menuText").value = data.menuText || data.dishes.map((dish) => dish.name_en).join("\n");
   renderDishes(data);
-  setStep(2);
+  setStep(3);
   toast(successToast);
   return true;
 }
@@ -364,7 +367,7 @@ function selectRestaurant(restaurant) {
       summary: "这是已整理的样板菜单：每道菜都固定中文名、解释、口味和忌口提醒。仍建议到店前核对是否售罄或菜单更新。",
       dishes: enrichStructuredDishes(restaurant.menuDishes, restaurant.menuSource || "真实菜单"),
     });
-    setStep(2);
+    setStep(3);
     return;
   }
   if (menu) {
@@ -377,7 +380,7 @@ function selectRestaurant(restaurant) {
         : "这是菜系练习/代表菜，不是某家餐厅的真实菜单。可以用来理解菜名，但不要直接拿它向餐厅下单。",
     });
     renderDishes(data);
-    setStep(2);
+    setStep(3);
   } else {
     toast("已选择餐厅，正在自动找菜单");
     discoverRestaurantMenu(restaurant, discoveryId);
@@ -2336,7 +2339,7 @@ async function analyzeImageDataUrl(imageDataUrl, label = "菜单照片", options
     if (options.returnData) return data;
     $("#menuText").value = data.dishes.map((dish) => dish.name_en).join("\n");
     renderDishes(data);
-    setStep(2);
+    setStep(3);
     toast("菜单图片已识别");
     return true;
   }
@@ -2362,7 +2365,7 @@ async function analyzeImageDataUrl(imageDataUrl, label = "菜单照片", options
     ...fallbackData,
     summary: "已用本机 OCR 识别菜单文字，并整理成中文说明。请检查菜名是否有识别错误。",
   });
-  setStep(2);
+  setStep(3);
   toast("菜单文字已识别");
   return true;
 }
@@ -2499,7 +2502,12 @@ function renderGenerated(data) {
   $("#bookingMessage").textContent = data.bookingMessage || "";
   $("#orderCard").textContent = data.orderCard || "";
   $("#fallbackCard").textContent = data.fallbackCard || "";
-  setStep(3);
+  const bookingText = data.bookingMessage || "";
+  const restaurant = $("#restaurantName").value.trim() || "restaurant";
+  $("#smsLink").href = `sms:?body=${encodeURIComponent(bookingText)}`;
+  $("#emailLink").href = `mailto:?subject=${encodeURIComponent(`Booking request - ${restaurant}`)}&body=${encodeURIComponent(bookingText)}`;
+  $("#contactActions").classList.toggle("hidden", !bookingText);
+  setStep(4);
 }
 
 function saveHistory() {
@@ -2531,10 +2539,10 @@ function renderHistory() {
 
 $("#sampleButton").addEventListener("click", () => {
   renderRestaurants(demoRestaurants, "这是示例餐厅。接入 Google Places key 后会显示真实附近餐厅。");
-  selectRestaurant(demoRestaurants[0]);
   $("#partySize").value = "3";
   $("#bookingTime").value = "今晚 6:30pm";
   $("#specialNotes").value = "少辣，不要香菜，有一位老人";
+  setStep(2);
 });
 
 $("#menuPhoto").addEventListener("change", async (event) => {
@@ -2595,10 +2603,12 @@ async function loadNearbyRestaurants(payload, loadingText = "正在查找...") {
     if (searchId !== state.restaurantSearchId) return;
     renderRestaurants(data.restaurants || demoRestaurants, data.message || "");
     const isRealSource = data.source === "google_places" || data.source === "openstreetmap" || data.source === "known_local" || data.source === "static_known";
+    setStep(2);
     toast(isRealSource ? "已找到真实附近餐厅" : "已显示示例餐厅");
   } catch {
     if (searchId !== state.restaurantSearchId) return;
     renderRestaurants(demoRestaurants, "附近餐厅暂时获取失败，先显示示例餐厅。");
+    setStep(2);
     toast("附近餐厅获取失败");
   } finally {
     if (searchId === state.restaurantSearchId) {
@@ -2674,7 +2684,7 @@ $("#analyzeButton").addEventListener("click", async () => {
   try {
     const data = await postJson("/api/analyze-menu", payload);
     renderDishes(data);
-    setStep(2);
+    setStep(3);
   } catch {
     toast("菜单分析失败，请稍后再试");
   } finally {
@@ -2707,12 +2717,28 @@ $("#cardButton").addEventListener("click", async () => {
     toast("生成失败，请稍后再试");
   } finally {
     button.disabled = false;
-    button.textContent = "生成点餐卡";
+    button.textContent = "生成预约信息和点餐卡";
   }
+});
+
+$("#toContactButton").addEventListener("click", () => {
+  const dishes = selectedDishes();
+  if (!dishes.length) {
+    toast("请至少选择一道菜");
+    return;
+  }
+  setStep(4);
 });
 
 $$("[data-back]").forEach((button) => {
   button.addEventListener("click", () => setStep(Number(button.dataset.back)));
+});
+
+$$("[data-step-dot]").forEach((dot) => {
+  dot.addEventListener("click", () => {
+    const targetStep = Number(dot.dataset.stepDot);
+    if (targetStep <= state.maxStepReached) setStep(targetStep);
+  });
 });
 
 $$("[data-copy]").forEach((button) => {
@@ -2737,4 +2763,5 @@ if ("serviceWorker" in navigator) {
 }
 
 renderHistory();
-renderRestaurants(demoRestaurants, "v44 已加载：菜单已改成分区分页查看。");
+setStep(1);
+renderRestaurants(demoRestaurants, "v45 已加载：流程已拆成入口、区域餐厅、选菜、联系餐厅四页。");
