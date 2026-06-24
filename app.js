@@ -193,8 +193,8 @@ function restaurantDisplayGroup(restaurant = {}) {
   const text = `${restaurant.name || ""} ${restaurant.nameNote || ""} ${(restaurant.tags || []).join(" ")} ${restaurant.note || ""}`.toLowerCase();
   if (/gelato|冰淇淋|甜品|dessert|咖啡甜品/.test(text)) return "甜品/饮品";
   if (/cafe|咖啡|早午餐|brunch|breakfast/.test(text)) return "咖啡早午餐";
-  if (/ooshman|黎巴嫩|快餐|卷饼|薄饼|打包/.test(text)) return "快餐/轻食";
-  if (/bistro|西式|融合|牛排|意面/.test(text)) return "西式/融合";
+  if (/ooshman|黎巴嫩|快餐|卷饼|薄饼|打包|takeaway|fish and chips|炸鱼|外带/.test(text)) return "快餐/轻食";
+  if (/bistro|西式|融合|牛排|意面|pub|酒吧餐|hotel|seafood|海鲜|golf club/.test(text)) return "西式/融合";
   if (/日餐|日本|拉面|寿司|刺身|韩餐|韩式|korean|japanese|ramen/.test(text)) return "日餐/韩餐";
   if (/泰餐|马来西亚|东南亚|thai|mamak|khao pla|咖喱|roti|沙爹/.test(text)) return "泰餐/东南亚";
   return "其他餐厅";
@@ -1414,49 +1414,135 @@ const teaGardensRestaurants = [
   {
     id: "known-tea-gardens-hotel",
     name: "Tea Gardens Hotel",
+    nameNote: "中文备注：Tea Gardens Hotel，本地河边 pub/hotel 餐厅。适合炸鱼薯条、汉堡、鸡排、披萨和家庭聚餐。",
     area: "Tea Gardens",
     address: "Cnr Maxwell Street & Marine Drive, Tea Gardens",
-    rating: "",
-    note: "澳洲酒吧餐，有官网，适合体验本地餐。",
-    tags: ["澳洲酒吧餐", "可查官网菜单"],
-    websiteUri: "https://teagardenshotel.com/",
+    rating: "本地",
+    note: "官网 Food + Drinks 菜单完整可查，是 Tea Gardens 区域优先样板店。",
+    curationReason: "入选原因：OpenStreetMap 本地餐饮点；官网菜单可核验，适合先做高可信中文菜单。",
+    tags: ["澳洲酒吧餐", "官网菜单", "真实菜单"],
+    websiteUri: "https://teagardenshotel.com/food-drinks",
     hasMenu: true,
     menuSource: "官网 Food + Drinks 菜单",
     menuVerified: true,
     menuText: teaGardensHotelMenuText(),
+    menuDishes: teaGardensHotelMenuDishes(),
   },
   {
     id: "known-mumms-seafood",
     name: "Mumm's Seafood",
+    nameNote: "中文备注：Mumm's Seafood，河边海鲜餐厅。适合海鲜拼盘、当日鱼、炸鱼薯条和甜点。",
     area: "Tea Gardens",
     address: "Tea Gardens",
-    rating: "",
-    note: "海鲜餐厅，官网可找到菜单；当前版本内置了可信甜点菜单。",
-    tags: ["Seafood", "有官网菜单"],
+    rating: "本地",
+    note: "官网可找到菜单入口；当前先整理官网确认代表菜和菜单页线索。",
+    curationReason: "入选原因：OpenStreetMap 本地 seafood 餐厅；用户已确认官网有菜单页。",
+    tags: ["Seafood", "官网菜单", "真实菜单"],
     websiteUri: "https://mummsonthemyall.com.au",
     hasMenu: true,
+    menuSource: "官网菜单页 + 已知菜单文件",
+    menuVerified: true,
+    menuText: mummsSeafoodMenuText(),
+    menuDishes: mummsSeafoodMenuDishes(),
   },
   {
     id: "known-hook-n-cook",
     name: "Hook'n Cook",
+    nameNote: "中文备注：Hook'n Cook，本地 fish and chips 外带店。适合炸鱼薯条、汉堡、炸鱿鱼和多人套餐。",
     area: "Tea Gardens",
     address: "Tea Gardens",
-    rating: "",
+    rating: "本地",
     note: "Google Maps 菜单照片可见大量外带菜，适合先选好炸鱼薯条、汉堡和分享套餐。",
-    tags: ["Fish And Chips", "快餐", "地图照片菜单"],
+    curationReason: "入选原因：OpenStreetMap 本地 fish and chips；用户提供的 Google Maps 菜单照片可读到主要售卖项。",
+    tags: ["Fish And Chips", "快餐", "地图照片菜单", "真实菜单"],
     hasMenu: true,
     menuSource: "Google Maps 菜单照片（约9个月前）",
     menuVerified: true,
     menuText: hookNCookMenuText(),
+    menuDishes: hookNCookMenuDishes(),
+  },
+  {
+    id: "known-tillermans",
+    name: "Tillermans Cafe - Restaurant",
+    nameNote: "中文备注：Tillermans，Tea Gardens 咖啡/餐厅。适合咖啡、早午餐和轻食。",
+    area: "Tea Gardens",
+    address: "Tea Gardens",
+    rating: "本地",
+    note: "本地 cafe restaurant，适合不会英文的用户先作为轻食候选；暂无可靠线上菜单，不展示编造菜品。",
+    curationReason: "入选原因：OpenStreetMap 本地 cafe/restaurant 点；菜单待核验。",
+    tags: ["咖啡早午餐", "本地餐厅", "菜单待补"],
+    hasMenu: false,
+  },
+  {
+    id: "known-nicoles-art-gallery-cafe",
+    name: "Nicole's Art Gallery and Cafe",
+    nameNote: "中文备注：Nicole's Art Gallery and Cafe，艺术画廊咖啡馆。适合咖啡、蛋糕和轻食。",
+    area: "Tea Gardens",
+    address: "Tea Gardens",
+    rating: "本地",
+    note: "Tea Gardens 河边附近 cafe，适合老人或游客轻松尝试；暂无可靠线上菜单。",
+    curationReason: "入选原因：OpenStreetMap 本地 cafe 点；菜单待核验。",
+    tags: ["咖啡", "轻食", "菜单待补"],
+    hasMenu: false,
   },
   {
     id: "known-mangrove-cafe",
     name: "Mangrove Cafe",
+    nameNote: "中文备注：Mangrove Cafe，本地咖啡轻食店。适合早餐、咖啡和简单午餐。",
     area: "Tea Gardens",
     address: "83 Marine Drive, Tea Gardens",
-    rating: "",
-    note: "咖啡和轻食，适合先从简单菜单开始。",
-    tags: ["咖啡/轻食"],
+    rating: "本地",
+    note: "咖啡和轻食，适合先从简单菜单开始；暂无可靠线上菜单。",
+    curationReason: "入选原因：OpenStreetMap 记录了具体地址；菜单待核验。",
+    tags: ["咖啡/轻食", "本地餐厅", "菜单待补"],
+    hasMenu: false,
+  },
+  {
+    id: "known-jayz-at-the-myall",
+    name: "Jayz At The Myall",
+    nameNote: "中文备注：Jayz At The Myall，本地咖啡轻食店。适合早上咖啡和简餐。",
+    area: "Tea Gardens",
+    address: "Tea Gardens",
+    rating: "本地",
+    note: "OpenStreetMap 显示平日和周六营业时段；暂无可靠线上菜单。",
+    curationReason: "入选原因：OpenStreetMap 本地 cafe 点；菜单待核验。",
+    tags: ["咖啡", "轻食", "菜单待补"],
+    hasMenu: false,
+  },
+  {
+    id: "known-hawks-nest-golf-club-bistro",
+    name: "Hawks Nest Golf Club Bistro",
+    nameNote: "中文备注：Hawks Nest Golf Club Bistro，桥对面高尔夫俱乐部 bistro。适合家庭式西餐和本地 club 餐。",
+    area: "Tea Gardens / Hawks Nest",
+    address: "Sanderling Avenue, Hawks Nest",
+    rating: "本地",
+    note: "Hawks Nest 与 Tea Gardens 隔桥相连，适合作为同一区域候选；暂无可靠线上菜单。",
+    curationReason: "入选原因：OpenStreetMap 本地 pub/bistro 点；距离 Tea Gardens 约几公里内。",
+    tags: ["Bistro", "俱乐部餐", "菜单待补"],
+    hasMenu: false,
+  },
+  {
+    id: "known-benchmark-on-booner",
+    name: "Benchmark on Booner",
+    nameNote: "中文备注：Benchmark on Booner，Hawks Nest 本地餐厅。适合西式餐和度假区晚餐。",
+    area: "Tea Gardens / Hawks Nest",
+    address: "100 Booner Street, Hawks Nest",
+    rating: "本地",
+    note: "桥对面 Hawks Nest 餐厅，适合 Tea Gardens 周边一起推荐；暂无可靠线上菜单。",
+    curationReason: "入选原因：OpenStreetMap 本地 restaurant 点；菜单待核验。",
+    tags: ["西式/融合", "本地餐厅", "菜单待补"],
+    hasMenu: false,
+  },
+  {
+    id: "known-hawks-nest-takeaway",
+    name: "Hawks Nest Takeaway",
+    nameNote: "中文备注：Hawks Nest Takeaway，桥对面 seafood/fish and chips 外带店。适合炸鱼薯条和简单外带。",
+    area: "Tea Gardens / Hawks Nest",
+    address: "34 Tuloa Avenue, Hawks Nest",
+    rating: "本地",
+    note: "OpenStreetMap 标注 seafood takeaway；暂无可靠线上菜单。",
+    curationReason: "入选原因：OpenStreetMap 本地 seafood takeaway 点；同属 Tea Gardens 近邻可达范围。",
+    tags: ["Fish And Chips", "外带", "菜单待补"],
     hasMenu: false,
   },
 ];
@@ -1502,6 +1588,17 @@ function hookNCookMenuText() {
   ].join("\n");
 }
 
+function mummsSeafoodMenuText() {
+  return [
+    "Mumm's Seafood Platter",
+    "Seafood Mornay",
+    "Fresh catch of the day",
+    "Takeaway fish and chips",
+    "Turkish delight panna cotta",
+    "Persian fairy floss and pistachio",
+  ].join("\n");
+}
+
 function teaGardensHotelMenuText() {
   return [
     "Garlic Bread",
@@ -1538,6 +1635,99 @@ function teaGardensHotelMenuText() {
     "Tea Gardens House Salad",
     "Mashed Potato & Gravy",
   ].join("\n");
+}
+
+function tgDish(name_en, name_zh, category, description_zh, taste = [], cautions = [], tags = [], price = "") {
+  return { name_en, name_zh, category, description_zh, taste, cautions, tags, price };
+}
+
+function teaGardensHotelMenuDishes() {
+  return [
+    tgDish("Garlic Bread", "蒜香面包", "前菜/小吃", "经典蒜香面包，可加芝士或火腿芝士。适合等主菜时分享。", ["蒜香", "酥脆"], ["含麸质", "加芝士会含奶制品"], ["适合分享", "安全菜"], "M $8 / NM $10"),
+    tgDish("Smoked Chicken Wings", "烟熏鸡翅", "前菜/鸡肉", "店家腌制烟熏鸡翅，味道偏咸香，有烟熏味。", ["烟熏", "咸香"], ["含鸡肉", "酱料过敏需确认"], ["鸡肉", "前菜"], "M $22 / NM $24"),
+    tgDish("Calamari Fritti", "意式炸鱿鱼", "前菜/海鲜", "炸鱿鱼配蒜香蛋黄酱、芝麻菜和柠檬。适合分享，但海鲜过敏者不要点。", ["酥脆", "海鲜味", "柠檬清爽"], ["含鱿鱼", "可能含蛋/麸质"], ["海鲜", "适合分享"], "M $20 / NM $22"),
+    tgDish("Tea Gardens Asian Chicken Salad", "亚洲风味鸡肉沙拉", "沙拉/鸡肉", "混合生菜、卷心菜沙拉、香草和炸鸡，配甜粘亚洲风味酱和新鲜辣椒。", ["清爽", "甜咸", "可能微辣"], ["含鸡肉", "有辣椒", "酱料成分需确认"], ["沙拉", "鸡肉"], "M $27 / NM $29"),
+    tgDish("Poke Bowl", "Poke 米饭碗", "沙拉/米饭", "糙米、毛豆、卷心菜胡萝卜沙拉、腌姜、照烧酱、海藻、芝麻蛋黄酱、牛油果等。", ["清爽", "照烧甜咸", "芝麻香"], ["含芝麻", "酱料可能含蛋/大豆"], ["可素食", "米饭"], "M $19 / NM $22"),
+    tgDish("Caesar Salad", "凯撒沙拉配烤鸡", "沙拉/鸡肉", "罗马生菜、培根、蒜香面包丁、帕玛森芝士、水煮蛋和凯撒酱，配烤鸡。", ["芝士香", "咸香", "清爽"], ["含鸡肉", "含培根/猪肉", "含蛋/奶/麸质"], ["沙拉", "相对稳"], "M $24 / NM $27"),
+    tgDish("TGH Beef Burger", "Tea Gardens 牛肉汉堡", "汉堡/牛肉", "牛肉饼、双份培根、芝士、甜菜根、生菜、番茄、焦糖洋葱和店家汉堡酱。", ["肉香", "咸甜", "酱香"], ["含牛肉", "含培根/猪肉", "含奶制品/麸质"], ["汉堡", "主食"], "M $25 / NM $27"),
+    tgDish("Grilled Chicken Burger", "烤鸡汉堡", "汉堡/鸡肉", "烤鸡配芝士、卷心菜沙拉、酸黄瓜和烟熏辣椒蛋黄酱。", ["鸡肉香", "微辣", "酸爽"], ["含鸡肉", "含奶制品/麸质", "酱料可能微辣"], ["汉堡", "相对安全"], "M $25 / NM $27"),
+    tgDish("Crispy Fish Burger", "脆炸鱼汉堡", "汉堡/鱼类", "炸鱼、生菜、番茄、红洋葱、甜菜根酱和塔塔酱。", ["酥脆", "鱼鲜味", "酸甜"], ["鱼类过敏者避免", "可能含蛋/麸质"], ["鱼类", "汉堡"], "M $25 / NM $27"),
+    tgDish("House Crumbed Chicken Schnitzel", "店家炸鸡排", "Pub 经典/鸡肉", "裹粉炸鸡排，可配薯条沙拉或蔬菜。比带酱鸡帕玛更简单。", ["酥脆", "咸香"], ["含鸡肉", "含麸质", "油炸"], ["pub 经典", "安全菜"], "M $26 / NM $28"),
+    tgDish("Chicken Parmigiana", "芝士番茄鸡排", "Pub 经典/鸡肉", "炸鸡排加 Napoli 番茄酱、火腿、马苏里拉和帕玛森芝士，配薯条沙拉或蔬菜。", ["芝士香", "番茄味", "咸香"], ["含鸡肉", "含火腿/猪肉", "含奶/麸质"], ["pub 经典", "份量足"], "M $30 / NM $32"),
+    tgDish("Fish & Chips", "炸鱼薯条", "Pub 经典/鱼类", "炸鱼配薯条、沙拉、柠檬和塔塔酱。第一次去最稳的本地菜之一。", ["酥脆", "鱼鲜味", "咸香"], ["鱼类过敏者避免", "可能含麸质/蛋"], ["本地经典", "安全菜"], "M $27 / NM $29"),
+    tgDish("Tea Gardens Famous Calamari Cone", "Tea Gardens 招牌鱿鱼杯", "Pub 经典/海鲜", "鱿鱼配薯条、柠檬和塔塔酱，用 cone 形式供应，适合轻松分享。", ["酥脆", "海鲜味"], ["含鱿鱼", "可能含麸质/蛋"], ["招牌", "海鲜"], "M $23 / NM $26"),
+    tgDish("Tea Gardens Fish Cone", "Tea Gardens 炸鱼杯", "Pub 经典/鱼类", "炸鱼配薯条、柠檬和塔塔酱，比完整 Fish & Chips 更像小份/轻食。", ["酥脆", "鱼鲜味"], ["鱼类过敏者避免", "可能含麸质/蛋"], ["鱼类", "轻食"], "M $22 / NM $24"),
+    tgDish("250g Hunter Reserve Rump", "250g Hunter Reserve 臀肉牛排", "主菜/牛肉", "250g 牛排，可配薯条沙拉或土豆蔬菜。适合想吃牛排的人。", ["肉香", "咸香"], ["含牛肉", "熟度需说明"], ["牛排", "主菜"], "M $32 / NM $34"),
+    tgDish("Bangers & Mash", "香肠土豆泥", "主菜/香肠", "香肠配土豆泥、青豆和肉汁，是澳洲 pub 常见 comfort food。", ["肉香", "肉汁味", "浓郁"], ["含肉类/可能含猪肉", "含奶制品需确认"], ["pub 经典", "老人友好"], "M $24 / NM $27"),
+    tgDish("Fish Burrito", "炸鱼卷饼", "主菜/鱼类", "炸鱼、卷心菜沙拉、生菜、辣椒、香草和蒜香蛋黄酱包在卷饼里。", ["酥脆", "清爽", "可能微辣"], ["鱼类过敏者避免", "有辣椒", "含麸质"], ["卷饼", "鱼类"], ""),
+    tgDish("Supreme Beef Nachos", "牛肉玉米片", "主菜/牛肉", "牛猪肉碎、番茄莎莎、香菜、牛油果酱、酸奶油、芝士和墨西哥辣椒配玉米片。", ["芝士香", "咸香", "微辣"], ["含牛/猪肉", "含奶制品", "有香菜/辣椒"], ["适合分享", "重口味"], "M $26 / NM $28"),
+    tgDish("Bolognese Linguine", "肉酱扁意面", "主菜/意面", "肉酱扁意面，配帕玛森芝士。适合不想冒险的人。", ["番茄肉酱", "芝士香"], ["含肉类", "含麸质/奶制品"], ["意面", "安全菜"], "M $26 / NM $28"),
+    tgDish("Margherita Pizza", "玛格丽特披萨", "披萨", "番茄 Napoli 酱、fior di latte、马苏里拉和新鲜罗勒。简单经典。", ["番茄味", "芝士香", "罗勒香"], ["含奶制品", "含麸质"], ["披萨", "素食友好"], "M $25 / NM $28"),
+    tgDish("Pepperoni Pizza", "辣香肠披萨", "披萨", "番茄酱、奶酪和 pepperoni。菜单写有芝麻菜，口味咸香。", ["咸香", "芝士香", "肉香"], ["含猪肉/加工肉", "含奶/麸质"], ["披萨", "肉类"], "M $27 / NM $29"),
+    tgDish("Hawaiian Pizza", "夏威夷披萨", "披萨", "番茄酱、火腿、菠萝和马苏里拉。甜咸口，适合家庭分享。", ["甜咸", "芝士香"], ["含火腿/猪肉", "含奶/麸质"], ["披萨", "儿童友好"], "M $27 / NM $30"),
+    tgDish("Meatlovers Pizza", "肉食披萨", "披萨", "BBQ 酱、火腿、pepperoni、意式香肠、腌鸡肉和马苏里拉。肉很多、口味重。", ["BBQ甜咸", "肉香", "浓郁"], ["含多种肉类/猪肉", "含奶/麸质"], ["披萨", "适合分享"], "M $29 / NM $32"),
+    tgDish("Veggie Supreme Pizza", "蔬菜披萨", "披萨", "番茄酱、时令蔬菜和马苏里拉。适合不吃肉的人。", ["番茄味", "蔬菜清甜", "芝士香"], ["含奶/麸质", "蔬菜种类可能变化"], ["素食友好", "披萨"], "M $25 / NM $28"),
+    tgDish("Garlic Prawn Pizza", "蒜香虾披萨", "披萨/海鲜", "番茄酱、腌虾、樱桃番茄、奶酪和芝麻菜。蒜香和虾味明显。", ["蒜香", "虾鲜味", "芝士香"], ["虾/海鲜过敏者避免", "含奶/麸质"], ["海鲜", "披萨"], "M $30 / NM $33"),
+    tgDish("Chicken Nuggets", "儿童鸡块", "儿童餐", "儿童餐鸡块，配薯条和西瓜或胡萝卜黄瓜条。", ["酥脆", "咸香"], ["含鸡肉", "油炸", "可能含麸质"], ["儿童友好"], "M $12 / NM $14"),
+    tgDish("Battered Fish", "儿童炸鱼", "儿童餐/鱼类", "儿童份炸鱼，配薯条和简单蔬果。", ["酥脆", "鱼鲜味"], ["鱼类过敏者避免", "油炸"], ["儿童友好", "鱼类"], "M $12 / NM $14"),
+    tgDish("Bolognese Pasta", "儿童肉酱意面", "儿童餐/意面", "儿童份肉酱意面，味道通常比成人主菜更简单。", ["番茄肉酱", "温和"], ["含肉类", "含麸质"], ["儿童友好"], "M $12 / NM $14"),
+    tgDish("Chocolate Lava Cake", "巧克力熔岩蛋糕", "甜点", "巧克力熔岩蛋糕配香草冰淇淋和巧克力酱，偏甜。", ["甜", "巧克力浓郁", "奶香"], ["含奶/蛋/麸质", "偏甜"], ["甜点"], "M $13 / NM $15"),
+    tgDish("Pecan Pie", "山核桃派", "甜点", "山核桃派配香草冰淇淋和卡仕达酱，甜度较高、坚果香明显。", ["甜", "坚果香", "奶香"], ["含坚果", "含奶/蛋/麸质"], ["甜点", "坚果风险"], "M $12 / NM $15"),
+    tgDish("Bowl of Chips", "一碗薯条", "配菜", "单点薯条，适合小孩或不确定点什么时加一份。", ["咸香", "酥脆"], ["油炸"], ["配菜", "安全菜"], "M $8 / NM $10"),
+    tgDish("Seasonal Vegetables", "时令蔬菜", "配菜", "时令蔬菜，适合搭配牛排、鸡排或炸鱼。", ["清淡", "蔬菜味"], ["具体蔬菜会变化"], ["配菜", "素食友好"], "M $10 / NM $12"),
+    tgDish("Tea Gardens House Salad", "店家沙拉", "配菜/沙拉", "生菜、番茄、黄瓜、红洋葱、橄榄和店家酱汁。", ["清爽", "酸香"], ["酱汁成分需确认"], ["配菜", "素食友好"], "M $10 / NM $12"),
+    tgDish("Mashed Potato & Gravy", "土豆泥配肉汁", "配菜", "土豆泥配肉汁，适合老人和小孩，但肉汁可能含肉类高汤。", ["绵密", "肉汁咸香"], ["可能含奶制品", "肉汁可能含肉类"], ["配菜", "老人友好"], "M $10 / NM $12"),
+  ];
+}
+
+function hookNCookMenuDishes() {
+  return [
+    tgDish("Hamburger", "普通汉堡", "汉堡", "外带店基础汉堡，适合想点简单主食的人。", ["肉香", "咸香"], ["肉类成分需现场确认", "含麸质"], ["汉堡", "简单"], "$12"),
+    tgDish("Steak sandwich", "牛排三明治", "三明治/牛肉", "牛排夹面包，份量通常比普通三明治更扎实。", ["牛肉香", "咸香"], ["含牛肉", "含麸质"], ["牛肉", "主食"], "$16"),
+    tgDish("Egg and bacon roll", "鸡蛋培根面包卷", "早餐/猪肉", "鸡蛋和培根夹面包卷，适合早餐或轻午餐。", ["咸香", "蛋香"], ["含培根/猪肉", "含蛋/麸质"], ["早餐", "简单"], "$9.50"),
+    tgDish("Chicken burger", "鸡肉汉堡", "汉堡/鸡肉", "鸡肉汉堡，比海鲜类更适合不吃鱼虾的人。", ["鸡肉香", "咸香"], ["含鸡肉", "含麸质"], ["汉堡", "相对安全"], "$14"),
+    tgDish("Fish burger", "炸鱼汉堡", "汉堡/鱼类", "炸鱼汉堡，适合想吃 fish and chips 但希望拿着吃的人。", ["酥脆", "鱼鲜味"], ["鱼类过敏者避免", "含麸质"], ["鱼类", "汉堡"], "$12"),
+    tgDish("Veggie burger", "素食汉堡", "汉堡/素食", "素食汉堡，适合不吃肉的人；具体素饼成分需现场确认。", ["咸香", "蔬菜味"], ["可能含蛋/奶/麸质"], ["素食友好"], "$12"),
+    tgDish("Works burger", "豪华汉堡", "汉堡", "加料版汉堡，照片菜单可见可加培根、芝士、菠萝等。适合胃口大的人。", ["丰富", "肉香", "咸甜"], ["可能含培根/猪肉", "含奶/麸质"], ["份量足"], "$16"),
+    tgDish("Chips", "薯条", "炸物/配菜", "外带店基础薯条，可搭配肉汁。", ["咸香", "酥脆"], ["油炸"], ["配菜", "儿童友好"], "$4.50"),
+    tgDish("Gravy", "肉汁酱", "酱汁", "肉汁酱，通常倒在薯条或土豆泥上。", ["咸香", "肉汁味"], ["可能含肉类高汤/麸质"], ["酱汁"], "$3"),
+    tgDish("Chicken nuggets", "鸡块", "炸物/鸡肉", "鸡块，适合儿童或不想吃海鲜的人。", ["酥脆", "咸香"], ["含鸡肉", "油炸"], ["儿童友好"], "$0.80 each"),
+    tgDish("Potato scallop", "炸土豆饼", "炸物/配菜", "澳洲 fish and chips 店常见炸土豆片/土豆饼。", ["酥脆", "土豆香"], ["油炸", "可能含麸质"], ["配菜"], "$2.50"),
+    tgDish("Hash brown", "薯饼", "炸物/配菜", "炸薯饼，适合早餐或小吃。", ["酥脆", "土豆香"], ["油炸"], ["配菜"], "$2"),
+    tgDish("Corn jack", "Corn Jack 炸玉米小吃", "炸物", "澳洲外带店常见冷冻炸物，里面通常是玉米/蔬菜馅。", ["酥脆", "甜咸"], ["可能含麸质/奶"], ["澳洲小吃"], "$4.50"),
+    tgDish("Pluto pup", "炸热狗/玉米狗", "炸物/香肠", "裹粉炸香肠，类似 corn dog。", ["酥脆", "香肠味"], ["含肉类", "含麸质", "油炸"], ["澳洲小吃"], "$4.50"),
+    tgDish("Chiko roll", "澳洲炸春卷 Chiko Roll", "炸物", "澳洲老式外带小吃，像厚春卷，里面通常有蔬菜和肉味馅。", ["酥脆", "咸香"], ["具体肉类需确认", "含麸质"], ["澳洲小吃"], "$4.50"),
+    tgDish("Battered sav", "裹粉炸香肠", "炸物/香肠", "裹粉油炸的 saveloy 香肠，口味重。", ["酥脆", "香肠味"], ["含肉类", "含麸质", "油炸"], ["澳洲小吃"], "$4.50"),
+    tgDish("Pineapple fritter", "炸菠萝圈", "炸物/甜口", "裹粉炸菠萝圈，甜口小吃。", ["甜", "酥脆", "果香"], ["含麸质", "油炸"], ["甜口", "小吃"], "$2"),
+    tgDish("Prawn cutlets", "炸虾排", "海鲜炸物", "炸虾排，适合喜欢虾的人。", ["酥脆", "虾鲜味"], ["虾过敏者避免", "可能含麸质"], ["海鲜"], "$1.50 each"),
+    tgDish("Fish cocktails", "炸鱼块", "鱼类炸物", "小块炸鱼，适合分享或小份尝试。", ["酥脆", "鱼鲜味"], ["鱼类过敏者避免", "可能含麸质"], ["鱼类", "适合分享"], "$4"),
+    tgDish("Fish cocktails and chips", "炸鱼块配薯条", "鱼类/套餐", "炸鱼块加薯条，比单点炸鱼更像一餐。", ["酥脆", "鱼鲜味", "咸香"], ["鱼类过敏者避免", "油炸"], ["套餐", "安全菜"], "$18"),
+    tgDish("Seafood stick", "海鲜棒", "海鲜炸物", "外带店常见海鲜棒，通常是鱼浆类制品。", ["咸香", "海鲜味"], ["鱼/海鲜过敏者避免"], ["海鲜小吃"], ""),
+    tgDish("Tassie scallop", "塔州扇贝", "贝类炸物", "塔州扇贝，菜单照片里价格被遮挡/未清楚显示。", ["贝类鲜味"], ["贝类过敏者避免", "价格需现场确认"], ["贝类"], ""),
+    tgDish("Calamari rings", "鱿鱼圈", "海鲜炸物", "炸鱿鱼圈，适合分享。", ["酥脆", "鱿鱼味"], ["鱿鱼过敏者避免", "可能含麸质"], ["海鲜", "适合分享"], "$1.20 each"),
+    tgDish("Salt and pepper squid", "椒盐鱿鱼", "海鲜炸物", "椒盐鱿鱼，比普通鱿鱼圈更有调味。", ["咸香", "微椒香", "海鲜味"], ["鱿鱼过敏者避免", "可能含麸质"], ["海鲜"], "$5"),
+    tgDish("Fish cake", "鱼饼", "鱼类炸物", "鱼肉制成的鱼饼，适合小吃或加在套餐里。", ["鱼鲜味", "咸香"], ["鱼类过敏者避免"], ["鱼类"], "$2.50"),
+    tgDish("Prawn twister", "炸虾卷", "海鲜炸物", "虾类卷状炸物，适合喜欢虾味小吃的人。", ["酥脆", "虾鲜味"], ["虾过敏者避免"], ["海鲜"], "$4.50"),
+    tgDish("Seafood cocktail", "海鲜小食拼", "海鲜炸物", "海鲜混合小食，具体组合需现场确认。", ["海鲜味", "酥脆"], ["海鲜过敏者避免", "内容需确认"], ["海鲜", "待确认"], "$5"),
+    tgDish("Grilled barramundi and chips", "烤澳洲盲曹鱼配薯条", "鱼类/套餐", "烤 barramundi 配薯条，比炸鱼更清爽。", ["鱼鲜味", "较清爽"], ["鱼类过敏者避免"], ["鱼类", "少油一点"], "$22"),
+    tgDish("Tassie salmon and chips", "塔州三文鱼配薯条", "鱼类/套餐", "塔州三文鱼配薯条，鱼味比白鱼更浓。", ["三文鱼香", "鱼鲜味"], ["鱼类过敏者避免"], ["鱼类"], "$22"),
+    tgDish("Seven pieces calamari and chips", "7块鱿鱼配薯条", "海鲜/套餐", "7块鱿鱼加薯条，适合鱿鱼爱好者。", ["酥脆", "鱿鱼味"], ["鱿鱼过敏者避免", "油炸"], ["套餐", "海鲜"], "$15.50"),
+    tgDish("Tinny special", "Tinny 小份海鲜炸物套餐", "海鲜/分享套餐", "照片菜单可见包含鱿鱼、盐胡椒鱿鱼、虾排、鱼块和小薯条，适合两人小分享。", ["酥脆", "海鲜味", "咸香"], ["海鲜过敏者避免", "油炸", "组合需现场核对"], ["分享", "热门"], "$24"),
+    tgDish("Boatload special", "Boatload 大份海鲜炸物套餐", "海鲜/分享套餐", "照片菜单可见包含多份鱿鱼、盐胡椒鱿鱼、虾排、鱼块、塔塔酱和中薯，适合多人分享。", ["酥脆", "海鲜味", "份量大"], ["海鲜过敏者避免", "油炸", "组合需现场核对"], ["多人分享", "套餐"], "$42"),
+    tgDish("Meal deal for two", "两人炸鱼薯条套餐", "套餐/分享", "2块鱼、2只虾排和薯条，适合两人简单点。", ["酥脆", "鱼鲜味", "虾鲜味"], ["鱼/虾过敏者避免", "油炸"], ["两人套餐"], "$31"),
+    tgDish("Meal deal for four", "四人炸鱼海鲜套餐", "套餐/分享", "4块鱼、4只虾排、4个鱿鱼圈和薯条，适合四人分享。", ["酥脆", "海鲜味", "份量大"], ["鱼/虾/鱿鱼过敏者避免", "油炸"], ["四人套餐"], "$72"),
+  ];
+}
+
+function mummsSeafoodMenuDishes() {
+  return [
+    tgDish("Mumm's Seafood Platter", "Mumm's 海鲜拼盘", "海鲜/分享", "官网确认的代表海鲜拼盘，适合想一次尝多种海鲜的人；具体组合可能随供应变化。", ["海鲜鲜味", "适合分享"], ["海鲜过敏者避免", "组合需当天确认"], ["招牌", "分享"], ""),
+    tgDish("Seafood Mornay", "奶油芝士焗海鲜", "海鲜/主菜", "Mornay 通常是奶油芝士白酱焗海鲜，口味浓郁。", ["奶香", "浓郁", "海鲜味"], ["海鲜过敏者避免", "含奶制品"], ["海鲜", "浓郁"], ""),
+    tgDish("Fresh catch of the day", "当日鲜鱼", "鱼类/主菜", "根据当天供应的鲜鱼，做法和鱼种需现场确认。适合想吃本地鱼的人。", ["鱼鲜味", "清爽或煎烤味"], ["鱼类过敏者避免", "鱼种需确认"], ["当日供应", "鱼类"], ""),
+    tgDish("Takeaway fish and chips", "外带炸鱼薯条", "鱼类/外带", "外带炸鱼薯条，适合不想正式坐下吃的时候。", ["酥脆", "鱼鲜味", "咸香"], ["鱼类过敏者避免", "油炸"], ["外带", "安全菜"], ""),
+    tgDish("Turkish delight panna cotta", "土耳其软糖风味意式奶冻", "甜点", "意式奶冻，带土耳其软糖/玫瑰糖风味，口感软滑、偏甜。", ["甜", "奶香", "软滑"], ["含奶制品", "偏甜"], ["甜点"], ""),
+    tgDish("Persian fairy floss and pistachio", "波斯棉花糖配开心果", "甜点", "偏甜甜点，通常有轻盈棉花糖口感和开心果坚果香。", ["甜", "坚果香"], ["含坚果", "开心果过敏者避免"], ["甜点", "坚果风险"], ""),
+  ];
 }
 
 const chatswoodRestaurants = [
@@ -2786,4 +2976,4 @@ if ("serviceWorker" in navigator) {
 
 renderHistory();
 setStep(1);
-renderRestaurants(demoRestaurants, "v47 已加载：常用区域已移到输入框下方，并支持左滑返回上一页。");
+renderRestaurants(demoRestaurants, "v48 已加载：Tea Gardens 已改为 10 家真实区域候选，重点店有结构化中文菜单。");

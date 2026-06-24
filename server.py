@@ -2114,14 +2114,25 @@ def known_restaurants(area_name=""):
         "Tea Gardens House Salad",
         "Mashed Potato & Gravy",
     ])
+    mumms_menu = "\n".join([
+        "Mumm's Seafood Platter",
+        "Seafood Mornay",
+        "Fresh catch of the day",
+        "Takeaway fish and chips",
+        "Turkish delight panna cotta",
+        "Persian fairy floss and pistachio",
+    ])
     restaurants = [
-        ("tea-gardens-hotel", "Tea Gardens Hotel", "Cnr Maxwell Street & Marine Drive, Tea Gardens", "澳洲酒吧餐，有官网菜单，适合体验本地 pub food。", ["澳洲酒吧餐", "官网菜单", "适合家庭"], "https://teagardenshotel.com/food-drinks", tea_gardens_hotel_menu, "官网 Food + Drinks 菜单", True),
-        ("tillermans", "Tillermans Cafe - Restaurant", "Tea Gardens", "咖啡和餐厅，适合轻食", ["咖啡/轻食", "餐厅"], "", "", "", False),
-        ("waterfront-bistro", "Waterfront Restaurant & Bistro", "Cnr Maxwell Street & Marine Drive, Tea Gardens", "海边餐厅/小酒馆类型", ["Bistro", "本地餐厅"], "", "", "", False),
-        ("hook-n-cook", "Hook'n Cook", "Tea Gardens", "Google Maps 菜单照片可见大量外带菜，适合先选好炸鱼薯条、汉堡和分享套餐。", ["Fish And Chips", "快餐", "地图照片菜单"], "", hook_menu, "Google Maps 菜单照片（约9个月前）", True),
-        ("mumms-seafood", "Mumm's Seafood", "Tea Gardens", "海鲜餐厅，已知官网可找到菜单", ["Seafood", "有官网菜单"], "https://mummsonthemyall.com.au", "", "", False),
-        ("mangrove-cafe", "Mangrove Cafe", "83 Marine Drive, Tea Gardens", "咖啡和轻食", ["咖啡/轻食"], "", "", "", False),
-        ("jayz-myall", "Jayz At The Myall", "Tea Gardens", "咖啡/轻食，本地餐厅", ["咖啡/轻食"], "", "", "", False),
+        ("tea-gardens-hotel", "Tea Gardens Hotel", "Tea Gardens Hotel，本地河边 pub/hotel 餐厅。适合炸鱼薯条、汉堡、鸡排、披萨和家庭聚餐。", "Cnr Maxwell Street & Marine Drive, Tea Gardens", "官网 Food + Drinks 菜单完整可查，是 Tea Gardens 区域优先样板店。", ["澳洲酒吧餐", "官网菜单", "真实菜单"], "https://teagardenshotel.com/food-drinks", tea_gardens_hotel_menu, "官网 Food + Drinks 菜单", True, "OpenStreetMap 本地餐饮点；官网菜单可核验。"),
+        ("mumms-seafood", "Mumm's Seafood", "Mumm's Seafood，河边海鲜餐厅。适合海鲜拼盘、当日鱼、炸鱼薯条和甜点。", "Tea Gardens", "官网可找到菜单入口；当前先整理官网确认代表菜和菜单页线索。", ["Seafood", "官网菜单", "真实菜单"], "https://mummsonthemyall.com.au", mumms_menu, "官网菜单页 + 已知菜单文件", True, "OpenStreetMap 本地 seafood 餐厅；用户已确认官网有菜单页。"),
+        ("hook-n-cook", "Hook'n Cook", "Hook'n Cook，本地 fish and chips 外带店。适合炸鱼薯条、汉堡、炸鱿鱼和多人套餐。", "Tea Gardens", "Google Maps 菜单照片可见大量外带菜，适合先选好炸鱼薯条、汉堡和分享套餐。", ["Fish And Chips", "快餐", "地图照片菜单", "真实菜单"], "", hook_menu, "Google Maps 菜单照片（约9个月前）", True, "OpenStreetMap 本地 fish and chips；用户提供的 Google Maps 菜单照片可读到主要售卖项。"),
+        ("tillermans", "Tillermans Cafe - Restaurant", "Tillermans，Tea Gardens 咖啡/餐厅。适合咖啡、早午餐和轻食。", "Tea Gardens", "本地 cafe restaurant，暂无可靠线上菜单，不展示编造菜品。", ["咖啡早午餐", "本地餐厅", "菜单待补"], "", "", "", False, "OpenStreetMap 本地 cafe/restaurant 点；菜单待核验。"),
+        ("nicoles-art-gallery-cafe", "Nicole's Art Gallery and Cafe", "Nicole's Art Gallery and Cafe，艺术画廊咖啡馆。适合咖啡、蛋糕和轻食。", "Tea Gardens", "Tea Gardens 河边附近 cafe，适合老人或游客轻松尝试；暂无可靠线上菜单。", ["咖啡", "轻食", "菜单待补"], "", "", "", False, "OpenStreetMap 本地 cafe 点；菜单待核验。"),
+        ("mangrove-cafe", "Mangrove Cafe", "Mangrove Cafe，本地咖啡轻食店。适合早餐、咖啡和简单午餐。", "83 Marine Drive, Tea Gardens", "咖啡和轻食，适合先从简单菜单开始；暂无可靠线上菜单。", ["咖啡/轻食", "本地餐厅", "菜单待补"], "", "", "", False, "OpenStreetMap 记录了具体地址；菜单待核验。"),
+        ("jayz-myall", "Jayz At The Myall", "Jayz At The Myall，本地咖啡轻食店。适合早上咖啡和简餐。", "Tea Gardens", "OpenStreetMap 显示平日和周六营业时段；暂无可靠线上菜单。", ["咖啡", "轻食", "菜单待补"], "", "", "", False, "OpenStreetMap 本地 cafe 点；菜单待核验。"),
+        ("hawks-nest-golf-club-bistro", "Hawks Nest Golf Club Bistro", "Hawks Nest Golf Club Bistro，桥对面高尔夫俱乐部 bistro。适合家庭式西餐和本地 club 餐。", "Sanderling Avenue, Hawks Nest", "Hawks Nest 与 Tea Gardens 隔桥相连，适合作为同一区域候选；暂无可靠线上菜单。", ["Bistro", "俱乐部餐", "菜单待补"], "", "", "", False, "OpenStreetMap 本地 pub/bistro 点；距离 Tea Gardens 约几公里内。"),
+        ("benchmark-on-booner", "Benchmark on Booner", "Benchmark on Booner，Hawks Nest 本地餐厅。适合西式餐和度假区晚餐。", "100 Booner Street, Hawks Nest", "桥对面 Hawks Nest 餐厅，适合 Tea Gardens 周边一起推荐；暂无可靠线上菜单。", ["西式/融合", "本地餐厅", "菜单待补"], "", "", "", False, "OpenStreetMap 本地 restaurant 点；菜单待核验。"),
+        ("hawks-nest-takeaway", "Hawks Nest Takeaway", "Hawks Nest Takeaway，桥对面 seafood/fish and chips 外带店。适合炸鱼薯条和简单外带。", "34 Tuloa Avenue, Hawks Nest", "OpenStreetMap 标注 seafood takeaway；暂无可靠线上菜单。", ["Fish And Chips", "外带", "菜单待补"], "", "", "", False, "OpenStreetMap 本地 seafood takeaway 点；同属 Tea Gardens 近邻可达范围。"),
     ]
     return {
         "source": "known_local",
@@ -2130,12 +2141,14 @@ def known_restaurants(area_name=""):
             {
                 "id": f"known-{slug}",
                 "name": name,
+                "nameNote": name_note,
                 "area": "Tea Gardens",
                 "address": address,
-                "rating": "",
+                "rating": "本地",
                 "userRatingCount": "",
                 "priceLevel": "",
                 "note": note,
+                "curationReason": curation_reason,
                 "tags": tags,
                 "googleMapsUri": "",
                 "websiteUri": website,
@@ -2143,8 +2156,9 @@ def known_restaurants(area_name=""):
                 "menuText": menu_text,
                 "menuSource": menu_source,
                 "menuVerified": menu_verified,
+                "menuDishes": fallback_analyze({"menuText": menu_text}).get("dishes", []) if menu_text else [],
             }
-            for slug, name, address, note, tags, website, menu_text, menu_source, menu_verified in restaurants
+            for slug, name, name_note, address, note, tags, website, menu_text, menu_source, menu_verified, curation_reason in restaurants
         ],
     }
 
