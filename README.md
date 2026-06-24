@@ -69,6 +69,7 @@ For known restaurants, the app can use a local trusted menu cache before attempt
 
 ## Current Menu Data Status
 
+- v53 continues St Ives menu thickening: The Living Room Café, Café Milligram, and Resunga were expanded from source text/structured menu data, and a Sushiru data bug was fixed so it no longer shows Chargrill Charlie's dishes.
 - v52 completes the first St Ives menu pass across all 11 candidates: Charmed Thai now has menu-image dishes, The St Ives Club has 2026 Brasserie menu categories, Chargrill Charlie's/Resunga/Café Milligram were thickened, and no St Ives restaurant is left with an empty menu card.
 - v51 adds St Ives as the next area sample: 11 real St Ives candidates, no default Chinese restaurant, Chinese restaurant notes, GPS/typing aliases for `St Ives` and `st lves`, and first-pass structured dish explanations for restaurants with public menu clues.
 - Chatswood real-menu sample set currently prioritizes non-Chinese-environment restaurants: Khao Pla, Mamak, Sunday Seoul, Kazuma, Bistro Kai, Manpuku, Cafe Markus, Chimichuri, Ooshman, and Gelateria Gondola.

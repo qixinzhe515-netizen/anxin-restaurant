@@ -1947,8 +1947,11 @@ const stIvesRestaurants = [
       tgDish("French toast", "法式吐司", "早餐/甜口", "吐司裹蛋奶煎制，通常偏甜，适合配咖啡。", ["甜", "蛋奶香", "柔软"], ["含蛋", "含奶", "含麸质"], ["甜口早餐"], ""),
       tgDish("Salads", "沙拉类午餐", "午餐/沙拉", "官方页说明有 delicious salads，适合想吃清淡午餐的人。", ["清爽"], ["酱汁成分需确认"], ["轻食", "午餐"], ""),
       tgDish("Light lunch meals", "轻午餐", "午餐/轻食", "官方页说明有 light meal 和 lunch options，适合家庭或老人简单吃。", ["温和", "易接受"], ["具体菜品需现场确认"], ["轻食", "老人友好"], ""),
+      tgDish("Meals inspired by flavours from around the world", "世界风味午餐", "午餐/主菜", "官方页说明有 inspired by flavours from around the world 的餐食，适合想吃比普通早餐更正式的一餐。", ["风味更丰富"], ["具体菜品需现场确认"], ["午餐", "主菜"], ""),
+      tgDish("Quick bite", "快速简餐", "轻食/快餐", "官方页说适合 quick bite with the family，适合赶时间或不想研究菜单的人。", ["简单", "方便"], ["具体成分需确认"], ["轻食", "家庭"], ""),
+      tgDish("Long lunch", "长午餐/聚餐", "午餐/聚餐", "官方页说适合 long lunch with friends，适合坐下来慢慢吃。", ["适合聚餐"], ["具体菜品需现场确认"], ["聚餐", "午餐"], ""),
     ],
-    menuText: ["Bacon and eggs", "Omelette", "French toast", "Salads", "Light lunch meals"].join("\n"),
+    menuText: ["Bacon and eggs", "Omelette", "French toast", "Salads", "Light lunch meals", "Meals inspired by flavours from around the world", "Quick bite", "Long lunch"].join("\n"),
   },
   {
     id: "stives-jjs-eatery",
@@ -2018,8 +2021,13 @@ const stIvesRestaurants = [
       tgDish("House-made sweet treats", "店内自制甜点", "甜点", "适合配咖啡，通常偏甜。", ["甜", "咖啡搭配"], ["可能含奶/蛋/麸质/坚果"], ["甜点"], ""),
       tgDish("Healthy lunch options", "健康午餐", "午餐/轻食", "官方页提到 healthy affordable lunch options，适合想吃轻食的人。", ["清爽", "健康"], ["具体配料需现场确认"], ["轻食", "午餐"], ""),
       tgDish("Coffee", "咖啡", "饮品", "官方页强调 coffee，适合早午餐搭配。", ["咖啡香"], ["含咖啡因"], ["咖啡"], ""),
+      tgDish("All-day menu", "全天菜单", "全天/简餐", "官方页说明有 diverse all-day menu，适合不确定早餐还是午餐时间的人。", ["选择多", "灵活"], ["具体菜品需现场确认"], ["全天", "简餐"], ""),
+      tgDish("Quick bite", "快速简餐", "轻食", "官方页提到 quick bite between errands，适合购物途中快速吃。", ["方便", "轻食"], ["具体成分需确认"], ["外带", "轻食"], ""),
+      tgDish("Leisurely lunch", "慢午餐", "午餐/聚餐", "官方页提到 leisurely lunch with friends，适合坐下聊天吃饭。", ["轻松", "适合聚餐"], ["具体菜品需确认"], ["午餐", "聚餐"], ""),
+      tgDish("Afternoon tea", "下午茶", "下午茶/甜点", "官方页写明下午可 unwind with a decadent treat。", ["甜", "咖啡搭配"], ["可能含奶/蛋/麸质"], ["下午茶", "甜点"], ""),
+      tgDish("Signature mocha", "招牌摩卡", "饮品/咖啡", "官方页提到 signature mocha，咖啡加巧克力风味，通常偏甜。", ["咖啡香", "巧克力", "甜"], ["含咖啡因", "可能含奶"], ["咖啡"], ""),
     ],
-    menuText: ["Brunch favourites", "House-made sweet treats", "Healthy lunch options", "Coffee"].join("\n"),
+    menuText: ["Brunch favourites", "House-made sweet treats", "Healthy lunch options", "Coffee", "All-day menu", "Quick bite", "Leisurely lunch", "Afternoon tea", "Signature mocha"].join("\n"),
   },
   {
     id: "stives-sushiru",
@@ -2106,9 +2114,17 @@ const stIvesRestaurants = [
       tgDish("Vegetable Samosa", "蔬菜咖喱角", "前菜/素食", "土豆、青豆、姜蒜、姜黄、香菜、辣椒、孜然等馅料的炸三角。", ["香料味", "酥脆", "微辣"], ["含麸质", "油炸", "有辣椒"], ["素食", "前菜"], "$7.90"),
       tgDish("Tandoori Lamb Cutlet", "坦都里羊排", "前菜/羊肉", "羊排用酸奶、姜蒜和香料腌制后入炉烤。", ["烤肉香", "香料味"], ["含羊肉", "含奶制品"], ["羊肉", "前菜"], "$15.90"),
       tgDish("Tandoori Tiger Prawn", "坦都里大虾", "前菜/虾", "半壳大虾用坦都里酱腌制后烤制，配薄荷酱。", ["虾鲜味", "香料味"], ["虾过敏者避免", "含奶制品需确认"], ["虾", "前菜"], "$16.90"),
-      tgDish("Indian curry", "印度咖喱", "主菜/咖喱", "适合配米饭或 naan，辣度和肉类/素食可现场确认。", ["香料味", "浓郁"], ["辣度需确认", "可能含奶/坚果"], ["咖喱", "主菜"], ""),
+      tgDish("Korma Beef/Lamb/Chicken", "Korma 温和腰果奶油咖喱", "主菜/咖喱", "Quandoo 菜单写明 ground roasted cashew nuts、spices 和 fresh cream，可选牛/羊/鸡。", ["温和", "奶油香", "腰果香"], ["含腰果", "含奶制品", "可选肉类"], ["咖喱", "不太辣"], "$16.90"),
+      tgDish("Vindaloo Beef/Lamb/Chicken", "Vindaloo 辣咖喱", "主菜/咖喱", "Goa 风格热辣咖喱，菜单写明 boneless meat、red wine 和 very hot sauce。", ["很辣", "酸香", "重口"], ["有辣", "可能含酒", "可选肉类"], ["咖喱", "辣"], "$16.90"),
+      tgDish("Kadai Cosht", "Kadai 羊肉香料咖喱", "主菜/羊肉", "菜单写明 Mughlai dish，羊肉在芳香香料 gravy 中烹制。", ["羊肉香", "香料味", "中辣"], ["含羊肉"], ["羊肉", "咖喱"], "$16.90"),
+      tgDish("Prawns Malabar", "马拉巴尔虾咖喱", "主菜/海鲜", "虾、蘑菇、洋葱番茄酱、椰香和混合香料。", ["虾鲜味", "椰香", "番茄香"], ["虾过敏者避免", "可能含椰子"], ["海鲜", "咖喱"], "$17.90"),
+      tgDish("Mole Fish", "椰香罗望子鱼咖喱", "主菜/鱼类", "鱼柳配 tamarin sauce、snow peas 和椰香。", ["酸香", "鱼鲜味", "椰香"], ["鱼类过敏者避免"], ["鱼", "海鲜"], "$17.90"),
+      tgDish("Mango Chicken", "芒果鸡咖喱", "主菜/鸡肉", "菜单写明 boneless chicken，以很温和的 gravy 和 mango 调味。", ["温和", "微甜", "芒果香"], ["含鸡肉"], ["咖喱", "不太辣"], "$16.90"),
+      tgDish("Chicken Tikka Masala", "鸡肉 Tikka Masala", "主菜/鸡肉", "坦都里鸡柳配 capsicum、番茄、洋葱、香菜和 masala。", ["香料味", "番茄香", "鸡肉香"], ["含鸡肉"], ["咖喱", "经典"], "$16.90"),
+      tgDish("Chicken Jalfrezi", "鸡肉 Jalfrezi", "主菜/鸡肉", "鸡肉配 capsicum、cherry tomato、洋葱和 chopped masala 炒制。", ["番茄香", "香料味"], ["含鸡肉"], ["咖喱", "鸡肉"], "$16.90"),
+      tgDish("Hariyali Goat", "薄荷香菜山羊咖喱", "主菜/山羊肉", "嫩山羊肉用 homemade sauce、mint 和 cilantro 烹制。", ["香草味", "肉香"], ["含山羊肉"], ["咖喱", "特色"], "$17.90"),
     ],
-    menuText: ["Vegetable Samosa", "Tandoori Lamb Cutlet", "Tandoori Tiger Prawn", "Indian curry"].join("\n"),
+    menuText: ["Vegetable Samosa", "Tandoori Lamb Cutlet", "Tandoori Tiger Prawn", "Korma Beef/Lamb/Chicken", "Vindaloo Beef/Lamb/Chicken", "Kadai Cosht", "Prawns Malabar", "Mole Fish", "Mango Chicken", "Chicken Tikka Masala", "Chicken Jalfrezi", "Hariyali Goat"].join("\n"),
   },
   {
     id: "stives-charmed-thai",
@@ -3501,4 +3517,4 @@ if ("serviceWorker" in navigator) {
 
 renderHistory();
 setStep(1);
-renderRestaurants(demoRestaurants, "v52 已加载：St Ives 11 家餐厅都已补菜单卡，Charmed Thai 和 St Ives Club 已不再是空菜单。");
+renderRestaurants(demoRestaurants, "v53 已加载：继续补厚 St Ives 菜单，并修正 Sushiru 菜品串店问题。");
