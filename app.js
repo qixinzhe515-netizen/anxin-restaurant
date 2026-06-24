@@ -2385,6 +2385,44 @@ function titleCaseArea(areaName = "") {
     .join(" ") || "Sydney CBD";
 }
 
+const knownAreaLocations = [
+  { area: "Tea Gardens", latitude: -32.6671, longitude: 152.1609 },
+  { area: "Chatswood", latitude: -33.7969, longitude: 151.1803 },
+  { area: "Hurstville", latitude: -33.9667, longitude: 151.1020 },
+  { area: "Sydney CBD", latitude: -33.8688, longitude: 151.2093 },
+  { area: "Parramatta", latitude: -33.8150, longitude: 151.0011 },
+];
+
+function distanceKm(aLat, aLng, bLat, bLng) {
+  const radius = 6371;
+  const dLat = (bLat - aLat) * Math.PI / 180;
+  const dLng = (bLng - aLng) * Math.PI / 180;
+  const lat1 = aLat * Math.PI / 180;
+  const lat2 = bLat * Math.PI / 180;
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+  return 2 * radius * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
+}
+
+function nearestKnownArea(latitude, longitude) {
+  return knownAreaLocations
+    .map((item) => ({ ...item, distanceKm: distanceKm(latitude, longitude, item.latitude, item.longitude) }))
+    .sort((a, b) => a.distanceKm - b.distanceKm)[0];
+}
+
+async function resolveAreaFromLocation(latitude, longitude) {
+  try {
+    const data = await postJson("/api/reverse-location", { latitude, longitude });
+    if (data?.areaName) return data;
+  } catch {}
+  const nearest = nearestKnownArea(latitude, longitude);
+  return {
+    source: "nearest_known_area",
+    areaName: nearest?.area || "Sydney CBD",
+    displayName: nearest ? `${nearest.area} 附近` : "当前位置附近",
+    distanceKm: nearest?.distanceKm,
+  };
+}
+
 function staticDemoRestaurantsForArea(areaName = "") {
   const area = titleCaseArea(areaName);
   return [
@@ -2486,6 +2524,21 @@ function localNearbyRestaurants(payload = {}) {
   };
 }
 
+function localReverseLocation(payload = {}) {
+  const latitude = Number(payload.latitude);
+  const longitude = Number(payload.longitude);
+  if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+    return { source: "static_error", areaName: "", displayName: "无法识别当前位置" };
+  }
+  const nearest = nearestKnownArea(latitude, longitude);
+  return {
+    source: "nearest_known_area",
+    areaName: nearest?.area || "Sydney CBD",
+    displayName: nearest ? `${nearest.area} 附近` : "当前位置附近",
+    distanceKm: nearest?.distanceKm,
+  };
+}
+
 function localAnalyzeMenu(payload = {}) {
   return fallbackLocalMenuData(payload.menuText || "", {
     source: "用户输入/照片识别",
@@ -2509,6 +2562,7 @@ function localGenerateCard(payload = {}) {
 }
 
 function localApi(url, payload = {}) {
+  if (url === "/api/reverse-location") return localReverseLocation(payload);
   if (url === "/api/nearby-restaurants") return localNearbyRestaurants(payload);
   if (url === "/api/discover-menu" || url === "/api/extract-menu-url") {
     return localKnownMenuCache(payload) || {
@@ -2934,16 +2988,27 @@ $("#locationButton").addEventListener("click", () => {
   button.disabled = true;
   button.textContent = "正在定位...";
   navigator.geolocation.getCurrentPosition(
-    (position) => {
-      button.disabled = false;
-      button.textContent = "使用我当前位置";
-      loadNearbyRestaurants(
-        {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        },
-        "正在查找..."
-      );
+    async (position) => {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+      button.textContent = "正在识别区域...";
+      try {
+        const resolved = await resolveAreaFromLocation(latitude, longitude);
+        const areaName = resolved.areaName || "";
+        if (areaName) $("#areaName").value = areaName;
+        toast(areaName ? `已定位到 ${areaName}` : "已获取当前位置");
+        await loadNearbyRestaurants(
+          {
+            areaName,
+            latitude,
+            longitude,
+          },
+          "正在查找..."
+        );
+      } finally {
+        button.disabled = false;
+        button.textContent = "使用我当前位置";
+      }
     },
     (error) => {
       button.disabled = false;
@@ -3074,4 +3139,4 @@ if ("serviceWorker" in navigator) {
 
 renderHistory();
 setStep(1);
-renderRestaurants(demoRestaurants, "v49 已加载：Mumm's Seafood 已补全官网食品菜单，包含午晚餐、早餐、甜点和外带。");
+renderRestaurants(demoRestaurants, "v50 已加载：当前位置会先识别到区，再按该区域推荐餐厅。");

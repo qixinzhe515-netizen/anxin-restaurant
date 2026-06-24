@@ -2433,6 +2433,123 @@ def known_area_coords(area_name):
     return known.get(key)
 
 
+def known_area_from_coords(lat, lng):
+    known = [
+        (-32.6671, 152.1609, "Tea Gardens"),
+        (-33.7969, 151.1803, "Chatswood"),
+        (-33.9667, 151.1020, "Hurstville"),
+        (-33.8688, 151.2093, "Sydney CBD"),
+        (-33.8150, 151.0011, "Parramatta"),
+    ]
+    closest = min(
+        (
+            {
+                "latitude": item_lat,
+                "longitude": item_lng,
+                "areaName": name,
+                "distanceKm": haversine_km(lat, lng, item_lat, item_lng),
+            }
+            for item_lat, item_lng, name in known
+        ),
+        key=lambda item: item["distanceKm"],
+    )
+    return closest
+
+
+def area_from_address(address):
+    if not isinstance(address, dict):
+        return ""
+    for key in ("suburb", "city_district", "neighbourhood", "town", "village", "city", "municipality"):
+        value = (address.get(key) or "").strip()
+        if value:
+            return value
+    return ""
+
+
+def reverse_location_google(lat, lng):
+    api_key = os.environ.get("GOOGLE_MAPS_API_KEY")
+    if not api_key:
+        return None
+    params = urllib.parse.urlencode(
+        {
+            "latlng": f"{lat},{lng}",
+            "key": api_key,
+            "result_type": "locality|sublocality|neighborhood|administrative_area_level_2",
+        }
+    )
+    data = http_json(f"https://maps.googleapis.com/maps/api/geocode/json?{params}", timeout=15)
+    if data.get("status") != "OK":
+        return None
+    for result in data.get("results", []):
+        components = result.get("address_components", [])
+        for preferred in ("locality", "sublocality", "neighborhood", "administrative_area_level_2"):
+            for component in components:
+                if preferred in component.get("types", []):
+                    name = component.get("long_name", "").strip()
+                    if name:
+                        return {
+                            "source": "google_geocoding",
+                            "areaName": name,
+                            "displayName": result.get("formatted_address", name),
+                        }
+    return None
+
+
+def reverse_location_osm(lat, lng):
+    params = urllib.parse.urlencode(
+        {
+            "lat": lat,
+            "lon": lng,
+            "format": "jsonv2",
+            "zoom": 14,
+            "addressdetails": 1,
+        }
+    )
+    data = http_json(f"https://nominatim.openstreetmap.org/reverse?{params}", timeout=15)
+    area = area_from_address(data.get("address", {}))
+    if not area:
+        return None
+    return {
+        "source": "nominatim",
+        "areaName": area,
+        "displayName": data.get("display_name", area),
+    }
+
+
+def reverse_location(payload):
+    try:
+        lat = float(payload.get("latitude"))
+        lng = float(payload.get("longitude"))
+    except (TypeError, ValueError):
+        return {"source": "invalid", "areaName": "", "displayName": "无法识别当前位置"}
+    nearest = known_area_from_coords(lat, lng)
+    if nearest and nearest["distanceKm"] <= 8:
+        return {
+            "source": "known_area",
+            "areaName": nearest["areaName"],
+            "displayName": f"{nearest['areaName']} 附近",
+            "distanceKm": round(nearest["distanceKm"], 2),
+        }
+    try:
+        resolved = reverse_location_google(lat, lng)
+        if resolved:
+            return resolved
+    except (RuntimeError, urllib.error.URLError, urllib.error.HTTPError, TimeoutError, ValueError, KeyError):
+        pass
+    try:
+        resolved = reverse_location_osm(lat, lng)
+        if resolved:
+            return resolved
+    except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, ValueError, KeyError):
+        pass
+    return {
+        "source": "nearest_known_area",
+        "areaName": nearest["areaName"],
+        "displayName": f"{nearest['areaName']} 附近",
+        "distanceKm": round(nearest["distanceKm"], 2),
+    }
+
+
 def geocode_area_osm(area_name):
     known = known_area_coords(area_name)
     if known:
@@ -2649,6 +2766,8 @@ def nearby_restaurants(payload):
     area_name = payload.get("areaName", "").strip()
     lat = payload.get("latitude")
     lng = payload.get("longitude")
+    if not area_name and lat is not None and lng is not None:
+        area_name = reverse_location(payload).get("areaName", "")
     known = known_restaurants(area_name)
     if known:
         return known
@@ -2873,6 +2992,8 @@ class Handler(SimpleHTTPRequestHandler):
                 self.respond_json(menu_file_data_url(payload))
             elif self.path == "/api/generate-card":
                 self.respond_json(generate_card(payload))
+            elif self.path == "/api/reverse-location":
+                self.respond_json(reverse_location(payload))
             elif self.path == "/api/nearby-restaurants":
                 self.respond_json(nearby_restaurants(payload))
             else:
@@ -2890,6 +3011,8 @@ class Handler(SimpleHTTPRequestHandler):
                 self.respond_json({"error": "fetch_failed"})
             elif self.path == "/api/generate-card":
                 self.respond_json(fallback_card({}))
+            elif self.path == "/api/reverse-location":
+                self.respond_json({"source": "fallback", "areaName": "", "displayName": "当前位置识别失败"})
             elif self.path == "/api/nearby-restaurants":
                 self.respond_json(fallback_restaurants(""))
             else:
