@@ -69,6 +69,7 @@ For known restaurants, the app can use a local trusted menu cache before attempt
 
 ## Current Menu Data Status
 
+- v54 turns the repeated lessons into a fixed area-operation playbook: every area must go through address/map QA, restaurant-source QA, menu-source QA, dish-category QA, and cross-restaurant contamination checks before being treated as usable.
 - v53 continues St Ives menu thickening: The Living Room Café, Café Milligram, and Resunga were expanded from source text/structured menu data, and a Sushiru data bug was fixed so it no longer shows Chargrill Charlie's dishes.
 - v52 completes the first St Ives menu pass across all 11 candidates: Charmed Thai now has menu-image dishes, The St Ives Club has 2026 Brasserie menu categories, Chargrill Charlie's/Resunga/Café Milligram were thickened, and no St Ives restaurant is left with an empty menu card.
 - v51 adds St Ives as the next area sample: 11 real St Ives candidates, no default Chinese restaurant, Chinese restaurant notes, GPS/typing aliases for `St Ives` and `st lves`, and first-pass structured dish explanations for restaurants with public menu clues.
@@ -82,3 +83,24 @@ For known restaurants, the app can use a local trusted menu cache before attempt
 - A restaurant needs a verifiable menu source before structured dishes are shown as real dishes.
 - Non-Chinese-environment restaurants are prioritized because the product solves English menu and ordering anxiety.
 - Older famous restaurants with mixed scores can stay only when clearly labelled as local staples; higher-rated restaurants should replace them when menu data is available.
+
+## Area Operation Playbook
+
+Use this sequence for every suburb. Do not skip around.
+
+1. Area identity: add suburb aliases, GPS anchor, and local fallback route so typed search and location search land in the same area.
+2. Restaurant set: choose at least 10 local well-reviewed, non-Chinese-default restaurants where possible. Chinese restaurants stay out unless there is a product reason.
+3. Address operation: every restaurant needs a usable address. If an exact `googleMapsUri` is missing, the app must still generate Google Maps search and navigation links from name plus address.
+4. Restaurant explanation: every restaurant needs a Chinese `nameNote` explaining what it is and what people usually eat there.
+5. Menu source rank: official menu page/PDF first, ordering menu second, Google Maps/menu photo third, review/photo clues last. Low-confidence clues can only create category cards or `待核验` dishes.
+6. Dish structure: dishes must be grouped by category, have Chinese name, original English name, simple explanation, taste, cautions, and tags.
+7. Anti-mix check: every dish must belong to that restaurant only. Never copy another restaurant's menu into a new restaurant just to fill count.
+8. Area QA: before deploy, check restaurant count, dish count, source labels, address/map links, left-swipe/back navigation, and version text.
+
+Run the local audit before each area deploy:
+
+```bash
+python3 area_audit.py
+```
+
+The audit is allowed to print `TODO` for honest missing work, but it should not print cross-restaurant contamination errors.

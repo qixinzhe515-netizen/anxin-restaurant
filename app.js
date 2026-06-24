@@ -3517,4 +3517,4 @@ if ("serviceWorker" in navigator) {
 
 renderHistory();
 setStep(1);
-renderRestaurants(demoRestaurants, "v53 已加载：继续补厚 St Ives 菜单，并修正 Sushiru 菜品串店问题。");
+renderRestaurants(demoRestaurants, "v54 已加载：已固化每个区的地址、地图、菜单来源和防串店操作规则。");

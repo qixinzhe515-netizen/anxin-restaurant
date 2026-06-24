@@ -49,3 +49,26 @@ Every product decision should be judged by this question:
 Would this help a Chinese-speaking person in Australia who cannot confidently use English go to a local restaurant, choose food, and order with less fear and less confusion?
 
 If not, it should not be in the first version.
+
+## Restaurant Area Operating Experience
+
+The app is now built area by area. Each area is treated like a small local product launch, not a loose restaurant list.
+
+For every suburb:
+
+- Start with the area identity: accepted spellings, common typo aliases, approximate GPS anchor, and fallback route.
+- Choose at least 10 local, well-reviewed restaurants where possible.
+- Prefer non-Chinese dining environments because the app solves English menu and ordering anxiety.
+- Every restaurant must have a Chinese name note explaining what the restaurant is and what kind of food it serves.
+- Every restaurant must have a usable address. A missing exact Google Maps place URL is acceptable only if the app can generate a Google Maps search and navigation URL from restaurant name plus address.
+- Menu data must be restaurant-specific. Never reuse dishes from another restaurant to fill a thin menu.
+- Source priority is official menu, ordering menu, Google/menu photo, then review/photo clues. The weaker the source, the more conservative the dish card should be.
+- If exact dishes are not reliable, show category-level or `待核验` guidance instead of pretending the menu is complete.
+- Before pushing an area, check restaurant count, menu count, address links, Chinese notes, category grouping, and obvious cross-restaurant contamination.
+
+Current expansion pattern:
+
+- Tea Gardens: real small-town sample; focus on seafood, fish and chips, hotel/pub dining, and cafe options.
+- Chatswood: dense city-area sample; 10 real non-Chinese-default restaurants with deeper menus.
+- St Ives: suburb sample; real restaurants, Chinese restaurants excluded by default, menus being thickened from official and ordering sources.
+- Hurstville, Sydney CBD, and Parramatta: still need the same area-by-area treatment before they are considered production-quality.
