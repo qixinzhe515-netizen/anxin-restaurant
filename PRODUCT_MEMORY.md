@@ -71,4 +71,5 @@ Current expansion pattern:
 - Tea Gardens: real small-town sample; focus on seafood, fish and chips, hotel/pub dining, and cafe options.
 - Chatswood: dense city-area sample; 10 real non-Chinese-default restaurants with deeper menus.
 - St Ives: suburb sample; real restaurants, Chinese restaurants excluded by default, menus being thickened from official and ordering sources.
-- Hurstville, Sydney CBD, and Parramatta: still need the same area-by-area treatment before they are considered production-quality.
+- Sydney CBD: first main-Sydney core area added with 10 real restaurants across CBD, Surry Hills, The Rocks, Redfern, and Chippendale. It should be treated as the model for tourist/student/visiting-parent city use.
+- Hurstville and Parramatta: still need the same area-by-area treatment before they are considered production-quality.

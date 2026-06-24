@@ -9,7 +9,8 @@ APP = Path(__file__).with_name("app.js")
 AREAS = {
     "Tea Gardens": ("const teaGardensRestaurants = [", "const stIvesRestaurants = ["),
     "St Ives": ("const stIvesRestaurants = [", "const chatswoodRestaurants = ["),
-    "Chatswood": ("const chatswoodRestaurants = [", "const chatswoodStaticMenuExtensions"),
+    "Chatswood": ("const chatswoodRestaurants = [", "const sydneyCbdRestaurants"),
+    "Sydney CBD": ("const sydneyCbdRestaurants = [", "const chatswoodStaticMenuExtensions"),
 }
 
 
