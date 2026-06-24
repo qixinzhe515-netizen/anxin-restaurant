@@ -69,6 +69,7 @@ For every suburb:
 Current expansion pattern:
 
 - Tea Gardens: real small-town sample; focus on seafood, fish and chips, hotel/pub dining, and cafe options.
+- Tea Gardens rule after v56: only Tillermans, Mumm's, Hook'n Cook, Jayz, Hawks Nest Golf Club/Sando's, Benchmark, and Tea Gardens Hotel have usable menu cards. Nicole's, Mangrove, and Hawks Nest Takeaway still need stronger sources before adding dishes.
 - Chatswood: dense city-area sample; 10 real non-Chinese-default restaurants with deeper menus.
 - St Ives: suburb sample; real restaurants, Chinese restaurants excluded by default, menus being thickened from official and ordering sources.
 - Sydney CBD: first main-Sydney core area added with 10 real restaurants across CBD, Surry Hills, The Rocks, Redfern, and Chippendale. It should be treated as the model for tourist/student/visiting-parent city use.

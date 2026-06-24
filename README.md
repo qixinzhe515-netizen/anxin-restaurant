@@ -69,6 +69,7 @@ For known restaurants, the app can use a local trusted menu cache before attempt
 
 ## Current Menu Data Status
 
+- v56 thickens Tea Gardens and Sydney CBD without inventing dishes: Tillermans, Jayz at the Myall, Hawks Nest Golf Club/Sando's, and Benchmark now have source-labelled menu cards; Sydney CBD adds more official Swillhouse PDF dishes for Restaurant Hubert, Le Foote, and Alberto's Lounge. Restaurants with no reliable menu remain unfilled.
 - v55 starts the main Sydney expansion pattern with a Sydney CBD core set: 10 real restaurants across CBD/Surry Hills/The Rocks/Redfern/Chippendale, each with Chinese notes, address/map fallback, and restaurant-specific menu clues from official pages or PDFs.
 - v54 turns the repeated lessons into a fixed area-operation playbook: every area must go through address/map QA, restaurant-source QA, menu-source QA, dish-category QA, and cross-restaurant contamination checks before being treated as usable.
 - v53 continues St Ives menu thickening: The Living Room Café, Café Milligram, and Resunga were expanded from source text/structured menu data, and a Sushiru data bug was fixed so it no longer shows Chargrill Charlie's dishes.

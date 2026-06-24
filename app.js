@@ -1484,12 +1484,28 @@ const teaGardensRestaurants = [
     name: "Tillermans Cafe - Restaurant",
     nameNote: "中文备注：Tillermans，Tea Gardens 咖啡/餐厅。适合咖啡、早午餐和轻食。",
     area: "Tea Gardens",
-    address: "Tea Gardens",
+    address: "77 Marine Drive, Tea Gardens NSW 2324",
     rating: "本地",
-    note: "本地 cafe restaurant，适合不会英文的用户先作为轻食候选；暂无可靠线上菜单，不展示编造菜品。",
-    curationReason: "入选原因：OpenStreetMap 本地 cafe/restaurant 点；菜单待核验。",
-    tags: ["咖啡早午餐", "本地餐厅", "菜单待补"],
-    hasMenu: false,
+    note: "官网有 breakfast、lunch、dinner 菜单页，菜单会随季节变化；已整理官网文字能确认的菜。",
+    curationReason: "入选原因：Tillermans 官网菜单页可核验，地址和菜单分类清楚。",
+    tags: ["咖啡早午餐", "法国风格", "官网菜单", "真实菜单"],
+    websiteUri: "https://tillermans.com.au/menu/",
+    hasMenu: true,
+    menuSource: "Tillermans 官网 breakfast/lunch/dinner menu",
+    menuVerified: true,
+    menuDishes: dishRows("Tillermans 官网 breakfast/lunch/dinner menu", [
+      ["Breakfast trifle", "早餐水果酸奶杯", "$16.50", "官网早餐菜单：水煮/炖煮大黄、坚果和酸奶分层，偏健康甜口。", "早餐/轻食", ["酸甜", "坚果香", "清爽"], ["含坚果", "含奶制品"], ["早餐", "轻食"]],
+      ["Tillermans Big Breakfast", "Tillermans 大早餐", "$29.50", "官网早餐菜单：鸡蛋、培根、香肠、蘑菇、番茄、土豆 rosti 和吐司，份量大。", "早餐/拼盘", ["咸香", "丰富", "份量足"], ["含猪肉", "含鸡蛋", "含麸质"], ["早餐", "主食"]],
+      ["The Onesie", "Onesie 小早餐套餐", "$19.50", "官网早餐菜单：培根、土豆 rosti、水波蛋、番茄、酸面包和小杯橙汁或咖啡。", "早餐/套餐", ["咸香", "蛋香"], ["含猪肉", "含鸡蛋", "含麸质"], ["早餐", "套餐"]],
+      ["Homemade muffins, scones and cakes", "自制松饼、司康和蛋糕", "", "官网早餐页确认有自制 muffins、scones 和 cakes，适合配咖啡。具体口味每天可能变化。", "甜点/烘焙", ["甜", "面香"], ["可能含奶制品", "可能含鸡蛋", "可能含麸质"], ["咖啡搭配", "待确认口味"]],
+      ["Twice-baked goats cheese souffle", "二次烘烤山羊奶酪舒芙蕾", "$24.50", "官网午餐/晚餐菜单：山羊奶酪舒芙蕾配 baby greens、腌水果和核桃。", "前菜/奶酪", ["奶香", "轻盈", "酸甜"], ["含奶制品", "含坚果", "含鸡蛋"], ["法国风格", "素食"]],
+      ["Chickpea battered prawns", "鹰嘴豆粉炸虾", "$29.50", "官网午餐菜单：鹰嘴豆面糊炸虾，配 chilli 和 mustard seed dressing。", "海鲜/虾", ["酥脆", "虾鲜味", "微辣"], ["虾过敏者避免", "可能有辣椒"], ["海鲜", "前菜"]],
+      ["Fromage & charcuterie", "奶酪和熟肉拼盘", "$38.50", "官网午餐菜单：鸭肉开心果 terrine、鸡肝酱、猪肉 rillettes、brie、无花果甜菜 relish、小黄瓜和酸面包。", "拼盘/分享", ["咸香", "奶香", "肉香"], ["含猪肉", "含坚果", "含奶制品"], ["分享", "法式"]],
+      ["Traditional French style 3-course lunch", "传统法式三道式午餐", "", "官网午餐菜单确认有三道式午餐，适合想省事点套餐的人。具体菜随季节变化。", "套餐", ["多种口味"], ["过敏需提前说明"], ["套餐", "需核对当天菜单"]],
+      ["Roasted chorizo and prawns with Pedro Ximenez", "烤西班牙辣香肠和虾配甜雪莉酒汁", "", "官网晚餐菜单：chorizo 和虾，Pedro Ximenez 带甜香酒味。", "前菜/海鲜肉类", ["虾鲜味", "肉香", "甜咸"], ["含虾", "含猪肉", "可能有酒味"], ["海鲜", "分享"]],
+      ["Dark and hot chocolate souffle with coffee bean ice cream", "黑巧克力热舒芙蕾配咖啡豆冰淇淋", "", "官网晚餐甜品：热巧克力舒芙蕾配咖啡豆冰淇淋，适合饭后分享。", "甜品", ["巧克力香", "甜", "咖啡香"], ["含奶制品", "含鸡蛋", "含咖啡因"], ["甜品", "饭后"]],
+    ]),
+    menuText: ["Breakfast trifle", "Tillermans Big Breakfast", "The Onesie", "Homemade muffins, scones and cakes", "Twice-baked goats cheese souffle", "Chickpea battered prawns", "Fromage & charcuterie", "Traditional French style 3-course lunch", "Roasted chorizo and prawns with Pedro Ximenez", "Dark and hot chocolate souffle with coffee bean ice cream"].join("\n"),
   },
   {
     id: "known-nicoles-art-gallery-cafe",
@@ -1522,10 +1538,22 @@ const teaGardensRestaurants = [
     area: "Tea Gardens",
     address: "Tea Gardens",
     rating: "本地",
-    note: "OpenStreetMap 显示平日和周六营业时段；暂无可靠线上菜单。",
-    curationReason: "入选原因：OpenStreetMap 本地 cafe 点；菜单待核验。",
-    tags: ["咖啡", "轻食", "菜单待补"],
-    hasMenu: false,
+    note: "社媒能确认部分 heat-and-eat / lunch 菜，但不是完整常驻菜单；只作为到店前参考。",
+    curationReason: "入选原因：OpenStreetMap 本地 cafe 点；Facebook/Instagram 有近期菜单片段。",
+    tags: ["咖啡", "轻食", "社媒菜单线索"],
+    websiteUri: "https://www.facebook.com/p/Jayz-at-the-Myall-61564768543654/",
+    hasMenu: true,
+    menuSource: "Jayz at the Myall Facebook/Instagram 菜单片段",
+    menuVerified: false,
+    menuDishes: dishRows("Jayz at the Myall Facebook/Instagram 菜单片段", [
+      ["Pumpkin Soup", "南瓜汤", "", "社媒菜单片段出现的热汤，适合想吃温和简单食物的人。", "汤/轻食", ["南瓜甜", "温和"], ["可能含奶制品"], ["轻食", "温和"]],
+      ["Beef Stroganoff", "俄式酸奶油牛肉炖菜", "", "社媒片段出现的牛肉菜，通常配米饭或面，口味浓郁。", "主菜/牛肉", ["牛肉香", "奶油感", "浓郁"], ["含牛肉", "可能含奶制品"], ["热食", "主菜"]],
+      ["Spaghetti Bolognaise", "肉酱意面", "", "社媒片段出现的意面，番茄肉酱风味，比较容易接受。", "意面/肉酱", ["番茄酸香", "肉香"], ["含麸质", "肉类需确认"], ["意面", "安全菜"]],
+      ["Honey soy garlic stirfry and Hokkien noodles", "蜂蜜酱油蒜香炒福建面", "", "社媒片段出现的炒面，甜咸蒜香，适合喜欢面食的人。", "面/炒面", ["甜咸", "蒜香"], ["含酱油/麸质", "配料需确认"], ["面食", "热食"]],
+      ["Satay Chicken and Singapore noodles", "沙爹鸡肉配星洲米粉", "", "社媒片段出现的鸡肉面，花生沙爹味明显。", "面/鸡肉", ["花生香", "咖喱香", "可能微辣"], ["含花生", "含鸡肉"], ["鸡肉", "花生风险"]],
+      ["Butter Chicken and Rice", "黄油鸡配米饭", "", "社媒片段出现的咖喱鸡饭，通常奶香浓郁、辣度较低。", "咖喱/鸡肉", ["奶香", "咖喱香", "温和"], ["含鸡肉", "含奶制品"], ["米饭", "热食"]],
+    ], "中"),
+    menuText: ["Pumpkin Soup", "Beef Stroganoff", "Spaghetti Bolognaise", "Honey soy garlic stirfry and Hokkien noodles", "Satay Chicken and Singapore noodles", "Butter Chicken and Rice"].join("\n"),
   },
   {
     id: "known-hawks-nest-golf-club-bistro",
@@ -1534,10 +1562,28 @@ const teaGardensRestaurants = [
     area: "Tea Gardens / Hawks Nest",
     address: "Sanderling Avenue, Hawks Nest",
     rating: "本地",
-    note: "Hawks Nest 与 Tea Gardens 隔桥相连，适合作为同一区域候选；暂无可靠线上菜单。",
-    curationReason: "入选原因：OpenStreetMap 本地 pub/bistro 点；距离 Tea Gardens 约几公里内。",
-    tags: ["Bistro", "俱乐部餐", "菜单待补"],
-    hasMenu: false,
+    note: "Sando's Café & Restaurant 官网和 2025 PDF 菜单可核验，适合家庭 club 餐。",
+    curationReason: "入选原因：Hawks Nest Golf Club 官方 dining 页和 PDF 菜单，距离 Tea Gardens 约几公里内。",
+    tags: ["Bistro", "俱乐部餐", "官网 PDF", "真实菜单"],
+    websiteUri: "https://www.hawksnestgolfclub.com.au/clubhouse/dining/",
+    hasMenu: true,
+    menuSource: "Sando's Café & Restaurant 官方 Dinner Menu PDF, Feb/May 2025",
+    menuVerified: true,
+    menuDishes: dishRows("Sando's Café & Restaurant 官方 Dinner Menu PDF, Feb/May 2025", [
+      ["Beer battered barramundi", "啤酒糊炸澳洲肺鱼", "$25M/$27G", "PDF 主菜：啤酒糊炸 barramundi，配沙拉、粗薯条、塔塔酱和柠檬。", "主菜/鱼类", ["酥脆", "鱼鲜味"], ["鱼类过敏者避免", "油炸", "含麸质"], ["鱼薯", "安全菜"]],
+      ["Herb crusted chicken schnitzel", "香草面包糠鸡排", "$25M/$27G", "PDF 主菜：鸡排配沙拉、粗薯条和自选酱汁。", "主菜/鸡肉", ["酥脆", "鸡肉香"], ["含鸡肉", "油炸", "含麸质"], ["鸡肉", "稳妥"]],
+      ["Pan fried barramundi", "香煎 barramundi 鱼", "$31M/$33G", "PDF 主菜：配甜薯南瓜泥、西兰花苗、炸刺山柑和 creamy tamari butter。", "主菜/鱼类", ["鱼鲜味", "黄油香", "咸鲜"], ["鱼类过敏者避免", "含奶制品/酱油需确认"], ["鱼类", "主菜"]],
+      ["Black Angus rump steak", "黑安格斯 rump 牛排", "$31M/$34G", "PDF 主菜：可配薯泥或薯条、沙拉和自选酱汁。", "主菜/牛排", ["牛肉香", "咸香"], ["含牛肉"], ["牛排", "主菜"]],
+      ["Surf and turf steak", "牛排配虾和鱿鱼", "$41M/$44G", "PDF 主菜：250g 黑安格斯 rump、烤虾、鱿鱼、薯条、沙拉和自选酱汁。", "主菜/牛肉海鲜", ["牛肉香", "海鲜味"], ["含牛肉", "虾/鱿鱼过敏者避免"], ["分享", "丰盛"]],
+      ["Chicken parmigiana", "鸡排帕玛森", "$27M/$29G", "PDF Flavours of the World：香草鸡排加火腿、mozzarella，配薯条和沙拉。", "主菜/鸡肉", ["芝士香", "番茄酱香", "咸香"], ["含鸡肉", "含猪肉火腿", "含奶制品"], ["澳洲常见", "热食"]],
+      ["Massaman Thai curry", "泰式 Massaman 咖喱", "$29M/$31G", "PDF 菜品：Massaman Thai curry，配 chat potatoes 和 jasmine rice。", "咖喱/主菜", ["咖喱香", "温和偏甜"], ["可能含花生/坚果", "辣度需确认"], ["咖喱", "米饭"]],
+      ["Beef, mushroom and garlic sausages", "牛肉蘑菇蒜香香肠配薯泥", "$25M/$27G", "PDF 菜品：牛肉蘑菇蒜香香肠配 creamy mash、豌豆和 rosemary gravy。", "主菜/香肠", ["肉香", "蒜香", "浓郁"], ["含牛肉", "可能含奶制品"], ["主菜", "热食"]],
+      ["USA style BBQ pork ribs", "美式 BBQ 猪肋排", "$39M/$43G", "PDF 菜品：整架美式 BBQ 猪肋排，配薯条和 coleslaw。", "主菜/猪肉", ["甜咸", "烟熏", "肉香"], ["含猪肉", "份量大"], ["分享", "肉食"]],
+      ["Pan fried halloumi salad", "煎 halloumi 奶酪沙拉", "$21M/$23G", "PDF 沙拉：halloumi、花椰菜、羽衣甘蓝、鹰嘴豆、洋葱、番茄、杏仁和芝麻酱。", "沙拉/奶酪", ["奶酪咸香", "蔬菜味", "坚果香"], ["含奶制品", "含杏仁/芝麻"], ["素食", "沙拉"]],
+      ["Grilled chicken Caesar salad", "烤鸡凯撒沙拉", "$23M/$25G", "PDF 沙拉：烤鸡、cos lettuce、培根、鸡蛋、面包丁、anchovy 和 parmesan。", "沙拉/鸡肉", ["咸香", "奶酪香"], ["含鸡肉", "含猪肉培根", "含鱼类/anchovy"], ["沙拉", "主食"]],
+      ["Pizza - double smoked ham and pineapple", "双熏火腿菠萝披萨", "$25M/$27G", "PDF 披萨项：double smoked ham and pineapple，11 寸底。", "披萨", ["甜咸", "芝士香"], ["含猪肉", "含奶制品", "含麸质"], ["披萨", "分享"]],
+    ]),
+    menuText: ["Beer battered barramundi", "Herb crusted chicken schnitzel", "Pan fried barramundi", "Black Angus rump steak", "Surf and turf steak", "Chicken parmigiana", "Massaman Thai curry", "Beef mushroom garlic sausages", "USA style BBQ pork ribs", "Pan fried halloumi salad", "Grilled chicken Caesar salad", "Pizza double smoked ham and pineapple"].join("\n"),
   },
   {
     id: "known-benchmark-on-booner",
@@ -1546,10 +1592,22 @@ const teaGardensRestaurants = [
     area: "Tea Gardens / Hawks Nest",
     address: "100 Booner Street, Hawks Nest",
     rating: "本地",
-    note: "桥对面 Hawks Nest 餐厅，适合 Tea Gardens 周边一起推荐；暂无可靠线上菜单。",
-    curationReason: "入选原因：OpenStreetMap 本地 restaurant 点；菜单待核验。",
-    tags: ["西式/融合", "本地餐厅", "菜单待补"],
-    hasMenu: false,
+    note: "官网确认有 breakfast、lunch、dinner、pub grub 和 pizzas all day；具体完整菜单需要扫码或到店确认。",
+    curationReason: "入选原因：官网确认营业、餐类、地址和 takeaway QR；AGFG/本地资料确认部分菜品线索。",
+    tags: ["西式/融合", "披萨", "官网菜单线索"],
+    websiteUri: "https://www.benchmarkbar.com/",
+    hasMenu: true,
+    menuSource: "Benchmark 官网 + AGFG/公开菜单线索",
+    menuVerified: false,
+    menuDishes: dishRows("Benchmark 官网 + AGFG/公开菜单线索", [
+      ["Pizzas all day", "全天披萨", "", "官网明确写着 pizzas all day from 11am，适合想点简单分享菜的人。具体口味需看店内菜单/扫码菜单。", "披萨/分享", ["芝士香", "咸香"], ["含麸质", "含奶制品", "具体配料需确认"], ["分享", "待确认口味"]],
+      ["Pub grub", "澳洲酒吧餐", "", "官网描述为 great pub grub，通常适合点汉堡、炸物、牛排或薯条类；具体菜名需到店确认。", "酒吧餐/主食", ["咸香", "份量足"], ["配料需确认"], ["安全菜", "待确认"]],
+      ["Breakfast menu", "早餐菜单", "", "官网确认早餐 8am-11am。具体早餐菜需扫码或到店菜单确认。", "早餐", ["温和", "简单"], ["鸡蛋/奶制品/麸质需确认"], ["早餐", "待确认"]],
+      ["Lunch specials", "午餐特价", "$12.50 weekdays", "官网图片/文字提到周一至周五 $12.50 lunches。具体菜式每天可能变化。", "午餐/特价", ["简单", "实惠"], ["当天菜式需确认"], ["午餐", "特价"]],
+      ["Slow-cooked Pork Coq Auvin", "慢炖猪肉 Coq Auvin 风格菜", "", "AGFG 页面提到的 signature dish。名称特殊，建议到店确认是否仍供应。", "主菜/猪肉", ["肉香", "浓郁"], ["含猪肉", "是否在售需确认"], ["招牌线索", "待核验"]],
+      ["Grilled lemon butter barramundi", "柠檬黄油烤 barramundi", "", "公开评价提到菜单上有 grilled lemon butter barramundi。是否当天供应需确认。", "主菜/鱼类", ["鱼鲜味", "黄油香", "柠檬清香"], ["鱼类过敏者避免", "含奶制品"], ["鱼类", "待核验"]],
+    ], "中"),
+    menuText: ["Pizzas all day", "Pub grub", "Breakfast menu", "Lunch specials", "Slow-cooked Pork Coq Auvin", "Grilled lemon butter barramundi"].join("\n"),
   },
   {
     id: "known-hawks-nest-takeaway",
@@ -2863,6 +2921,62 @@ const sydneyCbdRestaurants = [
   },
 ];
 
+const sydneyCbdMenuExtensions = {
+  "syd-hubert": [
+    ["Chicken and pork terrine", "鸡肉猪肉 terrine 冷肉冻", "$36", "Hubert 官方 PDF：鸡肉和猪肉 terrine，配鹅肝和 Muscat jelly，法式冷盘风格。", "前菜/冷盘", ["肉香", "浓郁", "微甜"], ["含猪肉", "含动物肝脏", "冷盘"], ["法餐", "分享"]],
+    ["Mushroom au Poivre", "黑椒蘑菇", "$29", "Hubert 官方 PDF：confit field mushroom 配 peppercorn sauce，适合不想吃肉的人。", "前菜/蘑菇", ["菌菇香", "黑椒香", "浓郁"], ["酱汁可能含奶制品"], ["素食友好", "蘑菇"]],
+    ["Saint Jacques et Tartine de Crevettes", "扇贝和虾吐司", "$37", "Hubert 官方 PDF：scallop and prawn toast，配 rouille 和 herbs。", "海鲜/前菜", ["虾鲜味", "扇贝鲜味", "酥脆"], ["虾/贝类过敏者避免", "含麸质"], ["海鲜", "分享"]],
+    ["Caviar Service", "鱼子酱服务", "$250/$550", "Hubert 官方 PDF：Kaviari caviar，配蒸面包和 cultured cream。价格高，适合特殊场合。", "海鲜/鱼子酱", ["咸鲜", "奶香"], ["鱼类过敏者避免", "含奶制品", "价格高"], ["高级", "特殊场合"]],
+    ["Pommes Anna", "千层土豆 Pommes Anna", "$19", "Hubert 官方 PDF：层叠土豆配 miso beurre blanc，适合配主菜。", "配菜", ["土豆香", "黄油香", "鲜味"], ["含奶制品", "可能含味噌/大豆"], ["配菜", "法餐"]],
+    ["Bitter Leaf Salad", "苦叶香草沙拉", "$17", "Hubert 官方 PDF：bitter leaf salad with soft herbs，清爽配菜。", "沙拉/配菜", ["清爽", "微苦", "香草味"], ["酱汁需确认"], ["配菜", "清爽"]],
+    ["Poisson du Jour", "当日整鱼", "MP", "Hubert 官方 PDF：whole fish of the day，鱼种和价格按当天变化。", "主菜/鱼类", ["鱼鲜味"], ["鱼类过敏者避免", "价格需确认"], ["当日供应", "待确认"]],
+    ["Chicken Fricassee", "法式整鸡炖/煎菜", "$108", "Hubert 官方 PDF：whole chicken, bread sauce, green garlic，适合多人分享。", "主菜/鸡肉", ["鸡肉香", "蒜香", "浓郁"], ["含鸡肉", "酱汁可能含奶/麸质"], ["分享", "主菜"]],
+  ],
+  "syd-le-foote": [
+    ["Baguette", "酸面包法棍配黄油", "$12", "Le Foote 官方 Main Menu PDF：AP Bakery sourdough baguette 配 cultured butter。", "前菜/面包", ["面香", "黄油香"], ["含麸质", "含奶制品"], ["开胃", "分享"]],
+    ["Oysters", "悉尼岩蚝", "$42/$84", "Le Foote 官方 Main Menu PDF：Sydney Rock oysters，配 mignonette 和黑胡椒。", "海鲜/生蚝", ["鲜味", "海水味", "清爽"], ["生食", "贝类过敏者避免"], ["海鲜", "生食"]],
+    ["Poireaux Vinaigrette", "炭烤韭葱配油醋汁", "$25", "Le Foote 官方 Main Menu PDF：charred leeks、toasted hazelnuts、soft herbs。", "蔬菜/前菜", ["炭烤香", "酸香", "坚果香"], ["含榛子", "酱汁需确认"], ["蔬菜", "法餐"]],
+    ["Terrine", "猪肉开心果 terrine", "$28", "Le Foote 官方 Main Menu PDF：pork and pistachio terrine，配 pickles 和 mustard。", "前菜/冷盘", ["肉香", "坚果香", "酸咸"], ["含猪肉", "含开心果"], ["冷盘", "分享"]],
+    ["Champignons Sauvages", "野生蘑菇配澳洲坚果和野米", "$35", "Le Foote 官方 Main Menu PDF：mixed mushrooms, macadamia, wild rice。", "蔬菜/蘑菇", ["菌菇香", "坚果香"], ["含坚果"], ["素食友好", "蘑菇"]],
+    ["Salade de Poulet Roti", "烤鸡沙拉", "$36", "Le Foote 官方 Main Menu PDF：roast chicken、puy lentils、bitter leaf salad 和 herbs。", "沙拉/鸡肉", ["鸡肉香", "清爽", "豆香"], ["含鸡肉"], ["沙拉", "主食"]],
+    ["Salade Nicoise", "烟熏鲭鱼尼斯沙拉", "$32", "Le Foote 官方 Main Menu PDF：smoked Australian mackerel、green beans、black olive、potatoes、egg。", "沙拉/鱼类", ["烟熏鱼香", "清爽", "咸香"], ["鱼类过敏者避免", "含鸡蛋"], ["沙拉", "主食"]],
+    ["Spatchcock", "炭烤小春鸡", "$45", "Le Foote 官方 Main Menu PDF：charcoal-grilled spatchcock with salsa verde。", "主菜/鸡肉", ["炭烤香", "香草味", "鸡肉香"], ["含鸡肉"], ["主菜", "热食"]],
+    ["Cote de Boeuf", "炭烤 Wagyu 肋眼大牛排", "$220/$240", "Le Foote 官方 Main Menu PDF：600g/1kg Kidman Wagyu ribeye，配 veal jus，适合多人分享。", "主菜/牛排", ["牛肉香", "炭烤味", "浓郁"], ["含牛肉", "价格高", "份量大"], ["分享", "牛排"]],
+    ["Pomme Frites", "法式薯条", "$15", "Le Foote 官方 Main Menu PDF：French fries，适合配汉堡或牛排。", "配菜", ["咸香", "酥脆"], ["油炸"], ["配菜", "稳妥"]],
+    ["Chocolate Parfait", "巧克力 parfait", "$24", "Le Foote 官方 Main Menu PDF：vanilla cream and cognac soaked prunes。", "甜品", ["巧克力香", "奶香", "酒香"], ["含奶制品", "可能含酒精"], ["甜品", "饭后"]],
+    ["Choux Bun", "泡芙配咖啡奶油和榛子 praline", "$24", "Le Foote 官方 Main Menu PDF：coffee custard、hazelnut praline。", "甜品", ["咖啡香", "奶香", "坚果香"], ["含榛子", "含奶制品", "含咖啡因"], ["甜品", "坚果"]],
+  ],
+  "syd-albertos": [
+    ["Olive Marinate", "腌橄榄", "$12", "Alberto's 官方 Main Menu PDF：marinated olives，适合开场小食。", "前菜/小食", ["咸香", "橄榄味"], ["橄榄味明显"], ["开胃", "分享"]],
+    ["Crostino", "烟熏晒干番茄 mozzarella 脆面包", "$10 each", "Alberto's 官方 Main Menu PDF：smoked sundried tomato, mozzarella。", "前菜/面包", ["烟熏番茄味", "奶酪香"], ["含奶制品", "含麸质"], ["小食", "分享"]],
+    ["Peperoni Buffalo", "烤甜椒配水牛 mozzarella", "$26", "Alberto's 官方 Main Menu PDF：roasted pepper、buffalo mozzarella、salsa verde、pine nuts。", "前菜/奶酪", ["甜椒香", "奶香", "坚果香"], ["含奶制品", "含松子"], ["素食", "奶酪"]],
+    ["Salumi e Grissini", "腌肉和芝士面包棒", "$28", "Alberto's 官方 Main Menu PDF：cured meat of the day, parmesan grissini。", "冷盘/分享", ["咸香", "肉香", "奶酪香"], ["含肉类", "含奶制品", "含麸质"], ["分享", "下酒"]],
+    ["Mafaldine con Battuto di Erbe", "香草青菜 mafaldine 意面", "$38", "Alberto's 官方 Main Menu PDF：cime di rapa、broccoli leaf、marjoram。", "意面/蔬菜", ["香草味", "蔬菜味"], ["含麸质", "酱汁需确认"], ["意面", "素食友好"]],
+    ["Pesce di Mercato", "当日市场鱼配手切 pesto", "$65", "Alberto's 官方 Main Menu PDF：market fish with hand cut pesto。", "主菜/鱼类", ["鱼鲜味", "罗勒/香草味"], ["鱼类过敏者避免", "坚果需确认"], ["鱼", "主菜"]],
+    ["Insalata", "苦叶橙味油醋沙拉", "$14", "Alberto's 官方 Main Menu PDF：bitter leaves, orange vinaigrette。", "沙拉/配菜", ["清爽", "微苦", "橙香"], ["酱汁需确认"], ["配菜", "清爽"]],
+    ["Tiramisu", "提拉米苏", "", "Alberto's 官方 banquet menu PDF：mascarpone, espresso and marsala。", "甜品", ["咖啡香", "奶香", "甜"], ["含奶制品", "含咖啡因", "可能含酒"], ["甜品", "经典"]],
+  ],
+};
+
+function applySydneyCbdMenuExtensions() {
+  sydneyCbdRestaurants.forEach((restaurant) => {
+    const rows = sydneyCbdMenuExtensions[restaurant.id] || [];
+    if (!rows.length) return;
+    const start = restaurant.menuDishes?.length || 0;
+    const additions = dishRows(restaurant.menuSource || "真实菜单", rows).map((dish, index) => ({
+      ...dish,
+      id: String(start + index + 1),
+    }));
+    restaurant.menuDishes = [...(restaurant.menuDishes || []), ...additions];
+    restaurant.menuText = [
+      restaurant.menuText || "",
+      ...rows.map(([name_en]) => name_en),
+    ].filter(Boolean).join("\n");
+  });
+}
+
+applySydneyCbdMenuExtensions();
+
 const chatswoodStaticMenuExtensions = {
   "cw-kazuma": [
     ["Tiger Tempura Prawn Roll", "老虎虾天妇罗寿司卷", "", "公开内容提到的寿司卷类菜，通常是炸虾配寿司饭和酱汁，适合想吃熟海鲜寿司的人。", "寿司/熟海鲜", ["酥脆", "鲜味", "酱汁味"], ["含虾", "可能含麸质"], ["寿司", "熟食", "海鲜"]],
@@ -3781,4 +3895,4 @@ if ("serviceWorker" in navigator) {
 
 renderHistory();
 setStep(1);
-renderRestaurants(demoRestaurants, "v55 已加载：新增 Sydney CBD 核心悉尼区域 10 家真实餐厅和官网菜单线索。");
+renderRestaurants(demoRestaurants, "v56 已加载：补厚 Tea Gardens 和 Sydney CBD 菜单；没有可靠来源的店继续留空。");
