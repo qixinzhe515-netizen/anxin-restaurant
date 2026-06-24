@@ -69,7 +69,7 @@ For known restaurants, the app can use a local trusted menu cache before attempt
 
 ## Current Menu Data Status
 
-- v50 adds GPS-to-area resolution: "use current location" now reverse-geocodes the phone location to a suburb/area first, fills the area input, then loads restaurants for that area. Static GitHub Pages falls back to nearest supported area coordinates; backend deployments can use Google Geocoding or Nominatim.
+- v51 adds St Ives as the next area sample: 11 real St Ives candidates, no default Chinese restaurant, Chinese restaurant notes, GPS/typing aliases for `St Ives` and `st lves`, and first-pass structured dish explanations for restaurants with public menu clues.
 - Chatswood real-menu sample set currently prioritizes non-Chinese-environment restaurants: Khao Pla, Mamak, Sunday Seoul, Kazuma, Bistro Kai, Manpuku, Cafe Markus, Chimichuri, Ooshman, and Gelateria Gondola.
 - All 10 Chatswood real restaurants now have at least 10 structured dish explanations. Khao Pla, Mamak, and Sunday Seoul still have the deepest coverage and should be the pattern for expanding the others.
 - Each real restaurant must keep its own source, address, menu text, and structured dish cards. Do not mix dishes between restaurants.

@@ -2089,6 +2089,47 @@ def known_restaurants(area_name=""):
                 ) in restaurants
             ],
         }
+    if key in {"stives", "stlves"}:
+        restaurants = [
+            ("stives-archies-cafe", "Archies Cafe Co", "Archies Cafe Co，现代早午餐咖啡馆。主打地中海/中东风味 brunch、三明治、tacos 和彩色健康碗。", "St Ives Shopping Village, 166 Mona Vale Road, St Ives", "官方商场页列出 Turkish eggs、burrata、power bowl、fried chicken sandwich、corn fritters 和 flathead tacos。", ["咖啡早午餐", "官方商场页", "真实菜单线索"], "https://stivesvillage.com.au/stores/archies-cafe-co/", "Archie's Style Turkish Eggs\nBurrata\nArchie's Power Bowl\nFried Chicken Sandwich\nCorn fritters with aburi miso salmon\nFlathead tacos", "St Ives Shopping Village 官方页面", True, "St Ives Shopping Village 官方页面；非中餐环境。"),
+            ("stives-living-room-cafe", "The Living Room Café", "The Living Room Café，持牌咖啡餐厅。适合早餐、轻食、沙拉和家庭午餐。", "Level 1 Shop 16, St Ives Shopping Village", "官方商场页说明有 bacon and eggs、omelettes、French toast、salads 和 light lunch options。", ["咖啡早午餐", "官方商场页", "老人友好"], "https://stivesvillage.com.au/stores/the-living-room-cafe/", "Bacon and eggs\nOmelette\nFrench toast\nSalads\nLight lunch meals", "St Ives Shopping Village 官方页面", True, "St Ives Shopping Village 官方页面；适合不会英文用户先看懂早餐轻食。"),
+            ("stives-jjs-eatery", "JJ's Eatery", "JJ's Eatery，现代澳式 cafe restaurant。适合早餐、午餐、risotto、osso bucco、pot pie、pasta、三明治和汉堡。", "Level 1 Shop 95, St Ives Shopping Village", "官方商场页明确提及 risotto、osso bucco、pot pies、pasta、sandwich、wrap、burger。", ["澳式咖啡餐厅", "官方商场页", "真实菜单线索"], "https://stivesvillage.com.au/stores/jjs-cafe-restaurant/", "Risotto\nOsso bucco\nPot pies\nPasta\nTakeaway sandwich\nWrap\nBurger", "St Ives Shopping Village 官方页面", True, "St Ives Shopping Village 官方页面；现代澳式 cafe restaurant。"),
+            ("stives-oscars-chargrill", "Oscar's Chargrill", "Oscar's Chargrill，中东/Turkish 风味快餐。适合 kebab、shish、pide、沙拉和外带。", "Level 1 Shop 15, St Ives Shopping Village", "官方商场页明确写有 kebabs、shish、pides、fresh salads、sides、sweets。", ["Turkish", "快餐/轻食", "官方商场页"], "https://stivesvillage.com.au/stores/oscars-chargrill/", "Kebabs\nShish\nPides\nFresh salads\nSides\nSweets", "St Ives Shopping Village 官方页面", True, "St Ives Shopping Village 官方页面；土耳其风味非中餐。"),
+            ("stives-cafe-milligram", "Café Milligram", "Café Milligram，咖啡早午餐店。适合咖啡、brunch、甜点和健康午餐。", "Level 1 Shop 25, St Ives Shopping Village", "官方商场页说明有 brunch favourites、house-made sweet treats、healthy affordable lunch options。", ["咖啡早午餐", "甜点", "菜单待加深"], "https://stivesvillage.com.au/stores/cafe-milligram/", "Brunch favourites\nHouse-made sweet treats\nHealthy lunch options\nCoffee", "St Ives Shopping Village 官方页面", True, "St Ives Shopping Village 官方页面；适合轻食。"),
+            ("stives-sushiru", "Sushiru", "Sushiru，日式寿司火车/日餐。适合寿司、刺身、nigiri、maki、tempura、udon、teriyaki。", "Shop 117, 166 Mona Vale Road, St Ives", "官方商场页明确列出 sushi、sashimi、nigiri、maki、tempura、udon、teriyaki。", ["日餐", "寿司", "官方商场页"], "https://stivesvillage.com.au/stores/sushiru/", "Sushi\nSashimi\nNigiri\nMaki\nTempura\nUdon\nTeriyaki", "St Ives Shopping Village 官方页面", True, "St Ives Shopping Village 官方页面和 AGFG 地址信息；非中餐。"),
+            ("stives-karoo", "Karoo & Co The Old School", "Karoo & Co The Old School，意式/融合餐厅。适合披萨、意面、burrata、calamari 和分享菜单。", "205 Mona Vale Road, St Ives", "官网确认 St Ives 分店和 dinner menu；OpenTable 提到 burrata、calamari、polenta fries、pizzas、seasonal pastas。", ["意式/融合", "本地好评", "菜单可核验"], "https://www.karooandco.com/st-ives-1", "Burrata\nCalamari\nPolenta fries\nPizzas\nSeasonal pastas\nRocket and pear salad\nGrilled greens", "Karoo 官网 + OpenTable 菜单描述", True, "OpenTable 约 4.3；官网确认 St Ives 地址和菜单入口。"),
+            ("stives-chargrill-charlies", "Chargrill Charlie's St Ives", "Chargrill Charlie's，澳式炭烤鸡和沙拉连锁。适合烤鸡、汉堡、卷、沙拉和家庭外带。", "213 Mona Vale Road, St Ives", "品牌官网确认主打 chargrilled chicken、burgers & rolls、salads。", ["澳式烤鸡", "外带", "菜单可核验"], "https://chargrillcharlies.com/our-food", "Chargrilled chicken\nChicken roll\nBurgers\nSalads\nSides", "Chargrill Charlie's 官网菜单方向", True, "连锁品牌官网菜单方向明确；Tripadvisor 评论集中提到 chicken & salads。"),
+            ("stives-resunga", "Resunga Indian Curry Restaurant & Bar", "Resunga Indian Curry，印度餐厅。适合咖喱、samosa、tandoori、素食和米饭。", "Shop 2, 235 Mona Vale Road, St Ives", "Quandoo 菜单页列出 samosa、tandoori lamb cutlet、tandoori tiger prawn 等菜品。", ["印度餐", "菜单可核验", "素食可选"], "https://www.quandoo.com.au/place/resunga-indian-curry-restaurant-bar-53622/menu", "Vegetable Samosa\nTandoori Lamb Cutlet\nTandoori Tiger Prawn\nIndian curry", "Quandoo 菜单页 + AGFG 地址信息", True, "第三方菜单页和 AGFG 地址信息可核验；非中餐。"),
+            ("stives-charmed-thai", "Charmed by Hanuman Thai", "Charmed by Hanuman Thai，St Ives 泰餐。适合咖喱、炒河粉、炒饭和家庭分享菜。", "Shop 2-3, 198A Mona Vale Road, St Ives", "官网确认 St Ives 店、午餐/晚餐营业和菜单入口；菜品详情下一轮继续抽取。", ["泰餐", "官网菜单入口", "菜单待加深"], "https://www.charmedthai.com.au/stives/", "", "", False, "独立官网确认地址、营业时间、menu/order online 入口；非中餐。"),
+            ("stives-st-ives-club", "The St Ives Club", "The St Ives Club，本地 club/pub 餐厅。适合家庭聚餐、酒吧餐和外带。", "100 Killeaton Street, St Ives", "官网菜单页确认 dine in、take away、home delivery；具体菜品由动态页面加载，下一轮继续抽取。", ["Club 餐", "官网菜单页", "菜单待抽取"], "https://www.thestivesclub.online/menu", "", "", False, "官网菜单页确认 St Ives 地址和餐厅服务；本地 club 场景适合家庭。"),
+        ]
+        return {
+            "source": "known_local",
+            "message": "St Ives 先显示 11 家真实候选；中餐默认不放，菜单来源不足的店已标注待补。",
+            "restaurants": [
+                {
+                    "id": f"known-{slug}",
+                    "name": name,
+                    "nameNote": name_note,
+                    "area": "St Ives",
+                    "address": address,
+                    "rating": "本地",
+                    "userRatingCount": "",
+                    "priceLevel": "",
+                    "note": note,
+                    "curationReason": curation_reason,
+                    "tags": tags,
+                    "googleMapsUri": "",
+                    "websiteUri": website,
+                    "hasMenu": bool(website or menu_text),
+                    "menuText": menu_text,
+                    "menuSource": menu_source,
+                    "menuVerified": menu_verified,
+                    "menuDishes": fallback_analyze({"menuText": menu_text}).get("dishes", []) if menu_text else [],
+                }
+                for slug, name, name_note, address, note, tags, website, menu_text, menu_source, menu_verified, curation_reason in restaurants
+            ],
+        }
     if key not in {"teagarden", "teagardens"}:
         return None
     hook_menu = "\n".join([
@@ -2425,6 +2466,8 @@ def known_area_coords(area_name):
         "teagarden": (-32.6671, 152.1609, "Tea Gardens"),
         "teagardens": (-32.6671, 152.1609, "Tea Gardens"),
         "chatswood": (-33.7969, 151.1803, "Chatswood"),
+        "stives": (-33.7293, 151.1595, "St Ives"),
+        "stlves": (-33.7293, 151.1595, "St Ives"),
         "hurstville": (-33.9667, 151.1020, "Hurstville"),
         "sydneycbd": (-33.8688, 151.2093, "Sydney CBD"),
         "sydney": (-33.8688, 151.2093, "Sydney CBD"),
@@ -2437,6 +2480,7 @@ def known_area_from_coords(lat, lng):
     known = [
         (-32.6671, 152.1609, "Tea Gardens"),
         (-33.7969, 151.1803, "Chatswood"),
+        (-33.7293, 151.1595, "St Ives"),
         (-33.9667, 151.1020, "Hurstville"),
         (-33.8688, 151.2093, "Sydney CBD"),
         (-33.8150, 151.0011, "Parramatta"),
