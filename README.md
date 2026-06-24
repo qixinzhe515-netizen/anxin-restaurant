@@ -69,7 +69,7 @@ For known restaurants, the app can use a local trusted menu cache before attempt
 
 ## Current Menu Data Status
 
-- v48 turns Tea Gardens into the first area-pattern sample: 10 real Tea Gardens/Hawks Nest candidates, no default Chinese restaurant, and structured Chinese menus for Tea Gardens Hotel, Mumm's Seafood, and Hook'n Cook.
+- v49 expands Mumm's Seafood from a small representative set into a broader verified food menu: lunch/dinner, breakfast, desserts, and take-away food are structured in Chinese while drinks are excluded.
 - Chatswood real-menu sample set currently prioritizes non-Chinese-environment restaurants: Khao Pla, Mamak, Sunday Seoul, Kazuma, Bistro Kai, Manpuku, Cafe Markus, Chimichuri, Ooshman, and Gelateria Gondola.
 - All 10 Chatswood real restaurants now have at least 10 structured dish explanations. Khao Pla, Mamak, and Sunday Seoul still have the deepest coverage and should be the pattern for expanding the others.
 - Each real restaurant must keep its own source, address, menu text, and structured dish cards. Do not mix dishes between restaurants.

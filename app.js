@@ -1590,12 +1590,62 @@ function hookNCookMenuText() {
 
 function mummsSeafoodMenuText() {
   return [
+    "Fish of the day",
+    "Fish and chips",
+    "Seafood marinara",
+    "Seafood mornay",
     "Mumm's Seafood Platter",
-    "Seafood Mornay",
-    "Fresh catch of the day",
-    "Takeaway fish and chips",
+    "Pan-roasted chicken supreme",
+    "Oven baked lamb rump",
+    "Tenderloin of beef",
+    "Oven-baked bread garlic or herb",
+    "Chorizo salad",
+    "Salmon tartare",
+    "Miso butter prawn skewers",
+    "Szechuan pepper squid",
+    "Duck and portobello ravioli",
+    "Sundried tomato and mozzarella arancini",
+    "Natural oysters half dozen",
+    "Kilpatrick oysters half dozen",
+    "Ponzu and wakame oysters half dozen",
+    "Sourdough toast",
+    "Thick cut raisin toast",
+    "Toasted banana bread",
+    "Breakfast burger",
+    "Poached eggs",
+    "Bacon and eggs",
+    "Eggs benedict",
+    "Smashed avocado",
+    "Indo breakfast",
+    "Mumm's big breakkie",
     "Turkish delight panna cotta",
-    "Persian fairy floss and pistachio",
+    "Citrus tart",
+    "Chocolate espresso and hazelnut roulade",
+    "Marmalade bread and butter pudding",
+    "Affogato",
+    "Take-away fish and chips",
+    "Fisherman's basket",
+    "Calamari and chips",
+    "Whiting and chips",
+    "Flathead and chips",
+    "Orange roughy and chips",
+    "Salt'n pepper squid and chips",
+    "Hoki fillet",
+    "Barramundi fillet",
+    "Fish cocktail",
+    "Calamari ring",
+    "Prawn cutlet",
+    "Potato scallop",
+    "Seafood stick",
+    "Chiko roll",
+    "Spring roll",
+    "Chips",
+    "Garden salad",
+    "Fish burger",
+    "Chicken burger",
+    "Beef burger",
+    "Works burger",
+    "Bacon and egg roll",
   ].join("\n");
 }
 
@@ -1721,12 +1771,62 @@ function hookNCookMenuDishes() {
 
 function mummsSeafoodMenuDishes() {
   return [
-    tgDish("Mumm's Seafood Platter", "Mumm's 海鲜拼盘", "海鲜/分享", "官网确认的代表海鲜拼盘，适合想一次尝多种海鲜的人；具体组合可能随供应变化。", ["海鲜鲜味", "适合分享"], ["海鲜过敏者避免", "组合需当天确认"], ["招牌", "分享"], ""),
-    tgDish("Seafood Mornay", "奶油芝士焗海鲜", "海鲜/主菜", "Mornay 通常是奶油芝士白酱焗海鲜，口味浓郁。", ["奶香", "浓郁", "海鲜味"], ["海鲜过敏者避免", "含奶制品"], ["海鲜", "浓郁"], ""),
-    tgDish("Fresh catch of the day", "当日鲜鱼", "鱼类/主菜", "根据当天供应的鲜鱼，做法和鱼种需现场确认。适合想吃本地鱼的人。", ["鱼鲜味", "清爽或煎烤味"], ["鱼类过敏者避免", "鱼种需确认"], ["当日供应", "鱼类"], ""),
-    tgDish("Takeaway fish and chips", "外带炸鱼薯条", "鱼类/外带", "外带炸鱼薯条，适合不想正式坐下吃的时候。", ["酥脆", "鱼鲜味", "咸香"], ["鱼类过敏者避免", "油炸"], ["外带", "安全菜"], ""),
-    tgDish("Turkish delight panna cotta", "土耳其软糖风味意式奶冻", "甜点", "意式奶冻，带土耳其软糖/玫瑰糖风味，口感软滑、偏甜。", ["甜", "奶香", "软滑"], ["含奶制品", "偏甜"], ["甜点"], ""),
-    tgDish("Persian fairy floss and pistachio", "波斯棉花糖配开心果", "甜点", "偏甜甜点，通常有轻盈棉花糖口感和开心果坚果香。", ["甜", "坚果香"], ["含坚果", "开心果过敏者避免"], ["甜点", "坚果风险"], ""),
+    tgDish("Fish of the day", "当日市场鲜鱼", "主菜/鱼类", "菜单写明看 specials board，当天鱼种和做法会变化。适合想吃本地鲜鱼的人。", ["鱼鲜味", "当天变化"], ["鱼类过敏者避免", "价格和鱼种需现场确认"], ["当日供应", "鱼类"], "MP"),
+    tgDish("Fish and chips", "炸鱼薯条", "主菜/鱼类", "啤酒面糊炸 orange roughy，配花园沙拉和自制塔塔酱。", ["酥脆", "鱼鲜味", "咸香"], ["鱼类过敏者避免", "含麸质", "油炸"], ["安全菜", "本地经典"], "$29.9"),
+    tgDish("Seafood marinara", "海鲜番茄白酒扁意面", "主菜/海鲜意面", "混合海鲜配白酒蒜香番茄 sugo 和 linguine。海鲜味明显，适合喜欢意面的人。", ["番茄味", "蒜香", "海鲜鲜味"], ["海鲜过敏者避免", "含麸质", "含酒香"], ["海鲜", "意面"], "$36.9"),
+    tgDish("Seafood mornay", "奶油芝士焗海鲜", "主菜/海鲜", "鱼、鱿鱼、虾和青口放在奶油芝士酱里，配脆面包和花园沙拉。", ["奶香", "浓郁", "海鲜味"], ["海鲜过敏者避免", "含奶制品", "含麸质"], ["海鲜", "浓郁"], "$36.9"),
+    tgDish("Mumm's Seafood Platter", "Mumm's 海鲜拼盘", "主菜/海鲜分享", "拼盘含生蚝、鲜虾、虾串、烤鱼、炸 orange roughy、四川鱿鱼、番茄辣青口、时令水果和薯条。", ["海鲜鲜味", "丰富", "适合分享"], ["海鲜过敏者避免", "有辣味元素", "组合可能随供应变化"], ["招牌", "分享", "推荐"], "1人 $80 / 2人 $150"),
+    tgDish("Pan-roasted chicken supreme", "香煎鸡胸上腿肉", "主菜/鸡肉", "鸡肉配蒜香 speck 土豆、炒菠菜、甜玉米和百里香肉汁。比海鲜更稳。", ["鸡肉香", "草本香", "肉汁味"], ["含鸡肉", "speck 可能为猪肉", "GF"], ["不吃海鲜可选", "主菜"], "$32.9"),
+    tgDish("Oven baked lamb rump", "摩洛哥香料烤羊臀肉", "主菜/羊肉", "羊臀肉配摩洛哥香料、茄子鹰嘴豆泥、烤胡萝卜和石榴。", ["羊肉香", "香料味", "微甜"], ["含羊肉", "GF", "香料味明显"], ["羊肉", "特色"], "$37.9"),
+    tgDish("Tenderloin of beef", "牛柳配红酒汁", "主菜/牛肉", "牛柳配土豆泥、西兰花苗、辣根黄油和红酒汁。适合想吃牛排的人。", ["肉香", "黄油香", "红酒汁"], ["含牛肉", "含奶制品", "熟度需说明"], ["牛肉", "高级主菜"], "$47.9"),
+    tgDish("Oven-baked bread garlic or herb", "烤蒜香/香草面包", "面包/前菜", "烤面包可选蒜香或香草味，适合等主菜时分享。", ["蒜香", "香草味", "酥脆"], ["含麸质", "可能含奶制品"], ["前菜", "适合分享"], "$13"),
+    tgDish("Chorizo salad", "西班牙辣香肠沙拉", "沙拉/肉类", "chorizo、波斯 feta、蜂蜜胡萝卜、baby cos、生核桃和第戎芥末酱。", ["咸香", "微辣", "坚果香"], ["含猪肉香肠", "含奶制品", "含核桃"], ["沙拉", "重口一点"], "$25.9"),
+    tgDish("Salmon tartare", "三文鱼塔塔", "前菜/生食海鲜", "生三文鱼配牛油果、烤芝麻、酱油姜汁。口感清爽但属于生食。", ["鲜味", "清爽", "姜香"], ["生食", "鱼类过敏者避免", "含芝麻/大豆"], ["前菜", "生食"], "$25.9"),
+    tgDish("Miso butter prawn skewers", "味噌黄油虾串", "前菜/虾", "澳洲虾串配花椰菜慕斯和炸韭葱，味噌黄油味浓。", ["虾鲜味", "黄油香", "味噌咸香"], ["虾过敏者避免", "含奶制品", "GF"], ["虾", "前菜"], "$25.9"),
+    tgDish("Szechuan pepper squid", "四川花椒鱿鱼", "前菜/海鲜", "鱿鱼配辣粉丝沙拉、蒜香酱油蘸酱。会有椒香和一点辣感。", ["椒香", "微辣", "海鲜味"], ["鱿鱼过敏者避免", "含大豆/可能含麸质"], ["海鲜", "有辣"], "$24.9"),
+    tgDish("Duck and portobello ravioli", "鸭肉蘑菇意式饺", "前菜/意式饺", "鸭肉和 portobello 蘑菇 ravioli，配南瓜泥和橙味酱汁。", ["鸭肉香", "蘑菇香", "微甜"], ["含鸭肉", "含麸质", "可能含奶制品"], ["前菜", "特色"], "$25.9"),
+    tgDish("Sundried tomato and mozzarella arancini", "日晒番茄马苏里拉炸饭团", "前菜/素食", "炸意式米饭团，含日晒番茄和 mozzarella，配松子和罗勒蒜香蛋黄酱。", ["芝士香", "番茄味", "酥脆"], ["含奶制品", "含松子", "可能含蛋"], ["素食", "前菜"], "$21.9"),
+    tgDish("Natural oysters half dozen", "半打原味生蚝", "生蚝/海鲜", "Karuah NSW Latitude 31 oyster co 生蚝，原味吃最清爽。", ["鲜味", "海水味", "清爽"], ["生食", "贝类过敏者避免"], ["生蚝", "本地海鲜"], "$34.9"),
+    tgDish("Kilpatrick oysters half dozen", "半打培根焗生蚝 Kilpatrick", "生蚝/海鲜", "生蚝加脆培根和 Kilpatrick 酱，比原味更咸香。", ["咸香", "培根味", "海鲜味"], ["贝类过敏者避免", "含培根/猪肉"], ["生蚝", "熟/焗风味"], "$39.9"),
+    tgDish("Ponzu and wakame oysters half dozen", "半打柚子酱海藻生蚝", "生蚝/海鲜", "生蚝配 ponzu、海藻和青柠，酸鲜清爽。", ["酸鲜", "海藻味", "清爽"], ["生食", "贝类过敏者避免", "含大豆需确认"], ["生蚝", "清爽"], "$39.9"),
+    tgDish("Sourdough toast", "酸面包吐司", "早餐", "酸面包配果酱、vegemite 或蜂蜜。早餐里最简单。", ["面包香", "可甜可咸"], ["含麸质", "可换无麸质需加价"], ["早餐", "简单"], "$10"),
+    tgDish("Thick cut raisin toast", "厚切葡萄干吐司", "早餐", "两片厚切葡萄干吐司配黄油，偏甜。", ["甜", "黄油香", "肉桂/果干味"], ["含麸质", "含奶制品"], ["早餐", "甜口"], "$10"),
+    tgDish("Toasted banana bread", "烤香蕉蛋糕", "早餐/甜点", "店家自制 banana bread，配黄油。适合配咖啡。", ["香蕉香", "甜", "黄油香"], ["含麸质", "含奶/蛋可能性高"], ["早餐", "咖啡搭配"], "$10"),
+    tgDish("Breakfast burger", "早餐汉堡", "早餐/汉堡", "培根、鸡蛋、薯饼、芝士和番茄 relish 的早餐汉堡。", ["咸香", "芝士香", "蛋香"], ["含培根/猪肉", "含蛋/奶/麸质"], ["早餐", "份量足"], "$17"),
+    tgDish("Poached eggs", "水波蛋酸面包", "早餐/鸡蛋", "散养水波蛋放在烤酸面包上。简单清淡。", ["蛋香", "清淡"], ["含蛋", "含麸质"], ["早餐", "简单"], "$15"),
+    tgDish("Bacon and eggs", "培根鸡蛋早餐", "早餐/猪肉", "培根和鸡蛋配烤番茄、烤酸面包。", ["咸香", "蛋香"], ["含培根/猪肉", "含蛋/麸质"], ["早餐", "经典"], "$21"),
+    tgDish("Eggs benedict", "班尼迪克蛋", "早餐/鸡蛋", "水波蛋、脆培根、荷兰酱和烤酸面包。酱汁浓郁。", ["蛋香", "奶油酸香", "咸香"], ["含蛋", "含培根/猪肉", "含奶/麸质"], ["早餐", "经典"], "$25"),
+    tgDish("Smashed avocado", "牛油果酸面包", "早餐/素食", "牛油果泥配青柠、海盐、feta 和 dukkah，放在酸面包上。可加水波蛋。", ["清爽", "牛油果", "芝士咸香"], ["含奶制品", "dukkah 可能含坚果/芝麻"], ["早餐", "素食"], "$20"),
+    tgDish("Indo breakfast", "印尼炒饭早餐", "早餐/米饭", "印尼炒饭配煎蛋、牛油果泥、辣椒、青柠和新鲜香草。可加培根。", ["咸香", "微辣", "香草味"], ["含蛋", "有辣椒", "加培根含猪肉"], ["早餐", "米饭"], "$22"),
+    tgDish("Mumm's big breakkie", "Mumm's 大早餐", "早餐/拼盘", "水波蛋、脆培根、烤番茄、牛油果泥、小香肠、薯饼和酸面包。", ["丰富", "咸香", "份量足"], ["含蛋", "含培根/香肠", "含麸质"], ["早餐", "份量足"], "$27.5"),
+    tgDish("Turkish delight panna cotta", "土耳其软糖风味意式奶冻", "甜点", "奶冻配波斯 fairy floss 和开心果碎，可做无麸质选项。", ["甜", "奶香", "软滑"], ["含奶制品", "含开心果", "偏甜"], ["甜点"], "$19"),
+    tgDish("Citrus tart", "柑橘挞", "甜点", "柑橘挞配焦橙糖浆，酸甜口，比巧克力甜点更清爽。", ["酸甜", "橙香"], ["含麸质/奶/蛋可能性高"], ["甜点", "清爽"], "$18.5"),
+    tgDish("Chocolate espresso and hazelnut roulade", "巧克力咖啡榛子卷", "甜点", "巧克力、espresso 和榛子 roulade，配巧克力淋酱。", ["巧克力", "咖啡香", "坚果香"], ["含榛子", "含咖啡因", "GF"], ["甜点", "坚果风险"], "$18.5"),
+    tgDish("Marmalade bread and butter pudding", "橙酱面包黄油布丁", "甜点", "面包黄油布丁配橙子冰淇淋，温暖浓郁、偏甜。", ["甜", "黄油香", "橙香"], ["含麸质", "含奶/蛋"], ["甜点", "温热"], "$18.5"),
+    tgDish("Affogato", "阿芙佳朵咖啡冰淇淋", "甜点/咖啡", "espresso、香草冰淇淋、biscotti，可选 Frangelico、Baileys、Kahlua 或 Tia Maria。", ["咖啡香", "奶香", "甜"], ["含咖啡因", "含奶制品", "可含酒精"], ["甜点", "成人"], "$21.5"),
+    tgDish("Take-away fish and chips", "外带炸鱼薯条", "外带/鱼类", "外带菜单的炸鱼薯条，4块 hoki fish cocktails。", ["酥脆", "鱼鲜味"], ["鱼类过敏者避免", "油炸"], ["外带", "安全菜"], "$16.5"),
+    tgDish("Fisherman's basket", "渔夫炸海鲜篮", "外带/海鲜套餐", "2块 hoki 鱼块、海鲜棒、4个鱿鱼圈、2个虾排和薯条。", ["酥脆", "海鲜味", "份量足"], ["海鲜过敏者避免", "油炸"], ["外带", "套餐"], "$23.8"),
+    tgDish("Calamari and chips", "鱿鱼配薯条", "外带/海鲜", "鱿鱼加薯条，适合喜欢鱿鱼的人。", ["酥脆", "鱿鱼味"], ["鱿鱼过敏者避免", "油炸"], ["外带", "海鲜"], "$17.5"),
+    tgDish("Whiting and chips", "牙鳕鱼配薯条", "外带/鱼类", "whiting 配薯条，鱼味相对温和。", ["鱼鲜味", "酥脆"], ["鱼类过敏者避免"], ["外带", "鱼类"], "$17"),
+    tgDish("Flathead and chips", "扁头鱼配薯条", "外带/鱼类", "flathead 配薯条，是澳洲常见白肉鱼。", ["鱼鲜味", "酥脆"], ["鱼类过敏者避免"], ["外带", "鱼类"], "$17.5"),
+    tgDish("Orange roughy and chips", "橙鲷鱼配薯条", "外带/鱼类", "orange roughy 配薯条，价格比普通鱼薯条高。", ["鱼鲜味", "酥脆"], ["鱼类过敏者避免"], ["外带", "鱼类"], "$22"),
+    tgDish("Salt'n pepper squid and chips", "椒盐鱿鱼配薯条", "外带/海鲜", "椒盐鱿鱼加薯条，调味比普通炸鱿鱼更重。", ["咸香", "椒香", "鱿鱼味"], ["鱿鱼过敏者避免"], ["外带", "海鲜"], "$17.5"),
+    tgDish("Hoki fillet", "Hoki 鱼柳", "外带/单点鱼", "单点 hoki 鱼柳，可选 grilled 或 crumbed 需加价。", ["鱼鲜味"], ["鱼类过敏者避免"], ["外带", "单点"], "$12"),
+    tgDish("Barramundi fillet", "澳洲盲曹鱼柳", "外带/单点鱼", "单点 barramundi 鱼柳，比 hoki 更有本地鱼特色。", ["鱼鲜味"], ["鱼类过敏者避免"], ["外带", "单点"], "$16"),
+    tgDish("Fish cocktail", "炸鱼块", "外带/小吃", "单个炸鱼块，适合加点或给孩子。", ["酥脆", "鱼鲜味"], ["鱼类过敏者避免"], ["外带", "小吃"], "$2.7 ea"),
+    tgDish("Calamari ring", "鱿鱼圈", "外带/小吃", "单个鱿鱼圈，适合加点。", ["酥脆", "鱿鱼味"], ["鱿鱼过敏者避免"], ["外带", "小吃"], "$2.2 ea"),
+    tgDish("Prawn cutlet", "炸虾排", "外带/小吃", "单个炸虾排，适合加到套餐里。", ["酥脆", "虾鲜味"], ["虾过敏者避免"], ["外带", "小吃"], "$3 ea"),
+    tgDish("Potato scallop", "炸土豆饼", "外带/配菜", "澳洲 fish and chips 店常见炸土豆片。", ["酥脆", "土豆香"], ["油炸", "可能含麸质"], ["外带", "配菜"], "$2 ea"),
+    tgDish("Seafood stick", "海鲜棒", "外带/小吃", "鱼浆类海鲜棒，适合加点。", ["咸香", "海鲜味"], ["鱼/海鲜过敏者避免"], ["外带", "小吃"], "$2.1 ea"),
+    tgDish("Chiko roll", "澳洲炸春卷 Chiko Roll", "外带/小吃", "澳洲经典炸卷类小吃，具体馅料需现场确认。", ["酥脆", "咸香"], ["可能含肉类/麸质"], ["外带", "澳洲小吃"], "$6 ea"),
+    tgDish("Spring roll", "春卷", "外带/小吃", "炸春卷，通常是蔬菜或混合馅。", ["酥脆", "咸香"], ["含麸质", "馅料需确认"], ["外带", "小吃"], "$6 ea"),
+    tgDish("Chips", "薯条", "外带/配菜", "外带薯条，可选普通或大份。", ["酥脆", "咸香"], ["油炸"], ["外带", "配菜"], "Reg $7.7 / Large $10.5"),
+    tgDish("Garden salad", "花园沙拉", "外带/沙拉", "简单花园沙拉，适合搭配炸物。", ["清爽"], ["酱汁成分需确认"], ["外带", "清爽"], "$7"),
+    tgDish("Fish burger", "炸鱼汉堡", "外带/汉堡", "鱼肉汉堡，适合不想拿刀叉的人。", ["鱼鲜味", "酱香"], ["鱼类过敏者避免", "含麸质"], ["外带", "汉堡"], "$13.5"),
+    tgDish("Chicken burger", "鸡肉汉堡", "外带/汉堡", "鸡肉汉堡，适合不吃海鲜的人。", ["鸡肉香", "咸香"], ["含鸡肉", "含麸质"], ["外带", "汉堡"], "$14.5"),
+    tgDish("Beef burger", "牛肉汉堡", "外带/汉堡", "牛肉汉堡，份量比鱼汉堡更扎实。", ["牛肉香", "咸香"], ["含牛肉", "含麸质"], ["外带", "汉堡"], "$16"),
+    tgDish("Works burger", "豪华汉堡", "外带/汉堡", "加料版汉堡，适合很饿或想吃丰富配料的人。", ["丰富", "肉香", "咸香"], ["含肉类", "含麸质/奶需确认"], ["外带", "份量足"], "$20"),
+    tgDish("Bacon and egg roll", "培根鸡蛋面包卷", "外带/早餐", "培根和鸡蛋卷，适合早午餐或简单外带。", ["咸香", "蛋香"], ["含培根/猪肉", "含蛋/麸质"], ["外带", "早餐"], "$10.5"),
   ];
 }
 
@@ -2339,22 +2439,20 @@ function staticDemoRestaurantsForArea(areaName = "") {
 function localKnownMenuCache(payload = {}) {
   const key = `${payload.restaurantName || ""} ${payload.areaName || ""} ${payload.websiteUri || ""} ${payload.url || ""}`.toLowerCase();
   if (!key.includes("mumm") && !key.includes("mummsonthemyall")) return null;
-  const menuText = [
-    "Mumm's Seafood Platter",
-    "Seafood Mornay",
-    "Fresh catch of the day",
-    "Takeaway fish and chips",
-    "Turkish delight panna cotta",
-    "Persian fairy floss and pistachio",
-  ].join("\n");
-  const analyzed = fallbackLocalMenuData(menuText, {
-    source: "官网确认代表菜",
+  const menuText = mummsSeafoodMenuText();
+  const analyzed = {
+    summary: "已整理 Mumm's 官网食品菜单：午晚餐、早餐、甜点和外带食物都已合并成中文解释；酒水菜单已跳过。",
+    dishes: enrichStructuredDishes(mummsSeafoodMenuDishes(), "Mumm's 官网菜单文件"),
+  };
+  const fallbackOptions = {
+    source: "Mumm's 官网菜单文件",
     verified: true,
-    summary: "已整理官网确认过的代表菜，不是完整菜单。包含招牌海鲜、当日鱼、外带炸鱼薯条和甜点；完整菜单仍可打开原文核对。",
-  });
+    summary: analyzed.summary,
+  };
   return {
     ...analyzed,
     menuText,
+    ...fallbackOptions,
     websiteUrl: "https://mummsonthemyall.com.au",
     menuLinks: [
       { title: "官网菜单页", url: "https://mummsonthemyall.com.au", type: "page" },
@@ -2976,4 +3074,4 @@ if ("serviceWorker" in navigator) {
 
 renderHistory();
 setStep(1);
-renderRestaurants(demoRestaurants, "v48 已加载：Tea Gardens 已改为 10 家真实区域候选，重点店有结构化中文菜单。");
+renderRestaurants(demoRestaurants, "v49 已加载：Mumm's Seafood 已补全官网食品菜单，包含午晚餐、早餐、甜点和外带。");
