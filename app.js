@@ -1830,6 +1830,78 @@ function mummsSeafoodMenuDishes() {
   ];
 }
 
+function chargrillCharliesStIvesDishes() {
+  return [
+    tgDish("Chargrilled chicken", "炭烤鸡", "主菜/鸡肉", "品牌官网确认的核心菜，适合家庭分享或搭配沙拉。", ["炭烤香", "鸡肉香"], ["含鸡肉"], ["安全菜", "家庭"], ""),
+    tgDish("Whole chicken", "整只炭烤鸡", "主菜/分享", "适合一家人分着吃，通常搭配沙拉和配菜更完整。", ["炭烤香", "份量足"], ["含鸡肉"], ["家庭", "分享"], ""),
+    tgDish("Half chicken", "半只炭烤鸡", "主菜/鸡肉", "比整鸡更适合一到两个人，点餐压力低。", ["炭烤香", "鸡肉香"], ["含鸡肉"], ["安全菜"], ""),
+    tgDish("Chicken roll", "鸡肉面包卷", "轻食/鸡肉", "品牌官网确认 burgers & rolls，适合外带。", ["鸡肉香", "酱香"], ["含鸡肉", "含麸质"], ["外带"], ""),
+    tgDish("Old Fashioned Roll", "经典老式鸡肉卷", "轻食/卷", "Chargrill Charlie's 社媒提到的经典 roll，通常是烤鸡和沙拉类夹馅。", ["清爽", "鸡肉香"], ["含鸡肉", "含麸质"], ["外带", "安全菜"], ""),
+    tgDish("Schnitzel Roll", "炸鸡排卷", "轻食/炸鸡", "社媒提到的 schnitzel roll，口感更酥脆，适合想吃重一点的人。", ["酥脆", "鸡肉香"], ["含鸡肉", "含麸质", "油炸"], ["外带"], ""),
+    tgDish("Burgers", "汉堡", "主食/汉堡", "品牌官网确认 burgers，适合想点简单主食的人。", ["咸香", "份量足"], ["含麸质", "具体肉类需确认"], ["安全菜"], ""),
+    tgDish("Salads", "沙拉", "沙拉/配菜", "官网确认 salads，是烤鸡最常见搭配。", ["清爽"], ["酱汁需确认"], ["配菜", "轻食"], ""),
+    tgDish("Sides", "配菜", "配菜", "搭配烤鸡或汉堡的小食，具体品类随门店变化。", ["咸香"], ["具体成分需确认"], ["配菜"], ""),
+    tgDish("Gourmet catering", "家庭/聚会餐盘", "分享/聚会", "官网确认有 gourmet catering，适合多人聚餐但需要提前向店员确认。", ["份量足"], ["需提前确认"], ["分享", "家庭"], ""),
+  ];
+}
+
+function charmedThaiDishes() {
+  return [
+    tgDish("Charmed sampler", "Charmed 前菜拼盘", "前菜/分享", "菜单写明包含 spring roll、chicken satay、steamed dumpling、crab prawns roll，适合两人分享。", ["丰富", "咸香"], ["含鸡肉", "含虾蟹", "可能含麸质"], ["分享", "前菜"], "$24.90"),
+    tgDish("Spring roll", "春卷", "前菜/炸物", "泰式炸春卷，适合先点一个安全小吃。", ["酥脆", "咸香"], ["含麸质", "油炸"], ["前菜", "安全菜"], "$12.90"),
+    tgDish("Curry puff", "咖喱角", "前菜/炸物", "咖喱馅炸酥角，通常带香料味但不一定很辣。", ["酥脆", "咖喱香"], ["含麸质", "油炸"], ["前菜"], "$12.90"),
+    tgDish("Thai fish cake", "泰式鱼饼", "前菜/鱼类", "泰餐常见鱼饼，菜单标注中辣。", ["鱼鲜味", "香料味", "中辣"], ["鱼类过敏者避免", "有辣"], ["前菜", "泰餐经典"], "$13.90"),
+    tgDish("Duck spring roll", "鸭肉春卷", "前菜/鸭肉", "鸭肉馅春卷，比普通春卷味道更重。", ["酥脆", "鸭肉香"], ["含鸭肉", "含麸质"], ["前菜"], "$13.90"),
+    tgDish("Golden bag", "黄金袋", "前菜/炸物", "小袋状炸点心，适合分享。", ["酥脆", "咸香"], ["油炸", "馅料需确认"], ["前菜"], "$13.90"),
+    tgDish("Crab prawns roll", "蟹虾卷", "前菜/海鲜", "菜单写明 deep fried net roll，馅料有蟹肉和虾肉，配 plum sauce。", ["酥脆", "虾蟹鲜味", "微甜"], ["虾蟹过敏者避免", "油炸"], ["海鲜", "前菜"], "$13.90"),
+    tgDish("Steamed dumpling", "蒸饺", "前菜/点心", "菜单标注 Must Try，蒸制比炸物清淡。", ["咸香", "柔软"], ["馅料需确认", "可能含麸质"], ["前菜", "老人友好"], "$14.90"),
+    tgDish("Chicken satay", "鸡肉沙爹串", "前菜/鸡肉", "鸡肉串配沙爹酱，适合不想吃辣的人，但花生风险要注意。", ["花生香", "鸡肉香"], ["含鸡肉", "可能含花生"], ["前菜", "安全菜"], "$15.90"),
+    tgDish("Easy Fried Prawn Stick", "炸虾条", "前菜/虾", "菜单写明配 homemade sweet chilli sauce。", ["酥脆", "虾鲜味", "甜辣"], ["虾过敏者避免", "油炸"], ["海鲜", "前菜"], "$15.90"),
+    tgDish("Sear bay scallops", "煎海湾扇贝", "前菜/海鲜", "4 个扇贝，可选 ginger and shallot 或 chilli lime coriander dressing。", ["扇贝鲜味", "清爽"], ["贝类过敏者避免"], ["海鲜"], "$16.90"),
+    tgDish("Delicious crispy Thai's devil wing", "泰式魔鬼脆鸡翅", "前菜/鸡肉", "菜单标注 Must Try 和辣椒，适合能吃辣的人。", ["酥脆", "辣", "鸡肉香"], ["含鸡肉", "有辣"], ["前菜", "辣"], "$16.90"),
+    tgDish("Green papaya salad", "青木瓜沙拉", "沙拉/泰餐", "菜单标注 Must Try，酸辣清爽。", ["酸辣", "清爽"], ["有辣", "可能含鱼露/花生"], ["沙拉", "泰餐经典"], "$17.90"),
+    tgDish("Grilled prawn satay", "烤虾沙爹串", "前菜/虾", "菜单标注 Chef Recommended，虾配沙爹风味。", ["虾鲜味", "花生香"], ["虾过敏者避免", "可能含花生"], ["推荐", "海鲜"], "$17.90"),
+    tgDish("Mild hot & sour coconut soup", "椰香酸辣鸡汤", "汤/鸡肉", "菜单写明 lean chicken fillet & mushroom，酸辣但相对温和。", ["酸辣", "椰香"], ["含鸡肉", "有辣"], ["汤", "温和"], "$18.90"),
+    tgDish("Hot & sour soup local prawn", "本地虾酸辣汤", "汤/虾", "菜单写明 mixed Thai herb & fresh chilli，辣味更明显。", ["酸辣", "虾鲜味"], ["虾过敏者避免", "有辣"], ["汤", "海鲜"], "$18.90"),
+    tgDish("Lunch box", "泰式午餐盒", "午餐/套餐", "午餐页写明可选 2 个前菜，加一份主菜；普通蛋白 $20.90，虾/混合海鲜/鸭/脆皮猪肉 $23.90。", ["组合", "省事"], ["按选择可能含海鲜/猪肉/鸭肉"], ["午餐", "套餐"], "$20.90 / $23.90"),
+    tgDish("Pad kana moo krob w/rice", "脆皮猪肉芥兰饭", "午餐/猪肉饭", "午餐页写明 crispy pork belly、Chinese broccoli 和 oyster sauce。", ["咸香", "脆皮猪肉"], ["含猪肉", "蚝油含海鲜"], ["午餐", "饭"], "$19.90"),
+    tgDish("Pad ka praw gai sub w/rice", "鸡肉末罗勒饭", "午餐/鸡肉饭", "鸡肉末配蒜、辣椒、罗勒和蚝油炒饭，菜单标辣。", ["罗勒香", "辣", "咸香"], ["含鸡肉", "有辣", "蚝油含海鲜"], ["午餐", "饭"], "$17.90"),
+    tgDish("Prik khing moo krob", "红咖喱酱脆皮猪肉饭", "午餐/猪肉饭", "脆皮猪肉配红咖喱酱、四季豆和 zucchini，菜单标辣。", ["咖喱香", "辣", "猪肉香"], ["含猪肉", "有辣"], ["午餐", "饭"], "$19.90"),
+    tgDish("Massaman beef w/rice", "马萨曼牛肉饭", "午餐/牛肉咖喱", "牛肉块配马萨曼咖喱、椰奶、腰果和小土豆。", ["椰香", "香料味", "微甜"], ["含牛肉", "含腰果"], ["午餐", "咖喱"], "$19.90"),
+    tgDish("Gang phed ped yang w/rice", "红咖喱烤鸭饭", "午餐/鸭肉咖喱", "烤鸭红咖喱，配番茄、菠萝和荔枝。", ["椰香", "甜辣", "鸭肉香"], ["含鸭肉", "有辣"], ["咖喱", "午餐"], "$19.90"),
+    tgDish("Yellow curry chicken w/rice", "黄咖喱鸡饭", "午餐/鸡肉咖喱", "鸡腿肉黄咖喱，配土豆，菜单写 medium hot。", ["咖喱香", "椰香", "中辣"], ["含鸡肉", "有辣"], ["咖喱", "午餐"], "$18.90"),
+    tgDish("Pad ka praw gai krob w/rice", "脆鸡罗勒饭", "午餐/鸡肉饭", "脆鸡配蒜、辣椒、罗勒和蚝油，菜单标辣。", ["酥脆", "罗勒香", "辣"], ["含鸡肉", "有辣"], ["午餐", "饭"], "$18.90"),
+    tgDish("Pineapple fried rice", "菠萝炒饭", "午餐/炒饭", "香米炒菠萝、虾、鸡肉、菠萝、番茄、腰果等。", ["微甜", "坚果香", "饭香"], ["含虾", "含鸡肉", "含腰果"], ["炒饭", "午餐"], "$19.90"),
+    tgDish("Charmed crispy chicken w/rice", "Charmed 脆鸡饭", "午餐/鸡肉饭", "脆鸡配甜辣蘸酱，适合不想吃太复杂的人。", ["酥脆", "甜辣", "鸡肉香"], ["含鸡肉", "油炸"], ["安全菜", "午餐"], "$18.90"),
+    tgDish("Hokkien mee w/sambal chilli", "参巴福建面", "午餐/面", "福建面配鸡蛋面、脆猪肉片、虾、豆腐、蔬菜和 sambal chilli paste。", ["酱香", "辣", "海鲜味"], ["含猪肉", "含虾", "有辣"], ["面", "午餐"], "$19.90"),
+    tgDish("Koo wa gai noodles", "泰式海鲜炒河粉", "午餐/面", "宽米粉配鸡、虾、豆芽、调味酱和炸洋葱。", ["咸香", "海鲜味"], ["含鸡肉", "含虾"], ["面", "午餐"], "$19.90"),
+    tgDish("Pad Thai gai krob", "脆鸡泰式炒河粉", "午餐/面", "泰式炒河粉配脆鸡、蒜香韭菜、豆芽、豆腐、蛋和花生。", ["酸甜", "花生香", "鸡肉香"], ["含鸡肉", "含蛋", "含花生"], ["泰餐经典", "面"], "$18.90"),
+    tgDish("BBQ chicken salad", "烤鸡沙拉", "肉类/沙拉", "菜单写明黄瓜、番茄、泰式香草、混合沙拉叶和 chilli lime dressing。", ["清爽", "鸡肉香", "微辣"], ["含鸡肉", "有辣"], ["沙拉", "鸡肉"], "$26.90"),
+    tgDish("BBQ chicken green papaya salad", "烤鸡青木瓜沙拉", "肉类/沙拉", "菜单标注 Must Try，青木瓜沙拉配烤鸡。", ["酸辣", "清爽", "鸡肉香"], ["含鸡肉", "有辣"], ["推荐", "沙拉"], "$26.90"),
+    tgDish("Banana blossom salad", "香蕉花沙拉", "肉类/沙拉", "椰香鸡肉香蕉花沙拉，菜单标注 Popular。", ["椰香", "清爽"], ["含鸡肉", "可能含椰子"], ["人气", "沙拉"], "$26.90"),
+    tgDish("Duck salad", "鸭肉沙拉", "鸭肉/沙拉", "烤鸭胸肉配 homemade chilli paste、泰式香草、椰奶、炸洋葱和腰果。", ["鸭肉香", "辣", "坚果香"], ["含鸭肉", "含腰果", "有辣"], ["鸭肉", "沙拉"], "$29.90"),
+    tgDish("Massaman lamb cutlets", "马萨曼羊排", "羊肉/主菜", "羊排配土豆和腰果，菜单标注 Must Try。", ["羊肉香", "咖喱香", "微甜"], ["含羊肉", "含腰果"], ["推荐", "主菜"], "$35.90"),
+    tgDish("Basil moo grob", "罗勒脆皮猪肉", "猪肉/主菜", "脆皮猪肉配蒜、辣椒和罗勒炒制。", ["猪肉香", "罗勒香", "辣"], ["含猪肉", "有辣"], ["主菜", "重口"], "$27.90"),
+    tgDish("Wok toss marinade beef slice", "腌牛肉片炒菜", "牛肉/主菜", "牛肉片配蒜、切长红椒和蒸混合青菜，菜单标注 Must Try。", ["牛肉香", "蒜香"], ["含牛肉"], ["推荐", "主菜"], "$26.90"),
+  ];
+}
+
+function stIvesClubDishes() {
+  return [
+    tgDish("Starters", "前菜小吃", "前菜/分享", "官网 2026 菜单分类确认有 Starters，适合先点小吃分着吃。", ["咸香", "适合分享"], ["具体品项需到店确认"], ["前菜"], ""),
+    tgDish("Club Favourites", "Club 经典主菜", "主菜/澳式", "官网菜单分类确认有 Club Favourites，通常是 schnitzel、steak、roast、pie 等澳式 club 常见主菜。", ["份量足", "澳式"], ["具体菜品需以店内菜单为准"], ["主菜", "安全菜"], ""),
+    tgDish("Burgers", "汉堡类", "主食/汉堡", "官网菜单分类确认有 Burgers，适合不会英文用户快速选择。", ["咸香", "份量足"], ["含麸质", "肉类需确认"], ["主食"], ""),
+    tgDish("Pizza & Pasta", "披萨和意面", "主食/意式", "官网菜单分类确认有 Pizza & Pasta，适合家庭分享或儿童。", ["芝士香", "酱香"], ["含麸质", "可能含奶制品"], ["披萨", "意面"], ""),
+    tgDish("From the Ocean", "海鲜主菜", "海鲜/主菜", "官网菜单分类确认有 From the Ocean，通常适合点鱼、虾、鱿鱼等海鲜。", ["海鲜味"], ["海鲜过敏者避免"], ["海鲜"], ""),
+    tgDish("Sides", "配菜", "配菜", "官网菜单分类确认有 Sides，可搭配主菜。", ["咸香"], ["具体成分需确认"], ["配菜"], ""),
+    tgDish("Kids", "儿童餐", "儿童/简餐", "官网菜单分类确认有 Kids，适合带孩子的家庭。", ["温和", "简单"], ["具体成分需确认"], ["有小孩"], ""),
+    tgDish("Desserts", "甜点", "甜点", "官网菜单分类确认有 Desserts，适合饭后点。", ["甜"], ["可能含奶/蛋/麸质"], ["甜点"], ""),
+    tgDish("Combo Deals", "套餐组合", "套餐/分享", "官网在线菜单分类确认有 Combo Deals，适合想省事直接点套餐的人。", ["组合", "份量足"], ["内容需确认"], ["套餐"], ""),
+    tgDish("Gluten Free", "无麸质选项", "特殊饮食", "官网在线菜单分类确认有 Gluten Free，适合需要避开麸质的人先问店员。", ["可定制"], ["仍需店员确认交叉污染"], ["无麸质"], ""),
+    tgDish("Vegetarian", "素食选项", "素食", "官网在线菜单分类确认有 Vegetarian，适合素食或想吃清淡的人。", ["清爽"], ["蛋奶素需确认"], ["素食"], ""),
+  ];
+}
+
 const stIvesRestaurants = [
   {
     id: "stives-archies-cafe",
@@ -2013,14 +2085,8 @@ const stIvesRestaurants = [
     hasMenu: true,
     menuSource: "Chargrill Charlie's 官网菜单方向",
     menuVerified: true,
-    menuDishes: [
-      tgDish("Chargrilled chicken", "炭烤鸡", "主菜/鸡肉", "品牌核心菜，适合家庭分享或搭配沙拉。", ["炭烤香", "鸡肉香"], ["含鸡肉"], ["安全菜", "家庭"], ""),
-      tgDish("Chicken roll", "鸡肉卷/面包卷", "轻食/鸡肉", "适合外带，比整鸡更方便。", ["鸡肉香", "酱香"], ["含鸡肉", "含麸质"], ["外带"], ""),
-      tgDish("Burgers", "汉堡", "主食/汉堡", "品牌官网提到 burgers，适合想点简单主食的人。", ["咸香", "份量足"], ["含麸质", "具体肉类需确认"], ["安全菜"], ""),
-      tgDish("Salads", "沙拉", "沙拉/配菜", "可和烤鸡搭配，适合想吃清淡一点。", ["清爽"], ["酱汁需确认"], ["配菜", "轻食"], ""),
-      tgDish("Sides", "配菜", "配菜", "搭配烤鸡或汉堡的小食，具体品类随门店变化。", ["咸香"], ["具体成分需确认"], ["配菜"], ""),
-    ],
-    menuText: ["Chargrilled chicken", "Chicken roll", "Burgers", "Salads", "Sides"].join("\n"),
+    menuDishes: chargrillCharliesStIvesDishes(),
+    menuText: ["Chargrilled chicken", "Whole chicken", "Half chicken", "Chicken roll", "Old Fashioned Roll", "Schnitzel Roll", "Burgers", "Salads", "Sides", "Gourmet catering"].join("\n"),
   },
   {
     id: "stives-resunga",
@@ -2051,11 +2117,52 @@ const stIvesRestaurants = [
     area: "St Ives",
     address: "Shop 2-3, 198A Mona Vale Road, St Ives",
     rating: "菜单",
-    note: "官网确认 St Ives 店、午餐/晚餐营业和菜单入口；菜品详情下一轮继续抽取。",
-    curationReason: "入选原因：独立官网确认地址、营业时间、menu/order online 入口；非中餐环境。",
-    tags: ["泰餐", "官网菜单入口", "菜单待加深"],
+    note: "官网确认 St Ives 店、午餐/晚餐营业；菜单图片页已整理前菜、午餐盒、午餐主菜和部分晚餐肉类主菜。",
+    curationReason: "入选原因：独立官网确认地址、营业时间、menu/order online 入口；菜单图片可核验，非中餐环境。",
+    tags: ["泰餐", "官网菜单图片", "真实菜单"],
     websiteUri: "https://www.charmedthai.com.au/stives/",
-    hasMenu: false,
+    hasMenu: true,
+    menuSource: "Charmed Thai St Ives 官网菜单图片",
+    menuVerified: true,
+    menuDishes: charmedThaiDishes(),
+    menuText: [
+      "Charmed sampler",
+      "Spring roll",
+      "Curry puff",
+      "Thai fish cake",
+      "Duck spring roll",
+      "Golden bag",
+      "Crab prawns roll",
+      "Steamed dumpling",
+      "Chicken satay",
+      "Easy Fried Prawn Stick",
+      "Sear bay scallops",
+      "Delicious crispy Thai's devil wing",
+      "Green papaya salad",
+      "Grilled prawn satay",
+      "Mild hot & sour coconut soup",
+      "Hot & sour soup local prawn",
+      "Lunch box",
+      "Pad kana moo krob w/rice",
+      "Pad ka praw gai sub w/rice",
+      "Prik khing moo krob",
+      "Massaman beef w/rice",
+      "Gang phed ped yang w/rice",
+      "Yellow curry chicken w/rice",
+      "Pad ka praw gai krob w/rice",
+      "Pineapple fried rice",
+      "Charmed crispy chicken w/rice",
+      "Hokkien mee w/sambal chilli",
+      "Koo wa gai noodles",
+      "Pad Thai gai krob",
+      "BBQ chicken salad",
+      "BBQ chicken green papaya salad",
+      "Banana blossom salad",
+      "Duck salad",
+      "Massaman lamb cutlets",
+      "Basil moo grob",
+      "Wok toss marinade beef slice",
+    ].join("\n"),
   },
   {
     id: "stives-st-ives-club",
@@ -2064,11 +2171,15 @@ const stIvesRestaurants = [
     area: "St Ives",
     address: "100 Killeaton Street, St Ives",
     rating: "菜单",
-    note: "官网菜单页确认 dine in、take away、home delivery；具体菜品由动态页面加载，下一轮继续抽取。",
+    note: "官网 2026 Brasserie 菜单页确认分类，包括 Starters、Club Favourites、Burgers、Pizza & Pasta、From the Ocean、Sides、Kids、Desserts、Gluten Free、Vegetarian。",
     curationReason: "入选原因：官网菜单页确认 St Ives 地址和餐厅服务；本地 club 场景适合家庭。",
-    tags: ["Club 餐", "官网菜单页", "菜单待抽取"],
+    tags: ["Club 餐", "官网菜单页", "分类已整理"],
     websiteUri: "https://www.thestivesclub.online/menu",
-    hasMenu: false,
+    hasMenu: true,
+    menuSource: "The St Ives Club 2026 Brasserie 官网菜单页",
+    menuVerified: true,
+    menuDishes: stIvesClubDishes(),
+    menuText: ["Starters", "Club Favourites", "Burgers", "Pizza & Pasta", "From the Ocean", "Sides", "Kids", "Desserts", "Combo Deals", "Gluten Free", "Vegetarian"].join("\n"),
   },
 ];
 
@@ -3390,4 +3501,4 @@ if ("serviceWorker" in navigator) {
 
 renderHistory();
 setStep(1);
-renderRestaurants(demoRestaurants, "v51 已加载：已加入 St Ives 真实区域候选，兼容 st lves 输入。");
+renderRestaurants(demoRestaurants, "v52 已加载：St Ives 11 家餐厅都已补菜单卡，Charmed Thai 和 St Ives Club 已不再是空菜单。");
