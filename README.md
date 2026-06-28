@@ -69,6 +69,7 @@ For known restaurants, the app can use a local trusted menu cache before attempt
 
 ## Current Menu Data Status
 
+- v58 removes user-facing language-difficulty labels. The product explanation should focus on restaurant type, suitable diners, price/occasion fit, recommended food and drinks, and cautions.
 - v57 expands Sydney CBD from a 10-restaurant starter set into a 20-restaurant core set. Added The Charles, Clam Bar, Shell House Menzies, Gowings, Ragazzi, Fabbrica CBD, Palazzo Salato, Letra House, Bennelong, and Bopp & Tone using official menu pages/PDFs, and thickened AALIA from its official menu.
 - v56 thickens Tea Gardens and Sydney CBD without inventing dishes: Tillermans, Jayz at the Myall, Hawks Nest Golf Club/Sando's, and Benchmark now have source-labelled menu cards; Sydney CBD adds more official Swillhouse PDF dishes for Restaurant Hubert, Le Foote, and Alberto's Lounge. Restaurants with no reliable menu remain unfilled.
 - v55 starts the main Sydney expansion pattern with a Sydney CBD core set: 10 real restaurants across CBD/Surry Hills/The Rocks/Redfern/Chippendale, each with Chinese notes, address/map fallback, and restaurant-specific menu clues from official pages or PDFs.

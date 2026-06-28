@@ -33,7 +33,7 @@ const demoRestaurants = [
     area: "Sydney CBD",
     rating: "4.6",
     note: "适合第一次尝试本地西餐，菜单不复杂，有鱼、虾、披萨和甜点。",
-    tags: ["适合老人", "可点安全菜", "英文压力低"],
+    tags: ["适合老人", "可点安全菜", "第一次尝试"],
     menu: sampleMenu,
   },
   {
@@ -2690,7 +2690,7 @@ const sydneyCbdRestaurants = [
     area: "Sydney CBD",
     address: "16 Foster Street, Surry Hills NSW 2010",
     rating: "4.6",
-    note: "官网菜单很清楚，菜名英文压力较高，但适合提前看懂后到店点。",
+    note: "官网菜单很清楚，菜名和做法偏复杂，适合提前看懂后再决定要不要去。",
     tags: ["中东地中海", "分享菜", "官网菜单", "真实菜单"],
     curationReason: "入选原因：官网公开完整菜单，Good Food/AGFG 帽子记录清楚，适合做 city 用户的高质量样板。",
     websiteUri: "https://nomad.sydney/",
@@ -3472,7 +3472,7 @@ function staticDemoRestaurantsForArea(areaName = "") {
       area,
       rating: "4.6",
       note: "适合第一次尝试本地西餐，菜单不复杂，有鱼、虾、披萨和甜点。",
-      tags: ["适合老人", "可点安全菜", "英文压力低"],
+      tags: ["适合老人", "可点安全菜", "第一次尝试"],
       menu: areaDemoMenus.bistro,
     },
     {
@@ -4194,4 +4194,4 @@ if ("serviceWorker" in navigator) {
 
 renderHistory();
 setStep(1);
-renderRestaurants(demoRestaurants, "v57 已加载：Sydney CBD 扩到 20 家核心餐厅，并补入更多官网/官方 PDF 菜单。");
+renderRestaurants(demoRestaurants, "v58 已加载：餐厅说明改为类型、适合人群、推荐和避雷，不做语言难度评价。");

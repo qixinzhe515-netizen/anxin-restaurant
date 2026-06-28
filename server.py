@@ -1462,7 +1462,7 @@ def fallback_restaurants(area_name=""):
         ),
     }
     specs = [
-        ("local-bistro", f"{area} Local Bistro", "4.6", "适合第一次尝试本地西餐，选择比较稳。", ["西餐", "适合老人", "英文压力低"], "bistro", "$$"),
+        ("local-bistro", f"{area} Local Bistro", "4.6", "适合第一次尝试本地西餐，选择比较稳。", ["西餐", "适合老人", "第一次尝试"], "bistro", "$$"),
         ("garden-cafe", f"{area} Garden Cafe", "4.5", "适合早午餐、咖啡和轻食，点餐相对简单。", ["早午餐", "咖啡", "儿童友好"], "cafe", "$"),
         ("laneway-italian", f"{area} Laneway Italian", "4.4", "适合家庭聚餐，披萨和意面容易提前选好。", ["意餐", "家庭聚餐", "不容易踩雷"], "italian", "$$"),
         ("harbour-pub", f"{area} Family Pub", "4.3", "澳洲常见酒吧餐，份量大，适合想体验本地餐的人。", ["澳洲本地", "份量大", "可点安全菜"], "pub", "$$"),

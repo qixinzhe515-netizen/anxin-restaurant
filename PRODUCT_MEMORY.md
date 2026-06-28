@@ -17,6 +17,8 @@ It is not an English-learning app and not a broad Australian life assistant in t
 
 The first commercial test product helps Chinese-speaking users in Australia go to local restaurants even when they cannot confidently use English.
 
+Do not show user-facing language-difficulty ratings. Explain practical fit instead: what the restaurant is, who it suits, price/occasion, what to eat or drink, and what to avoid.
+
 The product should reduce the need for live English conversation whenever possible. Many users may be able to show prepared information but cannot reliably understand spoken English replies. The app should therefore help users prepare choices, messages, booking details, order cards, and situation cards in advance, then let them show or send those structured outputs instead of improvising in English on the spot.
 
 The product should not require users to do hard preparatory work such as finding, copying, and pasting restaurant menus. Users are using the app because they do not know what to do. The app should guide them from simple choices such as location, nearby restaurants, party size, time, taste preference, and dietary limits.
